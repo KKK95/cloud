@@ -1,0 +1,402 @@
+﻿#HEADER
+{
+	color: #FFFFFF;
+	text-align: center;
+	line-height:100%;
+	word-wrap: break-word;
+	background-color: #00AA55;
+	margin-bottom:0px;
+	font-size: 25px;
+}
+
+#HEADER_SHADOW
+{
+	box-shadow: 0px 0px 10px #888888;
+}
+
+#main 
+{
+	box-shadow: 0px 0px 5px #888888;
+    width: 605px;
+    height:auto;
+	float:right;
+	background-color:white;
+	margin:3px;
+	border-radius:4px;
+	position: relative;
+}
+
+#main_in_main 
+{
+    width: 605px;
+    height:auto;
+	float:right;
+	margin:3px;
+	border:0px;
+	position: relative;
+}
+
+#main_sub
+{
+	box-shadow: 0px 0px 5px #888888;
+    width: 600px;
+    height:auto;
+	float:right;
+	background-color:white;
+	margin:3px;
+	border-radius:4px;
+	position: relative;
+}
+
+#conventionTittle
+{
+	text-align: center;
+	word-wrap: break-word;
+	font-size: 25px;
+}
+
+#table
+{
+	width:100%;
+	border: 0;
+}
+
+#tableTittle1/*欄位列奇數行tittle*/
+{
+	width: 25%;
+	background-color: #66FF66;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableTittle2/*欄位列偶數行tittle*/
+{
+	width: 25%;
+	background-color: #99FF99;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableTittleCol1/*欄位行奇數行tittle*/
+{
+	width: auto;
+	background-color: #66FF66;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableTittleCol2/*欄位行偶數行tittle*/
+{
+	width: auto;
+	background-color: #99FF99;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableValue1/*欄位列奇數行內容*/
+{
+	width: 100%;
+	border: 0px;
+	color: #333333;
+	background-color: #E4E4E4;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-decoration: none;
+	font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+}
+
+#tableValue2/*欄位列偶數行內容*/
+{
+	width: 100%;
+	border: 0px;
+	color: #333333;
+	background-color: #F2F2F2;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-decoration: none;
+	font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+}
+
+#tableValueCol1/*欄位行奇數行內容*/
+{
+	width: auto;
+	border: 0px;
+	background-color: #E4E4E4;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableValueCol2/*欄位行偶數行內容*/
+{
+	width: auto;
+	border: 0px;
+	background-color: #F2F2F2;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:200%;
+	text-align: center;
+	text-decoration: none;
+}
+
+#tableButton/*按鈕初始*/
+{
+	width: 100%;
+	border: 0px;
+	background-color: #00DD77;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+    color:#FFFFFF;
+    font-size:18px;
+}
+
+#tableButton:hover, #tableButton:active/*按鈕變化*/
+{
+	width: 100%;
+	border: 0px;
+	background-color: #008844;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+	color:#FFFFFF;
+	font-size:18px;
+}
+
+#tableButtonAdd/*新增初始*/
+{
+	width: 50%;
+	border: 0px;
+	background-color: #99FF33;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+    color:#FFFFFF;
+    font-size:18px;
+}
+
+#tableButtonAdd:hover, #tableButtonAdd:active/*新增變化*/
+{
+	width: 50%;
+	border: 0px;
+	background-color: #55AA00;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+	color:#FFFFFF;
+	font-size:18px;
+}
+
+#tableButtonDelete/*刪除初始*/
+{
+	width: 50%;
+	border: 0px;
+	background-color: #FFA488;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 4px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+    color:#FFFFFF;
+    font-size:18px;
+}
+
+#tableButtonDelete:hover, #tableButtonDelete:active/*刪除變化*/
+{
+	width: 50%;
+	border: 0px;
+	background-color: #FF5511;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	line-height:300%;
+	text-decoration: none;
+	border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 4px;
+    font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+	color:#FFFFFF;
+	font-size:18px;
+}
+
+body
+{
+	font-family:"Helvetica Neue",Helvetica,"Nimbus Sans L",Arial,"Liberation Sans","Hiragino Sans GB","Microsoft YaHei","Wenquanyi Micro Hei","WenQuanYi Zen Hei","ST Heiti","SimHei","WenQuanYi Zen Hei Sharp",sans-serif;
+	background-color: #66FF66;
+	color: #333333;
+	margin:0px;
+}
+
+#divTop /*中間底色*/
+{
+	
+	position: absolute;
+    box-shadow: 0px 0px 10px #888888;
+    text-align: center;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+	width:768px;
+	height:auto;
+	background-color:CCFF99;
+	padding:4px;
+}
+
+#divOrigin
+{
+	padding:10px;
+	margin: 0 auto;
+	width:768px;
+}
+
+.left
+{
+	background-color:#00AA55;
+	line-height:200%;
+	color: #FFFFFF;
+	font-size: 18px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	width:150px;
+	position: relative;
+}
+
+
+#pageSelect
+{
+	background-color:#F2F2F2;
+	line-height:180%;
+	margin:5px;
+	padding:5px;
+	width:auto;
+	color: #787878;
+	font-size: 15px;
+	float:left;
+	position:relative;
+}
+
+#pageSelectMainPhp
+{
+	background-color:#E4E4E4;
+	line-height:180%;
+	margin:5px;
+	padding:5px;
+	width:auto;
+	color: #787878;
+	font-size: 15px;
+	float:left;
+	position:relative;
+}
+
+#pageSelect:hover,#pageSelect:active
+{
+	background-color:#BBBBBB;
+	line-height:180%;
+	margin:5px;
+	padding:5px;
+	width:auto;
+	color: #787878;
+	font-size: 15px;
+	float:left;
+	position:relative;
+}
+
+a:link, a:visited
+{
+	display: block;
+	background-color:#F2F2F2;
+	line-height:180%;
+	color: #787878;
+	font-size: 15px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	width:150px;
+	text-decoration: none;
+}
+
+form
+{
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+}
+
+a:hover, a:active 
+{
+    background-color: #BBBBBB;
+    line-height:180%;
+	color: #787878;
+	font-size: 15px;
+	margin-bottom: 0px;
+	margin-top: 0px;
+	padding-bottom: 0px;
+	padding-top: 0px;
+	width:150px;
+	text-decoration: none;
+}
