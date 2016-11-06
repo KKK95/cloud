@@ -10,7 +10,7 @@
 		else if ($_GET['platform'] == "web")
 			header ("Location: web_index.php");
 		else
-			header ("Location: web_index.php");
+			header ("Location: device_index.php");
 	}	
 	
 ?>
