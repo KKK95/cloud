@@ -13,7 +13,6 @@
 	
 	$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
 	$result=$conn->query($sql);
-	
 													//看是否在會議中
 	$num_rows = $result->num_rows;	
 	if ($num_rows==0)								//否

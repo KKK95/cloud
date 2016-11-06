@@ -22,8 +22,8 @@
 		"contents" => array
 		(
 			"moderator" => $moderator,
-			"date":=> $meeting_date,
-			"time":=> $meeting_time
+			"date" => $meeting_date,
+			"time" => $meeting_time
 		),
 		"link" => array
 		(

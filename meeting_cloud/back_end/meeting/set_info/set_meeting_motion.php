@@ -23,11 +23,6 @@
 	}
 	
 	$sql = "INSERT INTO group_meeting_topics value('".$meeting_id."', 0, '".$topic."')";
-	
-	
-	
-	
-	
-	
+
 	
 ?>

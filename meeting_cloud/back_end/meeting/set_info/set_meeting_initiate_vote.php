@@ -16,7 +16,7 @@
 	if (isset($_POST['topic_id']))
 	{	$topic_id = $_POST['topic_id'];		}
 	else
-	{	$topic_id = 0;		}
+	{	$topic_id = 0;	}
 	
 	$sql = "select * from group_meeting_now where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result=$conn->query($sql);

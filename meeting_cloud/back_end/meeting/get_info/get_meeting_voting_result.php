@@ -20,10 +20,10 @@
 		}
 	//==============================================取得會議id===================================================
 	
-		if (isset($_POST['topic_id']))					//選擇某一議題內的投票
+		if ($_POST['topic_id'] != "none")					//選擇某一議題內的投票
 		{
 			$topic_id = $_POST['topic_id'];
-			if (isset($_POST['issue_id']))				//指定某一投票記錄
+			if ($_POST['issue_id'] != "none")				//某一議題內指定某一投票記錄
 			{
 				$issue_id = $_POST['issue_id'];
 				$sql = "select * from meeting_vote 
@@ -31,7 +31,7 @@
 				$num_rows = $result->num_rows;	
 				$result=$conn->query($sql);
 			}
-			else										//不指定某一投票記錄, 即取出議題內的所有投票記錄
+			else										//某一議題內的所有投票記錄
 			{
 				$sql = "select * from meeting_vote 
 						where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
@@ -45,7 +45,7 @@
 			$result=$conn->query($sql);
 			$num_rows = $result->num_rows;	
 		}
-		
+		//====================================================================================================================
 		$obj_issue = "obj_";
 		
 		$json = array
