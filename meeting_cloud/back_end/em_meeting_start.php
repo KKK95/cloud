@@ -32,14 +32,10 @@
 		$sql = "INSERT INTO meeting_record value('".$meeting_id."', '".$group_id."', '".$meeting_time."')";
 		$result = $conn->query($sql);
 	}
-		if ($_SESSION['platform'] == "device")
-			header("Location: ../device/employee/em_meeting_running.php?meeting_id=".$meeting_id);
-		else if ($_SESSION['platform'] == "web")
-			header("Location: ../web/employee/em_meeting_running.php?meeting_id=".$meeting_id);
-	}
-	else
-	{
-		header("Location: employee_center.php");
-	}
+	if ($_SESSION['platform'] == "device")
+		header("Location: ../device/employee/em_meeting_running.php");
+	else if ($_SESSION['platform'] == "web")
+		header("Location: ../web/employee/em_meeting_running.php");
+
 	
 ?>

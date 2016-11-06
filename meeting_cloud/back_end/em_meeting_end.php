@@ -9,9 +9,24 @@
 	
 	require_once("../login_check.php");			
 	
+	
+	
 	if ($_SESSION['platform'] == "device")
+	{
+		if ($_SESSION['access'] == "ls")
+			$sql = "delete form server_running_now where server_id = '".$_SESSION["id"]."'";
+		else
+			$sql = "delete form group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		
+		$result = $conn->query($sql);
 		header("Location: ../device/employee/employee_center.php");
+	}	
 	else if ($_SESSION['platform'] == "web")
+	{
+		$sql = "delete form group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		
+		$result = $conn->query($sql);
 		header("Location: ../web/employee/employee_center.php");
+	}	
 	
 ?>
