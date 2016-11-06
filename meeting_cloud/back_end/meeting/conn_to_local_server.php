@@ -7,7 +7,7 @@
 
 	require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("login_check.php");			
+	require_once("../../login_check.php");			
 	
 	$local_server_id = $_POST["local_server_id"];
 	$member_ip = $_POST["member_ip"];
@@ -56,12 +56,27 @@
 			$result = $conn->query($sql);
 		}
 		
-		header("Location: ../../device/employee/em_meeting_running.php");
+		$sql = "select * from server_running_now where meeting_id = '".$meeting_id."'";
+		$result = $conn->query($sql);
+		$row=$result->fetch_array();
+		
+		$json = array
+		(
+			"contents"=>array
+			(
+				"server_ip" => $row['server_ip'],
+			),
+		);
 	}
 	else
 	{
-		echo "會議主機正被使用中";
-		header("Location: ../../device/employee/em_meeting_running.php");
+		$json = array
+		(
+			"contents"=>array
+			(
+				"server_ip" => "會議主機正被使用中",
+			),
+		);
 	}
 	
 ?>

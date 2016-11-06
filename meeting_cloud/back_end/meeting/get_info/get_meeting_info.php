@@ -6,7 +6,7 @@
 
 	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../../../login_check.php?platform=device");	
+	require_once("../../../login_check.php");	
 	
 	$sql = "select scheduler.* member.name
 			form meeting_scheduler as scheduler, member

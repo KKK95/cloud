@@ -6,7 +6,7 @@
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php?platform=device");	
+		require_once("../../../login_check.php");	
 		
 		$datetime = date("Y-m-d H:i:s");
 		
