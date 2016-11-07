@@ -1,7 +1,9 @@
 ﻿<?php
 
+		header("Content-Type: text/html; charset=UTF-8");
+
 		if(!isset($_SESSION))
-		(  	session_start();	)			//用 session 函式, 看用戶是否已經登錄了
+		{	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
@@ -20,10 +22,10 @@
 		}
 	//==============================================取得會議id===================================================
 	
-		if ($_POST['topic_id'] != "none")					//選擇某一議題內的投票
+		if (isset($_POST['topic_id']) && $_POST['topic_id'] != "none")					//選擇某一議題內的投票
 		{
 			$topic_id = $_POST['topic_id'];
-			if ($_POST['issue_id'] != "none")				//某一議題內指定某一投票記錄
+			if ( isset($_POST['issue_id']) && $_POST['issue_id'] != "none")				//某一議題內指定某一投票記錄
 			{
 				$issue_id = $_POST['issue_id'];
 				$sql = "select * from meeting_vote 
@@ -50,6 +52,7 @@
 		
 		$json = array
 		(
+			"test" => "fuck you",
 			"contents"=>array(),
 		);
 		
@@ -87,7 +90,7 @@
 						array_push ($json['contents']['obj_voting_issue'][$obj_issue]['result'], $row['votes']);
 					}
 				}
-			
+			}
 		}
 		echo json_encode( $json );
 ?>
