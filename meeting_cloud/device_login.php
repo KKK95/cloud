@@ -29,7 +29,7 @@
 				header("Location: local_server_center.php"); 
 			}
 	}
-	if (	!isset($_SESSION["id"]) && !isset($_SESSION ["pw"])	)
+	if (	!isset($_SESSION["id"])	)
 	{
 		
 		if ($_POST["pw"] == $pw)		//¦pªG±K½X¥¿½T

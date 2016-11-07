@@ -2,7 +2,7 @@
 
 	header("Content-Type: text/html; charset=UTF-8");
 	
-	require_once ('../../connMysql.php');			//引用connMysql.php 來連接資料庫
+	require_once ('connMysql.php');			//引用connMysql.php 來連接資料庫
 	
 	session_start();						//用 session 函式
 	
@@ -22,14 +22,14 @@
 	{	
 		//登錄時, 這裏就分開了, 它會跟據你帳號本身的權限引導你去不同的頁面
 			if ($row['access']=="em")
-				header("Location: web/employee/employee_center.php"); 
+				header("Location: web/employee_web/employee_center.php"); 
 			else if ($row['access']=="ls")
 			{
 				echo "ok\n";
 				header("Location: local_server_center.php"); 
 			}
 	}
-	if (	!isset($_SESSION["id"]) && !isset($_SESSION ["pw"])	)
+	if (	!isset($_SESSION["id"]) )
 	{
 		
 		if ($_POST["pw"] == $pw)		//如果密碼正確
@@ -53,7 +53,7 @@
 			if ($row['access']=="em")
 			{
 				echo "ok\n";
-				header("Location: web/employee/employee_center.php"); 
+				header("Location: web/employee_web/employee_center.php"); 
 			}	
 			else if ($row['access']=="ls")
 			{
@@ -64,7 +64,7 @@
 		else							//如果密碼不正確
 		{
 			echo "wrong pw\n";
-			header("Location: index.php?loginfail=true"); 
+			header("Location: web_index.php?loginfail=true"); 
 		}
 		
 	}
