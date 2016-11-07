@@ -17,7 +17,7 @@
 				where gm.member_id = '".$_SESSION["id"]."' or gl.member_id = '".$_SESSION["id"]."'
                 group by gl.group_id
 			)
-			and member.id = scheduler.create_meeting_member_id
+			and member.id = scheduler.moderator_id
             order by scheduler.time desc";
 			
 	$result = $conn->query($sql);
@@ -58,7 +58,7 @@
 			$meeting_id = $row['meeting_id'];
 			
 			array_push( $json['link']['obj_time_to_meeting']['remark_meeting_topic'], $title);
-			array_push( $json['link']['obj_time_to_meeting']['meeting_info'], "../../meeting/meeting_info?meeting_id=".$meeting_id);
+			array_push( $json['link']['obj_time_to_meeting']['meeting_info'], "../../back_end/meeting/get_info/get_meeting_info?meeting_id=".$meeting_id);
 
 		}
 	}
