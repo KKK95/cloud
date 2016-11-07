@@ -10,20 +10,27 @@
 	require_once("../login_check.php");			
 	
 	$meeting_time = date("Y-m-d H:i:s");
-	$meeting_id = $_GET["meeting_id"];
+	$meeting_id = $_POST["meeting_id"];
 	
 	$sql = "select group_id from meeting_scheduler where meeting_id = '".$meeting_id."'";
-	$row=$result->fetch_array();
+	$result = $conn->query($sql);
+	$row = $result->fetch_array();
 	$group_id = $row['group_id'];				//取得群組id
 	
-	$sql = "select meeting_time from meeting_record where meeting_id = '".$meeting_id."'";
-	$result->fetch_array();		//要知道目前有沒有人開始了會議
-	
-	$num_rows = $result->num_rows;	
-	if ($num_rows==0)
+	$sql = "select meeting_time from group_meeting_now where meeting_id = '".$meeting_id."'";
+	$result = $conn->query($sql);	
+	$num_rows = $result->num_rows;			//要知道目前有沒有人開始了會議
+	if ($num_rows != 0)
 	{
-		$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$_SESSION["id"]."', 'none', 'none')";
+		$sql = "select meeting_time from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$_SESSION["id"]."'";
 		$result = $conn->query($sql);
+		$num_rows = $result->num_rows;		//要知道目前有沒有人開始了會議
+
+		if ($num_rows != 1 )
+		{
+			$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$_SESSION["id"]."', 'none', 'none')";
+			$result = $conn->query($sql);
+		}
 	}
 	else	//還沒開始會議
 	{
@@ -35,7 +42,7 @@
 	if ($_SESSION['platform'] == "device")
 		header("Location: ../device/employee/em_meeting_running.php");
 	else if ($_SESSION['platform'] == "web")
-		header("Location: ../web/employee/em_meeting_running.php");
+		header("Location: ../web/employee_web/em_meeting_running.php");
 
 	
 ?>
