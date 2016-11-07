@@ -5,14 +5,14 @@
 	
 	require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("login_check.php");
+	require_once("../../login_check.php");
 	
 	$start = 1;
 	
 	$datetime = date("Y-m-d H:i:s");
 	
 	$sql = "insert INTO group_leader (leader_id, group_name, date_time) 
-			VALUES ('".$_POST['group_leader_id']."', '".$_POST['group_name']."', '".$datetime."')";
+			VALUES ('".$_SESSION['id']."', '".$_POST['group_name']."', '".$datetime."')";
 	
 	if($result = $conn->query($sql))
 	{	echo "build group success\n";	}
@@ -21,7 +21,7 @@
 		echo "build group failed\n";	
 	}
 	
-	$sql = "select group_id from group_leader where date_time = '".$datetime."'";			//要取得group id
+	$sql = "select group_id from group_leader where date_time = '".$datetime."' and leader_id = '".$_SESSION['id']."'";			//要取得group id
 	
 	$result = $conn->query($sql);
 	
@@ -29,7 +29,7 @@
 	
 	$group_id = $row['group_id'];
 	
-	$file = "../group_upload_space/".$group_id;
+	$file = "../upload_space/group_upload_space/".$group_id;
 	
 	mkdir($file);
 	
@@ -40,7 +40,7 @@
 		if (empty($varvalue)) {
 			return ;
 		} 
-		else if ($start > 2)
+		else if ($start >= 2)
 		{
 			$post[$varname] = $varvalue;
 			$sql = "insert INTO group_member (group_id, member_id) 
@@ -56,6 +56,6 @@
 			";
 	$conn->query($sql);
 
-	header("Location: group.php?group_id=".$row['group_id']);
+	header("Location: ../../device/employee/group/group.php?group_id=".$row['group_id']);
 
 ?>
