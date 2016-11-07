@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主機: 127.0.0.1
--- 產生時間： 2016-11-07 00:35:10
+-- 產生時間： 2016-11-07 11:04:53
 -- 伺服器版本: 10.1.8-MariaDB
 -- PHP 版本： 5.6.14
 
@@ -67,7 +67,9 @@ CREATE TABLE `group_leader` (
 
 INSERT INTO `group_leader` (`group_id`, `member_id`, `group_name`, `date_time`) VALUES
 (1, 'emac', 'testing', '2016-10-01 05:23:32.000000'),
-(2, 'emaa', 'emab', '2016-07-04 04:59:55.000000');
+(2, 'emaa', 'emab', '2016-07-04 04:59:55.000000'),
+(3, 'a@', 'a_group', '2016-11-01 07:00:00.000000'),
+(4, 'b@', 'b_group', '2016-11-02 14:00:00.000000');
 
 -- --------------------------------------------------------
 
@@ -81,6 +83,13 @@ CREATE TABLE `group_meeting_now` (
   `server_id` varchar(4) COLLATE utf8_bin NOT NULL,
   `member_ip` varchar(15) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- 資料表的匯出資料 `group_meeting_now`
+--
+
+INSERT INTO `group_meeting_now` (`meeting_id`, `member_id`, `server_id`, `member_ip`) VALUES
+(1, 'emaa', 'none', 'none');
 
 -- --------------------------------------------------------
 
@@ -124,8 +133,13 @@ CREATE TABLE `group_member` (
 
 INSERT INTO `group_member` (`water`, `group_id`, `member_id`) VALUES
 (1, 1, 'emaa'),
+(2, 3, 'b@'),
+(3, 3, 'c@'),
 (4, 2, 'emac'),
-(6, 2, 'emad');
+(5, 3, 'd@'),
+(6, 2, 'emad'),
+(7, 4, 'c@'),
+(8, 4, 'a@');
 
 -- --------------------------------------------------------
 
@@ -154,6 +168,13 @@ CREATE TABLE `meeting_record` (
   `meeting_time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+--
+-- 資料表的匯出資料 `meeting_record`
+--
+
+INSERT INTO `meeting_record` (`meeting_id`, `group_id`, `meeting_time`) VALUES
+(1, 1, '2016-11-07 01:19:57');
+
 -- --------------------------------------------------------
 
 --
@@ -173,9 +194,12 @@ CREATE TABLE `meeting_scheduler` (
 --
 
 INSERT INTO `meeting_scheduler` (`meeting_id`, `group_id`, `title`, `moderator_id`, `time`) VALUES
-(1, 1, '武林群英會', 'emaa', '2016-11-01 08:30:00'),
+(1, 1, '武林群英會', 'emaa', '2016-11-07 08:30:00'),
 (2, 2, '全球氣候變化導致日本東京温度上升的影嚮', 'emac', '2016-11-02 13:00:00'),
-(3, 1, '因少年得痔對於少年成長過程中所引發的問題', 'emac', '2016-11-03 10:00:00');
+(3, 1, '因少年得痔對於少年成長過程中所引發的問題', 'emac', '2016-11-03 10:00:00'),
+(4, 3, 'testing_by_android', 'a@', '2016-11-30 09:00:00'),
+(5, 3, 'testing_by_android2', 'a@', '2016-11-30 10:00:00'),
+(6, 4, 'group_b_testing_by_android', 'b@', '2016-11-30 11:00:00');
 
 -- --------------------------------------------------------
 
@@ -189,6 +213,15 @@ CREATE TABLE `meeting_vote` (
   `issue_id` int(11) NOT NULL,
   `issue` varchar(100) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- 資料表的匯出資料 `meeting_vote`
+--
+
+INSERT INTO `meeting_vote` (`meeting_id`, `topic_id`, `issue_id`, `issue`) VALUES
+(1, 0, 1, '你喜歡吃甚麼?'),
+(1, 0, 2, '你的興趣是甚麼?'),
+(1, 0, 3, '你喜歡恐龍嗎?');
 
 -- --------------------------------------------------------
 
@@ -204,6 +237,14 @@ CREATE TABLE `meeting_voting_options` (
   `voting_option` varchar(50) COLLATE utf8_bin NOT NULL,
   `votes` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- 資料表的匯出資料 `meeting_voting_options`
+--
+
+INSERT INTO `meeting_voting_options` (`meeting_id`, `topic_id`, `issue_id`, `option_id`, `voting_option`, `votes`) VALUES
+(1, 0, 1, 1, '鼻屎', 2),
+(1, 0, 1, 2, '土', 10);
 
 -- --------------------------------------------------------
 
@@ -226,6 +267,10 @@ CREATE TABLE `member` (
 --
 
 INSERT INTO `member` (`id`, `pw`, `name`, `sex`, `telephone`, `mail`, `access`) VALUES
+('a@', '', 'apple', '', '', '', 'em'),
+('b@', '', 'boy', '', '', '', 'em'),
+('c@', '', 'cat', '', '', '', 'em'),
+('d@', '', 'dog', '', '', '', 'em'),
 ('emaa', '12', 'big loser', 'm', '', '', 'em'),
 ('emab', '1', 'one', 'f', '', '', 'em'),
 ('emac', '1', 'two', 'f', '', '', 'em'),
@@ -312,17 +357,17 @@ ALTER TABLE `group_chat_room`
 -- 使用資料表 AUTO_INCREMENT `group_leader`
 --
 ALTER TABLE `group_leader`
-  MODIFY `group_id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `group_id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- 使用資料表 AUTO_INCREMENT `group_member`
 --
 ALTER TABLE `group_member`
-  MODIFY `water` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `water` int(8) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- 使用資料表 AUTO_INCREMENT `meeting_scheduler`
 --
 ALTER TABLE `meeting_scheduler`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
