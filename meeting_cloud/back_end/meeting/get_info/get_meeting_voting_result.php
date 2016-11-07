@@ -45,19 +45,18 @@
 		{
 			$sql = "select * from meeting_vote where meeting_id = '".$meeting_id."'";
 			$result=$conn->query($sql);
-			$num_rows = $result->num_rows;	
+			$num_voting = $result->num_rows;	
 		}
 		//====================================================================================================================
 		$obj_issue = "obj_";
 		
 		$json = array
 		(
-			"test" => "fuck you",
 			"contents"=>array(),
 		);
 		
 		
-		if ($num_rows==0)
+		if ( $num_voting == 0 )
 		{	$state = "目前尚未發起投票";	}
 		else
 		{
@@ -67,30 +66,45 @@
 			$json['contents']['obj_voting_issue']['topic_id'] = array();
 			$json['contents']['obj_voting_issue']['issue_id'] = array();
 		
-			for($i=1;$i<=$num_rows;$i++) 
+			for($i=1;$i<=$num_voting;$i++) 
 			{
-				$row=$result->fetch_array();
+				$row = $result->fetch_array();
 				array_push( $json['contents']['obj_voting_issue']['head_issue'], $row['issue']);
 				array_push( $json['contents']['obj_voting_issue']['topic_id'], $row['topic_id']);
 				array_push( $json['contents']['obj_voting_issue']['issue_id'], $row['issue_id']);
-				$obj_issue = "obj_".$row['issue'];
-				$find_options = "select * from meeting_voting_options where issue_id = '".$row['issue_id']."'";
-				$result=$conn->query($find_options);
-				$num_rows = $result->num_rows;	
-				if ($num_rows != 0)
+				
+				$obj_issue = "obj_".$row['issue_id'];
+				$find_options = "select * from meeting_voting_options 
+								where issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' and issue_id = '".$row['issue_id']."'";
+				
+				$options_result = $conn->query($find_options);
+				$num_options = $options_result->num_rows;	
+				if ($num_options != 0)
 				{
-					$json['contents'][$obj_issue] = array('option'=>array());
-					$json['contents'][$obj_issue] = array('option_id'=>array());
+					$json['contents'][$obj_issue] = array('option'=>array(), 'option_id'=>array(), 'result'=>array());
+	//				$json['contents'][$obj_issue] = array('option_id'=>array());
+	//				$json['contents'][$obj_issue] = array('result'=>array());
 
-					for($j=1;$j<=$num_rows;$j++) 
+					for($j=1 ; $j <= $num_options ; $j++) 
 					{
-						$row=$result->fetch_array();
-						array_push( $json['contents']['obj_voting_issue'][$obj_issue]['option'], $row['voting_option']);
-						array_push( $json['contents']['obj_voting_issue'][$obj_issue]['option_id'], $row['option_id']);
-						array_push ($json['contents']['obj_voting_issue'][$obj_issue]['result'], $row['votes']);
+						$option = $options_result->fetch_array();
+/*						if (isset($option['voting_option']))
+							$voting_option = "none";
+						if (isset($option['option_id']))
+							$option_id = "none";
+*/
+						array_push( $json['contents'][$obj_issue]['option'], $option['voting_option']);
+						array_push( $json['contents'][$obj_issue]['option_id'], $option['option_id']);
+						array_push ($json['contents'][$obj_issue]['result'], $option['votes']);
 					}
+					
 				}
 			}
 		}
-		echo json_encode( $json );
+		if ($_SESSION['platform'] == "device")
+			echo json_encode( $json );
+		else
+		{
+			$data = json_encode( $json );
+		}	echo "($data)";
 ?>
