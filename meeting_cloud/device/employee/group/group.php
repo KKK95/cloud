@@ -17,19 +17,6 @@
 	$leader_id = $row['leader_id'];
 	$leader_name = $row['name'];					//先抓出群組中的隊長
 	
-	//找出群組會議的時間
-	$sql = "select m_s.meeting_id, m_s.time, m_s.title		
-			from meeting_schedular as m_s
-			where 
-			m_s.group_id = '".$_GET['group_id']."'
-			order by m_s.time";
-			
-	$result=$conn->query($sql);
-	$meeting_time = $row['time'];
-	$meeting_id = $row['meeting_id'];
-	$meeting_title = $row['title'];
-	$today = date("Y-m-d H:i:s");
-	
 	$sql = "select m.id, m.name 
 			from group_member as gm, member as m, group_leader as gl
 			where 
@@ -96,29 +83,46 @@
 		}
 		
 		//創立會議
-		$json['form']['創立會議'] = array();
-		$json['form']['會議開始']['func'] => "創立會議",
-		$json['form']['會議開始']['addr'] => "back_end/create_meeting_scheduler.php",
-		$json['form']['會議開始']['form'] = array
-			(
-				"group_id" => $_GET['group_id'],
-				"meeting_time" => "none",
-				"create_meeting_member_id" => "none",
-				"meeting_title" => "none"
-			);
+		$json['form']['set_meeting_scheduler'] = array();
+		$json['form']['set_meeting_scheduler']['func'] => "創立會議",
+		$json['form']['set_meeting_scheduler']['addr'] => "../../../back_end/meeting/set_info/set_meeting_scheduler.php",
+		$json['form']['set_meeting_scheduler']['form'] = array
+		(
+			"group_id" => $_GET['group_id'],
+			"meeting_time" => "none",
+			"join_meeting_member_id" => "none",
+			"meeting_title" => "none"
+		);
+		
+			//找出群組最近要開的會議
+		$sql = "select m_s.meeting_id, m_s.time, m_s.title		
+				from meeting_schedular as m_s
+				where 
+				m_s.group_id = '".$_GET['group_id']."'
+				order by m_s.time";
+				
+		$result=$conn->query($sql);
+		$today = date("Y-m-d H:i:s");
 		
 		if (((strtotime($meeting_time) - strtotime($today))/ (60*60)) == 0)			//今天有會議要開才有會議開始讓你按
 		{
-			$json['form']['會議開始'] = array();
-			$json['form']['會議開始']['func'] => "會議開始",
-			$json['form']['會議開始']['title'] => $meeting_title,
-			$json['form']['會議開始']['addr'] => "back_end/em_meeting_start.php",
-			$json['form']['會議開始']['form'] = array
-			(
-				"local_server_id" => "none",
-				"meeting_id" => $meeting_id,
-				"member_ip" => "none"
-			);
+			$json['link']['obj_time_to_meeting'] = array();
+		
+			for($i=1 ; $i<=$num_rows ; $i++) 
+			{
+				$row=$result->fetch_array();
+				$meeting_date = date("Y-m-d", strtotime($row['time']));
+				$meeting_time = date("H:i", strtotime($row['time']));
+
+				if ((strtotime($today) - strtotime($meeting_date)) > 0)		//昨天的事
+				{	$end_meeting = $i;	break;	}
+				$title = $row['title'];
+				$meeting_id = $row['meeting_id'];
+				
+				array_push( $json['link']['obj_time_to_meeting']['remark_meeting_topic'], $title);
+				array_push( $json['link']['obj_time_to_meeting']['meeting_info'], "../../../back_end/meeting/get_info/get_meeting_info?meeting_id=".$meeting_id);
+
+			}
 		}
 	}
 	
