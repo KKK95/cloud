@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主機: 127.0.0.1
--- 產生時間： 2016-11-07 11:04:53
+-- 產生時間： 2016-11-08 14:08:57
 -- 伺服器版本: 10.1.8-MariaDB
 -- PHP 版本： 5.6.14
 
@@ -102,6 +102,14 @@ CREATE TABLE `group_meeting_topics` (
   `topic_id` int(11) NOT NULL,
   `topic` varchar(100) COLLATE utf8_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- 資料表的匯出資料 `group_meeting_topics`
+--
+
+INSERT INTO `group_meeting_topics` (`meeting_id`, `topic_id`, `topic`) VALUES
+(4, 1, '全盛時期的林大神可以一次吃多少碗 沙茶伴飯?'),
+(4, 2, '全盛時期的林大神 的肚子到底可以裝多少東西?');
 
 -- --------------------------------------------------------
 
