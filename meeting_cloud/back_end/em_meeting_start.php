@@ -20,13 +20,13 @@
 	$sql = "select meeting_time from group_meeting_now where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);	
 	$num_rows = $result->num_rows;			//要知道目前有沒有人開始了會議
-	if ($num_rows != 0)
+	if ($num_rows != 0)						//已有人開始了會議
 	{
 		$sql = "select meeting_time from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$_SESSION["id"]."'";
 		$result = $conn->query($sql);
-		$num_rows = $result->num_rows;		//要知道目前有沒有人開始了會議
+		$num_rows = $result->num_rows;		//要知道自己是否已開始了會議
 
-		if ($num_rows != 1 )
+		if ($num_rows != 1 )				//否
 		{
 			$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$_SESSION["id"]."', 'none', 'none')";
 			$result = $conn->query($sql);
@@ -40,7 +40,7 @@
 		$result = $conn->query($sql);
 	}
 	if ($_SESSION['platform'] == "device")
-		header("Location: ../device/employee/em_meeting_running.php");
+		header("Location: ../device/employee/meeting/em_meeting_running.php");
 	else if ($_SESSION['platform'] == "web")
 		header("Location: ../web/employee_web/em_meeting_running.php");
 
