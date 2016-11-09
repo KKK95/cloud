@@ -1,9 +1,9 @@
-<?php
+ï»¿<?php
 
 		if(!isset($_SESSION))
-		{  	session_start();	}			//¥Î session ¨ç¦¡, ¬İ¥Î¤á¬O§_¤w¸gµn¿ı¤F
+		{  	session_start();	}			//ç”¨ session å‡½å¼, çœ‹ç”¨æˆ¶æ˜¯å¦å·²ç¶“ç™»éŒ„äº†
 
-		require_once("../../../connMysql.php");			//¤Ş¥ÎconnMysql.php ¨Ó³s±µ¸ê®Æ®w
+		require_once("../../../connMysql.php");			//å¼•ç”¨connMysql.php ä¾†é€£æ¥è³‡æ–™åº«
 	
 		require_once("../../../login_check.php");	
 
@@ -11,10 +11,10 @@
 		$result=$conn->query($sql);
 		
 														
-		$num_rows = $result->num_rows;					//¬İ¬O§_¦b·|Ä³¤¤
-		if ($num_rows==0)								//§_
+		$num_rows = $result->num_rows;					//çœ‹æ˜¯å¦åœ¨æœƒè­°ä¸­
+		if ($num_rows==0)								//å¦
 		{	$meeting_id = $_GET['meeting_id'];	}
-		else											//¬O
+		else											//æ˜¯
 		{
 			$row=$result->fetch_array();
 			$meeting_id = $row['meeting_id'];
@@ -35,7 +35,7 @@
 		$num_rows = $result->num_rows;
 		
 		if ($num_rows == 0)
-		{	echo "©|¥¼³]©w¥ô¦ó°İÃD";	}
+		{	echo "å°šæœªè¨­å®šä»»ä½•å•é¡Œ";	}
 		else
 		{
 			$json ['contents']['obj_question'] = array();

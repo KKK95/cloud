@@ -20,6 +20,8 @@
 	$meeting_date = date("Y-m-d", strtotime($row['time']));
 	$meeting_time = date("H:i", strtotime($row['time']));
 	$moderator = $row['name'];
+	
+	//以center 的角度來看的相對路徑
 	$json = array
 	(
 		"contents" => array
@@ -30,8 +32,8 @@
 		),
 		"link" => array
 		(
-			"meeting_start" => "../../meeting_start.php?meeting_id=".$_GET['meeting_id'],
-			"get_meeting_topic_form.php" => "../../../device/employee/meeting/set_meeting_topic_form.php?meeting_id=".$_GET['meeting_id']
+			"meeting_start" => "../../back_end/meeting_start.php?meeting_id=".$_GET['meeting_id'],				
+			"get_meeting_topic_form.php" => ".meeting/set_meeting_topic_form.php?meeting_id=".$_GET['meeting_id']
 		),
 		
 	);
