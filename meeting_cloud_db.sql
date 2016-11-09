@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主機: 127.0.0.1
--- 產生時間： 2016-11-08 14:08:57
+-- 產生時間： 2016-11-09 02:05:24
 -- 伺服器版本: 10.1.8-MariaDB
 -- PHP 版本： 5.6.14
 
@@ -109,7 +109,9 @@ CREATE TABLE `group_meeting_topics` (
 
 INSERT INTO `group_meeting_topics` (`meeting_id`, `topic_id`, `topic`) VALUES
 (4, 1, '全盛時期的林大神可以一次吃多少碗 沙茶伴飯?'),
-(4, 2, '全盛時期的林大神 的肚子到底可以裝多少東西?');
+(4, 2, '全盛時期的林大神 的肚子到底可以裝多少東西?'),
+(7, 1, '林韋丞肚子的彈性系數有多大?'),
+(7, 2, '林韋丞肚子還可以變多大?');
 
 -- --------------------------------------------------------
 
@@ -164,6 +166,16 @@ CREATE TABLE `meeting_questions` (
   `asking_time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+--
+-- 資料表的匯出資料 `meeting_questions`
+--
+
+INSERT INTO `meeting_questions` (`meeting_id`, `topic_id`, `question_id`, `question`, `answer`, `asking_time`) VALUES
+(7, 0, 1, '今天中午該吃甚麼好呢?', '吃草吧~', '2016-11-01 02:00:00'),
+(7, 1, 2, '今天能回家睡覺嗎?', '準備看日出吧，呵呵~', '2016-11-01 02:05:00'),
+(4, 0, 1, '今天可以讓老師不啪啪我們嗎?', '呵呵', '2016-11-30 16:00:00'),
+(4, 2, 0, '已經掰不出問題了嗎?', '對啊', '2016-11-30 17:00:00');
+
 -- --------------------------------------------------------
 
 --
@@ -181,7 +193,9 @@ CREATE TABLE `meeting_record` (
 --
 
 INSERT INTO `meeting_record` (`meeting_id`, `group_id`, `meeting_time`) VALUES
-(1, 1, '2016-11-07 01:19:57');
+(1, 1, '2016-11-07 01:19:57'),
+(7, 3, '2016-11-01 01:00:00'),
+(8, 3, '2016-11-02 15:00:00');
 
 -- --------------------------------------------------------
 
@@ -207,7 +221,9 @@ INSERT INTO `meeting_scheduler` (`meeting_id`, `group_id`, `title`, `moderator_i
 (3, 1, '因少年得痔對於少年成長過程中所引發的問題', 'emac', '2016-11-03 10:00:00'),
 (4, 3, 'testing_by_android', 'a@', '2016-11-30 09:00:00'),
 (5, 3, 'testing_by_android2', 'a@', '2016-11-30 10:00:00'),
-(6, 4, 'group_b_testing_by_android', 'b@', '2016-11-30 11:00:00');
+(6, 4, 'group_b_testing_by_android', 'b@', '2016-11-30 11:00:00'),
+(7, 3, '測試用會議記錄', 'a@', '2016-11-01 00:00:00'),
+(8, 3, '測試用會議記錄2', 'a@', '2016-11-02 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -227,9 +243,9 @@ CREATE TABLE `meeting_vote` (
 --
 
 INSERT INTO `meeting_vote` (`meeting_id`, `topic_id`, `issue_id`, `issue`) VALUES
-(1, 0, 1, '你喜歡吃甚麼?'),
-(1, 0, 2, '你的興趣是甚麼?'),
-(1, 0, 3, '你喜歡恐龍嗎?');
+(4, 0, 1, '你喜歡吃甚麼?'),
+(4, 1, 2, '你的興趣是甚麼?'),
+(4, 0, 3, '你喜歡恐龍嗎?');
 
 -- --------------------------------------------------------
 
@@ -251,8 +267,8 @@ CREATE TABLE `meeting_voting_options` (
 --
 
 INSERT INTO `meeting_voting_options` (`meeting_id`, `topic_id`, `issue_id`, `option_id`, `voting_option`, `votes`) VALUES
-(1, 0, 1, 1, '鼻屎', 2),
-(1, 0, 1, 2, '土', 10);
+(4, 0, 1, 1, '鼻屎', 2),
+(4, 0, 1, 2, '土', 10);
 
 -- --------------------------------------------------------
 
@@ -375,7 +391,7 @@ ALTER TABLE `group_member`
 -- 使用資料表 AUTO_INCREMENT `meeting_scheduler`
 --
 ALTER TABLE `meeting_scheduler`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
