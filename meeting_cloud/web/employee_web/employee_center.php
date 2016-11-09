@@ -19,7 +19,7 @@
 				where gm.member_id = '".$id."' or gl.member_id = '".$id."'
                 group by gl.group_id
 			)
-			and member.id = scheduler.create_meeting_member_id
+			and member.id = scheduler.moderator_id
             order by scheduler.time desc";
 			
 	$result = $conn->query($sql);
@@ -56,11 +56,12 @@
 	        		<dt id="member_Bar" class="left">
 	        			會員專區
 	        			<dt id = "member_SubBar" style="margin:0;width:150px;display:none;">
+							<dt><a href="./group/build_group_form.php">建立會議群組</a></dt>
 		        			<dt><a href="">會員瀏覽</a></dt>
 		        			<dt><a href="">會員資料</a></dt>
 		        			<dt><a href="em_update_pw.php">修改密碼</a></dt>
 							<dt><a href="">我的雲端空間</a></dt>
-		        			<dt><a href="../back_end/logout.php">登出</a></dt>
+		        			<dt><a href="../../logout.php">登出</a></dt>
 	        			</dt>
 	        		</dt>
 	        		<dt id="meeting_Bar" class="left">
@@ -80,14 +81,18 @@
 					
 						<table id="table">
 							<tr>
-								<td id="title">會議標題</td>
-								<td id="date">日期</td>
-								<td id="time">時間</td>
-								<td id="leader">召集人</td>
+								<td id="tableTittleCol1">會議標題</td>
+								<td id="tableTittleCol2">日期</td>
+								<td id="tableTittleCol1">時間</td>
+								<td id="tableTittleCol2">召集人</td>
 						    </tr>
 						    
 							<?php	
-								$num_rows = $result->num_rows;	
+								if (isset($result))
+									$num_rows = $result->num_rows;	
+								else
+									$num_rows = 0;
+								
 								$today = date("Y-m-d");
 								$end_meeting = 0;
 							if ( $num_rows == 0 )
@@ -105,19 +110,21 @@
 									{	$end_meeting = $i;	break;	}
 									$title = $row['title'];
 									$meeting_id = $row['meeting_id'];
-									$create_meeting_member_id = $row['create_meeting_member_id'];
+									$moderator = $row['name'];
+
 									echo "<tr><!--最多五欄-->";
 									
-									echo "<form id=\"meeting_start\" name=\"meeting_start\" method=\"post\" action=\"../back_end/meeting_start.php\">";
+									echo "<td>";
+									echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"post\" action=\"../../back_end/em_meeting_start.php\">";
 									echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
-									echo "<input type=\"submit\" value=\"$title\" style=\"color:#333333;width:auto;line-height:200%;\" />"
-									echo "</form>" 
+									echo "<input id=\"tableValueCol1\" type=\"submit\" value=\"$title\" style=\"color:#333333;width:auto;line-height:200%;\" />";
+									echo "</form>" ;
 									
 									echo "</td>";
 									
-									echo "<td id=\"date\">$meeting_date</td>";
-									echo "<td id=\"time\">$meeting_time</td>";
-									echo "<td id=\"leader\">$create_meeting_member_id</td>";
+									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
+									echo "<td id=\"tableValueCol1\">$meeting_time</td>";
+									echo "<td id=\"tableValueCol2\">$moderator</td>";
 									echo "</tr>";
 								}
 							}
@@ -130,10 +137,10 @@
 					
 						<table id="table">
 							<tr>
-								<td id="title">會議標題</td>
-								<td id="date">日期</td>
-								<td id="time">時間</td>
-								<td id="leader">召集人</td>
+								<td id="tableTittleCol1">會議標題</td>
+								<td id="tableTittleCol2">日期</td>
+								<td id="tableTittleCol1">時間</td>
+								<td id="tableTittleCol2">召集人</td>
 						    </tr>
 						    
 						    <?php
@@ -149,19 +156,23 @@
 									$meeting_time = date("H:i", strtotime($row['time']));
 									
 									$title = $row['title'];
-									$create_meeting_member_id = $row['create_meeting_member_id'];
-									echo "<tr><!--最多五欄-->";
-									
-									echo "<td id=\"\"><a href='' style=\"color:#333333;width:auto;line-height:200%;\">";
-									echo $title;
-									echo "</a></td>";
-									
-									echo "<td id=\"date\">$meeting_date</td>";
-									echo "<td id=\"time\">$meeting_time</td>";
-									echo "<td id=\"leader\">$create_meeting_member_id</td>";
-									echo "</tr>";
-									
+									$meeting_id = $row['meeting_id'];
+									$moderator = $row['name'];
 
+									echo "<tr><!--最多五欄-->";
+									echo "<td>";
+
+									echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"post\" action=\"../../back_end/em_meeting_start.php\">";
+									echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
+									echo "<input id=\"tableValueCol1\" type=\"submit\" value=\"$title\" style=\"color:#333333;width:auto;line-height:200%;\" />";
+									echo "</form>" ;
+
+									echo "</td>";
+									
+									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
+									echo "<td id=\"tableValueCol1\">$meeting_time</td>";
+									echo "<td id=\"tableValueCol2\">$moderator</td>";
+									echo "</tr>";
 								}
 							}
 						    ?>
