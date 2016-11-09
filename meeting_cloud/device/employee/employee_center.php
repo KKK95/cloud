@@ -26,11 +26,11 @@
 	(
 		"link" => array
 		(
-			"新增會議群組" => "build_group_form.php",
-			"查看會議群組列表" => "group_list.php",
+			"新增會議群組" => "./group/build_group_form.php",
+			"查看會議群組列表" => "./group/group_list.php",
 			"我的雲端空間" => "my_upload_space.php?basic_path=user_upload_space/".$_SESSION["id"],
 			"會議群組雲端空間" => "group/group_upload_space_center.php?basic_path=group_upload_space",
-			"登出系統" => "../logout.php"
+			"登出系統" => "../../logout.php"
 			
 		),
 	);
@@ -59,7 +59,8 @@
 			
 			array_push( $json['link']['obj_time_to_meeting']['remark_meeting_topic'], $title);
 			array_push( $json['link']['obj_time_to_meeting']['meeting_info'], "../../back_end/meeting/get_info/get_meeting_info?meeting_id=".$meeting_id);
-
+			//測試網址
+			//http://127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_info.php?meeting_id=3
 		}
 	}
 	
