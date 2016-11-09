@@ -22,7 +22,10 @@
 			$meeting_id = $row['meeting_id'];
 		}
 		
-		$topic_id = $_POST['topic_id'];
+		if (isset($_POST['topic_id']))
+		{	$topic_id = $_POST['topic_id'];	}
+		else
+		{	$topic_id = 0;	}
 		
 		$question = $_POST['question'];
 		

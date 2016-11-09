@@ -23,6 +23,7 @@
 			$result = $conn->query($sql);
 		}
 	}
+	
 	$platform = $_SESSION["platform"];
 	if ($platform == "device")
 		header("Location: ../../../device/employee/employee_center.php");
