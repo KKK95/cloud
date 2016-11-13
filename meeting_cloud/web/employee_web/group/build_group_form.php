@@ -59,53 +59,33 @@
 	        	<dl style="margin:0;width:20%;float:left;">
 	        		<dt id="memberBar" class="left">
 	        			會員專區
-	        			<dl id = "member_SubBar" style="margin:0;width:150px;display:none;">
 		        			<dt><a href="">會員瀏覽</a></dt>
 		        			<dt><a href="">會員資料</a></dt>
 		        			<dt><a href="">修改密碼</a></dt>
 		        			<dt><a href="">會員管理</a></dt>
+							
 		        			<dt><a href="">登出</a></dt>
-	        			</dl>
+	        		</dt>
+					<dt id="group" class="left">
+	        			會議群組
+		        			<dt><a href="./group_list.php">會議群組列表</a></dt>
 	        		</dt>
 	        		<dt id="conventionBar" class="left">
 	        			會議專區
-	        			<dl id = "conventionSubBar" style="margin:0;width:150px;display:none;">
 		        			<dt><a href="">會議瀏覽</a></dt>
 		        			<dt><a href="">會議紀錄</a></dt>
 		        			<dt><a href="">會議管理</a></dt>
 		        			<dt><a href="">修改請求</a></dt>
-	        			</dl>
 	        		</dt>
 					<dt id="cloud" class="left">
 	        			雲端專區
-	        			<dl id = "cloud" style="margin:0;width:150px;display:none;">
-		        			<dt><a href="">資料列表-群組</a></dt>
-							<dt><a href="">資料列表-個人</a></dt>
-		        		</dl>
+		        			<dt><a href="">個人雲端</a></dt>
+							<dt><a href="">群組雲端</a></dt>
 	        		</dt>
 					<dt id="talk" class="left">
 	        			討論區
-	        			<dl id = "talk" style="margin:0;width:150px;display:none;">
 		        			<dt><a href="">會議聊天室</a></dt>
 							<dt><a href="">會議紀錄</a></dt>
-		        		</dl>
-	        		</dt>
-					<dt id="group" class="left">
-	        			會議群組
-	        			<dl id = "group" style="margin:0;width:150px;display:none;">
-		        			<dt><a href="">會議群組列表</a></dt>
-							<dt><a href="">會議群組管理</a></dt>
-							<dt><a href="">會議成員列表</a></dt>
-							<dt><a href="">會議成員管理</a></dt>
-		        		</dl>
-	        		</dt>
-					<dt id="write" class="left">
-	        			會議簽名
-	        			<dl id = "write" style="margin:0;width:150px;display:none;">
-		        			<dt><a href="">會議簽到表</a></dt>
-							<dt><a href="">會議投票</a></dt>
-							<dt><a href="">會議投票結果表</a></dt>
-		        		</dl>
 	        		</dt>
 	        	</dl>
 	        	

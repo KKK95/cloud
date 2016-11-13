@@ -16,6 +16,8 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	
+	
 ?>
 
 
@@ -30,15 +32,12 @@
 	<script language="JavaScript" src="../../main_js/leftBarSlide.js"></script>
 	
 	<script>
-		var now_num_of_meeting_topic = 0;
-		var get_num_of_meeting_topic = 0;
-		
-		var now_num_of_doc = 0;
-		var get_num_of_doc = 0;
+		var now_num_of_member = 0;
+		var get_num_of_member = 0;
 		
 		var obj;
 
-		function set_topic() 
+		function invite_member() 
 		{
 			set_topic_request = createRequest();
 			if (set_topic_request != null) 
@@ -48,20 +47,20 @@
 		?>
 				set_topic_request.open("POST", url, true);
 				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
-				set_topic_request.send("topic=" + document.set_new_topic_form.topic.value);						// 送出請求（由於為 GET 所以參數為 null）
+				set_topic_request.send("member=" + document.invite_member_form.member.value);						// 送出請求（由於為 GET 所以參數為 null）
 				document.set_new_topic_form.topic.value = "";
 				console.log(document.set_new_topic_form.topic.value);
 			}
 		}
 		
 		
-		function get_meeting_info_request() 					//取得會議id
+		function get_meeting_member_list_request() 					//取得會議id
 		{
 			request = createRequest();
 			if (request != null) 
 			{
 		<?php
-				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_info.php?meeting_id=".$meeting_id."\";";
+				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=".$meeting_id."\";";
 		?>
 
 				request.open("GET", url, true);
@@ -80,20 +79,13 @@
 					{
 						obj = eval('(' + request.responseText + ')');
 						
-						if ( obj['contents'] && obj.contents['obj_meeting_topic'] && obj.contents.obj_meeting_topic != "none")
+						if ( obj['contents'] && obj.contents['obj_meeting_member_list'] && obj.contents.obj_meeting_member_list != "none")
 						{
-							get_num_of_meeting_topic = obj.contents.obj_meeting_topic.topic.length;
-							if (get_num_of_meeting_topic > now_num_of_meeting_topic)
-								add_new_topic();
+							get_num_of_member = obj.contents.obj_meeting_member_list.name.length;
+							if (get_num_of_member > now_num_of_member)
+								add_new_member();
 						}
-						else if ( obj.link['obj_doc_list'] && obj.link.obj_doc_list != "none" )
-						{
-							
-			//				console.log(request.responseText);
-							get_num_of_doc = obj.link.obj_doc_list.remark_name.length;
-							if (get_num_of_doc > now_num_of_doc)
-								add_new_doc();
-						}
+
 					}
 					else	console.log(request.responseText);
 						
@@ -125,23 +117,30 @@
 			return request;
 		}
 		
-		setInterval("get_meeting_info_request();", 1000) //每隔一秒發出一次查詢
+		setInterval("get_meeting_member_list_request();", 1000) //每隔一秒發出一次查詢
 			
-		function add_new_topic() 
+		function add_new_member() 
 		{  
-			var count = now_num_of_meeting_topic;
-			var meeting_topic_row = 0;
-			
-			for (var i = now_num_of_meeting_topic; i < get_num_of_meeting_topic; i++ )
+			var count = now_num_of_member;
+			var mail;
+			var access;
+			for (var i = now_num_of_member; i < get_num_of_member; i++ )
 			{
 				count = count + 1;
-				meeting_topic_row = count % 2;
-				if (meeting_topic_row == 0)	meeting_topic_row = 2;
+				mail = obj.contents.obj_meeting_member_list.mail[i];
+				access = obj.contents.obj_meeting_member_list.access[i];
 				
-				document.getElementById("meeting_topic" + count).innerHTML = document.getElementById("meeting_topic" + count).innerHTML + 
-					'<td id = "tableValueCol' + meeting_topic_row + '">' + obj.contents.obj_meeting_topic.topic[i] + '</td>';
+				if (!mail)
+					mail = "none";
+				if (!access)
+					access = "none";
 				
-				now_num_of_meeting_topic = now_num_of_meeting_topic + 1;
+				document.getElementById("meeting_member" + count).innerHTML = document.getElementById("meeting_member" + count).innerHTML + 
+					'<td id = "tableValueCol1" style="width:150px">' + obj.contents.obj_meeting_member_list.name[i] + '</td>'	+
+					'<td id = "tableValueCol2" style="width:150px">' + access + '</td>'	+
+					'<td id = "tableValueCol2" style="width:300px">' + mail + '</td>';
+				
+				now_num_of_member = now_num_of_member + 1;
 			}
 		}
 		
@@ -179,59 +178,52 @@
 					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
 				?>
 				<div id="main_sub">
-					<p id="conventionTittle">會議議題</p>
+					<p id="conventionTittle">與會者名單</p>
 					<table id="table">
-						<tr>
-							<table id="table">
-								<tr>
-									<td id="tableTittleCol1" > </td>
-								</tr>
-							</table>
-						</tr>
-						<tr>
-							<div style="width:600px; height:200px; overflow:hidden;">
-							<div style="width:620px; height:200px; overflow-y: auto;">
+						<table id="table">
+							<tr>
 								<table id="table">
-								
-								
-								
-									<?php    
-										$num_of_meeting_topic = 30;
-										for ($i =1; $i<=$num_of_meeting_topic; $i++)
-											echo "<tr id = \"meeting_topic".$i."\"></tr>";
-									?>    
-									
-									
-									<tr></tr>
+									<tr>
+										<td id="tableTittleCol1" style="width:150px">姓名</td>
+										<td id="tableTittleCol1" style="width:150px">職位</td>
+										<td id="tableTittleCol2" style="width:300px">e-mail</td>
+									</tr>
 								</table>
-							</div>
-							</div>
-						</tr>
+							</tr>
+							<tr>
+								<div style="width:600px; height:200px; overflow:hidden;" >
+								<div style="width:620px; height:200px; overflow-y: auto;">
+									<table id="table">
+									
+										<?php    
+										$num_of_meeting_member = 30;
+										for ($i =1; $i<=$num_of_meeting_member; $i++)
+											echo "<tr id = \"meeting_member".$i."\"></tr>";
+										?>    
+										
+										<tr></tr>
+									</table>
+								</div>
+								</div>
+							</tr>
+						</table>
 						<tr>
 							<table id="table">
 								<tr>
-									<td id="tableTittle1">新增會議議題</td>
+									<td id="tableTittle1">新增與會者</td>
 									<?php
-										echo "<form name=\"set_new_topic_form\" method=\"post\"
+										echo "<form name=\"set_member_form\" method=\"post\"
 												action=\"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\">";
 									?>
-									<td id="tableValueCol1"><input id="tableValue1" type="text" name="topic" /></td>
+									<td id="tableValueCol1"><input id="tableValue1" type="text" name="member" /></td>
 									
 									</form>
 								</tr>
 							</table>
-							<input id="tableButton" name="set_new_topic" type="submit" value="確認送出" onclick="set_topic();"/>
+							<input id="tableButton" type="submit" value="確認送出" onclick="invite_member();"/>
 						</tr>
 					</table>
 				</div>
-				
-				<table id="table">
-						<tr>
-							<td id="tableTittleCol2" style="border-radius: 4px;">
-								<input id="tableButton" type="button" onclick="goDeleteMember()" value="會議開始" style="border-radius: 4px;"/>
-							</td>
-					    </tr>
-				</table>
 				
 			</div>
 			

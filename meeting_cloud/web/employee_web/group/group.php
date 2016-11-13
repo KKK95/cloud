@@ -16,7 +16,7 @@
 			
 	$result = $conn->query($sql);
 	$row = $result->fetch_array();
-	
+	$group_id = $_GET['group_id'];
 	$leader_id = $row['member_id'];
 	$leader_name = $row['name'];					//先抓出群組中的隊長
 	$group_name = $row['group_name'];
@@ -24,7 +24,7 @@
 	$sql = "select m.id, m.name, m.mail 
 			from group_member as gm, member as m, group_leader as gl
 			where 
-			gm.group_id = '".$_GET['group_id']."'
+			gm.group_id = '".$group_id."'
 			and (gm.member_id = m.id or gl.member_id = m.id)
 			and gl.group_id = gm.group_id
 			group by m.id";
@@ -46,19 +46,10 @@
 	<script language="JavaScript" src="../../main_js/leftBarSlide.js"></script>
 	
 	<script>
-		function goNewMember()//重新導向到新增會員(會員編輯)
-		{
-			window.location = "addMemberProfile.php";
-		}
 		
-		function goDeleteMember()//重新導向到刪除會員
+		function invite_member()
 		{
-			window.location = "http://www.google.com";
-		}
-		
-		function meeting_start()
-		{
-			.submit();
+			invite_member_form.submit();
 		}
 	</script>
 	
@@ -79,24 +70,35 @@
 		<div id="divTop">
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
-					會員專區
-					<dl id = "memberSubBar" style="margin:0;width:150px;display:none;">
-						<dt><a href="">會員瀏覽</a></dt>
-						<dt><a href="">會員資料</a></dt>
-						<dt><a href="">修改密碼</a></dt>
-						<dt><a href="">會員管理</a></dt>
-						<dt><a href="">登出</a></dt>
-					</dl>
-				</dt>
-				<dt id="conventionBar" class="left">
-					會議專區
-					<dl id = "conventionSubBar" style="margin:0;width:150px;display:none;">
-						<dt><a href="">會議瀏覽</a></dt>
-						<dt><a href="">會議紀錄</a></dt>
-						<dt><a href="">會議管理</a></dt>
-						<dt><a href="">修改請求</a></dt>
-					</dl>
-				</dt>
+	        			會員專區
+		        			<dt><a href="">會員瀏覽</a></dt>
+		        			<dt><a href="">會員資料</a></dt>
+		        			<dt><a href="">修改密碼</a></dt>
+		        			<dt><a href="">會員管理</a></dt>
+							
+		        			<dt><a href="">登出</a></dt>
+	        		</dt>
+					<dt id="group" class="left">
+	        			會議群組
+		        			<dt><a href="./group_list.php">會議群組列表</a></dt>
+	        		</dt>
+	        		<dt id="conventionBar" class="left">
+	        			會議專區
+		        			<dt><a href="">會議瀏覽</a></dt>
+		        			<dt><a href="">會議紀錄</a></dt>
+		        			<dt><a href="">會議管理</a></dt>
+		        			<dt><a href="">修改請求</a></dt>
+	        		</dt>
+					<dt id="cloud" class="left">
+	        			雲端專區
+		        			<dt><a href="">個人雲端</a></dt>
+							<dt><a href="">群組雲端</a></dt>
+	        		</dt>
+					<dt id="talk" class="left">
+	        			討論區
+		        			<dt><a href="">會議聊天室</a></dt>
+							<dt><a href="">會議紀錄</a></dt>
+	        		</dt>
 			</dl>
 			
 			
@@ -104,6 +106,117 @@
 				<?php
 					echo "<p id=\"conventionTittle\">群組 - ".$group_name."</p>"
 				?>
+				<div id="main_sub">
+	        		
+		        	<p id="conventionTittle">創立會議</p>
+					<table id="table">
+						<form name="set_meeting_scheduler_form" method=\"post\">
+							<tr>
+								<td id="tableTittle1">會議名稱</td>
+								<td id="tableValue1"><input id="tableValue1" type="text" name="name"/></td>
+							</tr>
+							<tr>
+								<td id="tableTittle1">會議主席</td>
+								<td id="tableValue1"><input id="tableValue1" type="text" name="moderator"/></td>
+							</tr>
+							<tr>
+								<td id="tableTittle2">會議創立日期</td>
+								<td id="tableValue2"><input id="tableValue2" type="text" name="date"/></td>
+							</tr>
+							
+						</form>
+					</table>
+					
+					<tr>
+						<td id="tableTittleCol1" style="border-radius: 4px;">
+							<input id="tableButton" type="button" onclick="set_meeting_scheduler();" value="新增會議" style="border-radius: 4px;"/>
+						</td>
+					</tr>
+					
+				</div>
+				
+				<div id="main_sub">
+					<p id="conventionTittle">將至會議</p><!--管理員/紀錄-->
+					<table id="table">
+						<tr>
+							<table id="table">
+								<tr>
+									<td id="tableTittleCol1" style="width:320px">會議標題</td>
+									<td id="tableTittleCol2" style="width:110px">日期</td>
+									<td id="tableTittleCol1" style="width:70px">時間</td>
+									<td id="tableTittleCol2" style="width:100px">召集人</td>
+								</tr>
+							</table>
+						</tr>
+						<tr>
+							<div style="width:600px; height:125px; overflow:hidden;" >
+							<div style="width:615px; height:125px; overflow-y: auto;">
+								<table id="table">
+									<?php	
+									
+									$id = "a@";
+		
+									$scheduler_sql = "select scheduler.*, member.name
+											from meeting_scheduler as scheduler, member
+											where scheduler.group_id in 
+											(select gl.group_id
+												FROM group_leader as gl, group_member as gm
+												where ( gm.member_id = '".$id."' or gl.member_id = '".$id."' ) and gl.group_id = '".$group_id."'
+												group by gl.group_id 
+											)
+											and member.id = scheduler.moderator_id
+											order by scheduler.time desc";
+											
+									$scheduler_result = $conn->query($scheduler_sql);
+								
+									if (isset($scheduler_result))
+										$num_of_meeting = $scheduler_result->num_rows;	
+									else
+										$num_of_meeting = 0;
+									
+									$today = date("Y-m-d");
+									$end_meeting = 0;
+									if ( $num_of_meeting == 0 )
+									{	echo "目前尚未建立關於你的會議群組";	}
+									else
+									{			
+															
+										for($i=1 ; $i<=$num_of_meeting ; $i++) 
+										{
+											$scheduler_row = $scheduler_result->fetch_array();
+											$meeting_date = date("Y-m-d", strtotime($scheduler_row['time']));
+											$meeting_time = date("H:i", strtotime($scheduler_row['time']));
+											
+											if ((strtotime($today) - strtotime($meeting_date)) > 0)		//昨天的事
+											{	$end_meeting = $i;	break;	}
+											$title = $scheduler_row['title'];
+											$meeting_id = $scheduler_row['meeting_id'];
+											$moderator = $scheduler_row['name'];
+
+											echo "<tr><!--最多五欄-->";
+											
+											echo "<td id=\"tableValueCol1\" style=\"width:320px\">";
+												echo "<a href=\"../meeting/em_meeting_info.php?meeting_id=".$meeting_id."\" style=\"color:#333333;width:auto;line-height:200%;\">".$title."</a> ";
+											echo "</td>";
+											
+											echo "<td id=\"tableValueCol2\" style=\"width:110px\">$meeting_date</td>";
+											echo "<td id=\"tableValueCol1\" style=\"width:70px\">$meeting_time</td>";
+											echo "<td id=\"tableValueCol2\" style=\"width:100px\">$moderator</td>";
+											echo "</tr>";
+										}
+									}
+									?>
+									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
+									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
+									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
+									
+									<tr></tr>
+								</table>
+							</div>
+							</div>
+						</tr>	
+					</table>
+				</div>
 				<div id="main_sub">
 					<p id="conventionTittle">會員管理</p>
 					<table id="table">
@@ -121,6 +234,9 @@
 							<div style="width:620px; height:125px; overflow-y: auto;">
 								<table id="table">
 									<?php    
+										
+										
+										
 										if ($num_rows==0)
 										{	$state = "";	}	
 										else
@@ -150,94 +266,28 @@
 							</div>
 							</div>
 						</tr>
-					</table>
-				</div>
-				
-				<div id="main_sub">
-					<p id="conventionTittle">將至會議</p><!--管理員/紀錄-->
-					<table id="table">
 						<tr>
 							<table id="table">
 								<tr>
-									<td id="tableTittleCol1" style="width:320px">會議標題</td>
-									<td id="tableTittleCol2" style="width:110px">日期</td>
-									<td id="tableTittleCol1" style="width:70px">時間</td>
-									<td id="tableTittleCol2" style="width:100px">召集人</td>
+									<td id="tableTittle1">新增會員到此群組</td>
+									<?php
+										echo "<form name=\"invite_member_form\" method=\"post\"
+												action=\"../../../back_end/group/add_member_to_group.php\">";
+									?>
+									<input id="tableValue1" type="hidden" name="group_id" value="<?php echo $group_id;	?>"/>
+									<td id="tableValueCol1"><input id="tableValue1" type="text" name="member" /></td>
+									
+									</form>
 								</tr>
 							</table>
+							<input id="tableButton" type="submit" value="確認送出" onclick="invite_member();"/>
+							
 						</tr>
-						<tr>
-							<div style="width:600px; height:125px; overflow:hidden;" >
-							<div style="width:615px; height:125px; overflow-y: auto;">
-								<table id="table">
-									<?php	
-									
-									$id = "a@";
-		
-									$sql = "select scheduler.*, member.name
-											from meeting_scheduler as scheduler, member
-											where scheduler.group_id in 
-											(select gl.group_id
-												FROM group_leader as gl, group_member as gm
-												where gm.member_id = '".$id."' or gl.member_id = '".$id."'
-												group by gl.group_id
-											)
-											and member.id = scheduler.moderator_id
-											order by scheduler.time desc";
-											
-									$result = $conn->query($sql);
-								
-									if (isset($result))
-										$num_rows = $result->num_rows;	
-									else
-										$num_rows = 0;
-									
-									$today = date("Y-m-d");
-									$end_meeting = 0;
-									if ( $num_rows == 0 )
-									{	echo "目前尚未建立關於你的會議群組";	}
-									else
-									{			
-															
-										for($i=1 ; $i<=$num_rows ; $i++) 
-										{
-											$row=$result->fetch_array();
-											$meeting_date = date("Y-m-d", strtotime($row['time']));
-											$meeting_time = date("H:i", strtotime($row['time']));
-											
-											if ((strtotime($today) - strtotime($meeting_date)) > 0)		//昨天的事
-											{	$end_meeting = $i;	break;	}
-											$title = $row['title'];
-											$meeting_id = $row['meeting_id'];
-											$moderator = $row['name'];
-
-											echo "<tr><!--最多五欄-->";
-											
-											echo "<td id=\"tableValueCol1\" style=\"width:320px\">";
-						//						echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"get\" action=\"../meeting/em_meeting_info.php\">";
-						//						echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
-												echo "<a href=\"../meeting/em_meeting_info.php?meeting_id=".$meeting_id."\" style=\"color:#333333;width:auto;line-height:200%;\">".$title."</a> ";
-						//						echo "</form>" ;
-											echo "</td>";
-											
-											echo "<td id=\"tableValueCol2\" style=\"width:110px\">$meeting_date</td>";
-											echo "<td id=\"tableValueCol1\" style=\"width:70px\">$meeting_time</td>";
-											echo "<td id=\"tableValueCol2\" style=\"width:100px\">$moderator</td>";
-											echo "</tr>";
-										}
-									}
-									?>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									
-									<tr></tr>
-								</table>
-							</div>
-							</div>
-						</tr>	
 					</table>
 				</div>
+				
+				
+				
 				<div id="main_sub">
 					<p id="conventionTittle">結束會議</p><!--管理員/紀錄-->
 				
@@ -255,7 +305,7 @@
 						<tr>
 							<div style="width:600px; height:125px; overflow:hidden;" >
 							<?php
-							if ($num_rows - $end_meeting >= 3)			//多於4筆資料的話框寬為 620px
+							if ($num_of_meeting - $end_meeting >= 3)			//多於4筆資料的話框寬為 620px
 								$width = 620;
 							else
 								$width = 600;
@@ -265,19 +315,19 @@
 						
 								<?php
 								if ($end_meeting == 0)
-								{	echo "你還未開過會呢~";	}
+								{	echo "沒有會議記錄";	}
 								else
 								{				
-									for($i=$end_meeting ; $i<=$num_rows ; $i++) 
+									for($i=$end_meeting ; $i<=$num_of_meeting ; $i++) 
 									{
-										if ($i != $end_meeting)	$row=$result->fetch_array();
+										if ($i != $end_meeting)	$scheduler_row=$$scheduler_result->fetch_array();
 										
-										$meeting_date = date("Y-m-d", strtotime($row['time']));
-										$meeting_time = date("H:i", strtotime($row['time']));
+										$meeting_date = date("Y-m-d", strtotime($scheduler_row['time']));
+										$meeting_time = date("H:i", strtotime($scheduler_row['time']));
 										
-										$title = $row['title'];
-										$meeting_id = $row['meeting_id'];
-										$moderator = $row['name'];
+										$title = $scheduler_row['title'];
+										$meeting_id = $scheduler_row['meeting_id'];
+										$moderator = $scheduler_row['name'];
 
 										echo "<tr><!--最多五欄-->";
 										echo "<td id=\"tableValueCol1\" style=\"width:320px\">";

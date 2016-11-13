@@ -53,23 +53,35 @@
 		<div id="divOrigin">
 			<div id="divTop">
 	        	<dl style="margin:0;width:20%;float:left;">
-	        		<dt id="member_Bar" class="left">
+	        		<dt id="memberBar" class="left">
 	        			會員專區
-	        			<dt id = "member_SubBar" style="margin:0;width:150px;display:none;">
-							<dt><a href="./group/build_group_form.php">建立會議群組</a></dt>
 		        			<dt><a href="">會員瀏覽</a></dt>
 		        			<dt><a href="">會員資料</a></dt>
-		        			<dt><a href="em_update_pw.php">修改密碼</a></dt>
-							<dt><a href="">我的雲端空間</a></dt>
-		        			<dt><a href="../../logout.php">登出</a></dt>
-	        			</dt>
+		        			<dt><a href="">修改密碼</a></dt>
+		        			<dt><a href="">會員管理</a></dt>
+							
+		        			<dt><a href="">登出</a></dt>
 	        		</dt>
-	        		<dt id="meeting_Bar" class="left">
+					<dt id="group" class="left">
+	        			會議群組
+		        			<dt><a href="./group/group_list.php">會議群組列表</a></dt>
+	        		</dt>
+	        		<dt id="conventionBar" class="left">
 	        			會議專區
-	        			<dt id = "meeting_SubBar" style="margin:0;width:150px;display:none;">
-		        			<dt><a href="em_meeting_list.php">會議管理</a></dt>
-							<dt><a href="em_group_list.php">會議群組管理</a></dt>
-	        			</dt>
+		        			<dt><a href="">會議瀏覽</a></dt>
+		        			<dt><a href="">會議紀錄</a></dt>
+		        			<dt><a href="">會議管理</a></dt>
+		        			<dt><a href="">修改請求</a></dt>
+	        		</dt>
+					<dt id="cloud" class="left">
+	        			雲端專區
+		        			<dt><a href="">個人雲端</a></dt>
+							<dt><a href="">群組雲端</a></dt>
+	        		</dt>
+					<dt id="talk" class="left">
+	        			討論區
+		        			<dt><a href="">會議聊天室</a></dt>
+							<dt><a href="">會議紀錄</a></dt>
 	        		</dt>
 	        	</dl>
 	        	
@@ -115,11 +127,8 @@
 									echo "<tr><!--最多五欄-->";
 									
 									echo "<td>";
-									echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"post\" action=\"../../back_end/em_meeting_start.php\">";
-									echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
-									echo "<input id=\"tableValueCol1\" type=\"submit\" value=\"$title\" style=\"color:#333333;width:auto;line-height:200%;\" />";
-									echo "</form>" ;
-									
+									echo "<a style=\"color:#333333;width:auto;line-height:200%;\" 
+											href=\"./meeting/em_meeting_info.php?meeting_id=".$meeting_id."\">".$title."</a> ";					
 									echo "</td>";
 									
 									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
@@ -160,13 +169,10 @@
 									$moderator = $row['name'];
 
 									echo "<tr><!--最多五欄-->";
+
 									echo "<td>";
-
-									echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"post\" action=\"../../back_end/em_meeting_start.php\">";
-									echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
-									echo "<input id=\"tableValueCol1\" type=\"submit\" value=\"$title\" style=\"color:#333333;width:auto;line-height:200%;\" />";
-									echo "</form>" ;
-
+									echo "<a style=\"color:#333333;width:auto;line-height:200%;\" 
+											href=\"./meeting/em_meeting_info.php?meeting_id=".$meeting_id."\">".$title."</a> ";					
 									echo "</td>";
 									
 									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
