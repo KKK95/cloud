@@ -6,7 +6,12 @@
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+	//	require_once("../../../login_check.php");	
+	
+		if (isset($_SESSION["id"]))
+			$id = $_SESSION['id'];
+		else
+			$id = "a@";
 		
 		$datetime = date("Y-m-d H:i:s");
 		
@@ -16,7 +21,7 @@
 		}
 		else
 		{
-			$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+			$sql = "select * from group_meeting_now where member_id = '".$id."'";
 			$result=$conn->query($sql);
 			$row=$result->fetch_array();
 			$meeting_id = $row['meeting_id'];
@@ -29,7 +34,7 @@
 		
 		$question = $_POST['question'];
 		
-		$sql = "select * from meeting_questions as m_q where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+		$sql = "select * from meeting_questions where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 		$result = $conn->query($sql);
 		$num_rows = $result->num_rows;	
 		$question_id = $num_rows + 1;

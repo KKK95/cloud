@@ -7,10 +7,27 @@
 	
 	require_once("../../../login_check.php");	
 
-	$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
-	$result=$conn->query($sql);
-	$row=$result->fetch_array();
-	$meeting_id = $row['meeting_id'];			//透過member id 來查詢會議中的 meeting id
+	
+	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION['id'];
+	else
+		$id = "a@";
+	
+	$datetime = date("Y-m-d H:i:s");
+	
+	if (isset($_GET['meeting_id'])
+	{
+		$meeting_id = $_GET['meeting_id'];
+	}
+	else
+	{
+		$sql = "select * from group_meeting_now where member_id = '".$id."'";
+		$result=$conn->query($sql);
+		$row=$result->fetch_array();
+		$meeting_id = $row['meeting_id'];
+	}
+	
 	$option = $_POST['option'];
 	
 	if (isset($_POST['topic_id']))
@@ -24,9 +41,5 @@
 	
 	$sql = "INSERT INTO meeting_vote value('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$issue."')";
 	
-	if ($conn->query($sql))
-		echo "add voting issue success";
-	else
-		echo "add voting issue failed";
 	
 ?>

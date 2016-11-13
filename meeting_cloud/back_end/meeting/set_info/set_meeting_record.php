@@ -35,8 +35,5 @@
 			}
 		}
 		
-		if (false !== ($rst = strpos($member_id, "ls"))				//server 送的就回到server 頁面
-			header("Location: server_meeting_runngin.php"); 
-		else
-			header("Location: em_meeting_running.php"); 
+
 ?>

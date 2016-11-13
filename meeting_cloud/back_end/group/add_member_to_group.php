@@ -5,7 +5,7 @@
 	
 	require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("login_check.php");
+	require_once("../../login_check.php");
 	
 	$start = 1;
 	
@@ -21,23 +21,25 @@
 			$post[$varname] = $varvalue;
 			$sql = "insert INTO group_member (group_id, member_id) 
 											VALUES ('".$_POST['group_id']."','"
-													  .$varvalue."')";
-			if($result = $conn->query($sql))
-			{	echo "build group success\n";	}
-			else
-			{	
-				echo "build group failed\n";	
-			}
+													  .$post[$varname]."')";
+			$result = $conn->query($sql);
+
 		}
 		$start = $start + 1;
 	}
 	
 	$sql = "delete from group_member
 			where group_id = '".$row['group_id']."
-			member_id not in (	select id from member	)
-			";
+			member_id not in (	select id from member	)";
 	$conn->query($sql);
 	
-	header("Location: employee_center.php");
+	if ($_SESSION['platform'] == "device")
+	{
+		header("Location: ../../device/employee/group/group.php?group_id=".$row['group_id']);
+	}	
+	else if ($_SESSION['platform'] == "web")
+	{
+		header("Location: ../../web/employee_web/group/group.php?group_id=".$row['group_id']);
+	}	
 
 ?>
