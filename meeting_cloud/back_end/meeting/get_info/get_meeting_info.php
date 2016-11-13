@@ -11,6 +11,7 @@
 	
 //	require_once("../../../login_check.php");	
 	
+	
 	$sql = "select scheduler.*, member.name
 			from meeting_scheduler as scheduler, member
 			where scheduler.meeting_id = '".$_GET['meeting_id']."' and scheduler.moderator_id = member.id";
@@ -43,7 +44,7 @@
 	$num_rows = $result->num_rows;	
 	
 	if ($num_rows==0)
-	{	$state = "會議還沒有設下議題";	}
+	{	$json['contents']['obj_meeting_topic'] = "none";	}
 	else
 	{
 		$json['contents']['obj_meeting_topic'] = array();

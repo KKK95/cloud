@@ -1,7 +1,7 @@
 ﻿<?php
 	
 	if(!isset($_SESSION))
-	{  		session_start();	}			//用 session 函式, 看用戶是否已經登錄了
+	{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 	
 	require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
@@ -50,10 +50,10 @@
 		$start = $start + 1;
 	}
 	
-	$sql = "delete from group_member
+	//刪除一些不在member 列表中的 member id
+	$sql = "delete from group_member		
 			where group_id = '".$row['group_id']."
-			member_id not in (	select id from member	)
-			";
+			member_id not in (	select id from member	)";
 	$conn->query($sql);
 
 	header("Location: ../../device/employee/group/group.php?group_id=".$row['group_id']);

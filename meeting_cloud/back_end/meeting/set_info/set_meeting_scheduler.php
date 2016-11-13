@@ -12,18 +12,28 @@
 	$group_id = $_POST["group_id"];
 	$today = date("Y-m-d H:i:s");
 	$meeting_title = $_POST['meeting_title'];
-	$create_meeting_member_id = $_POST['create_meeting_member_id'];
+	$moderator_id = $_POST['moderator_id'];
 	$meeting_time = $_POST['meeting_time'];
 	
-	if ($group_id != "" && $create_meeting_member_id != "")
+	if ($moderator_id == "" || $moderator_id == "none")
+		$moderator_id = $_SESSION['id'];
+	
+	if ($group_id != "")
 	{
 		if (((strtotime($meeting_time) - strtotime($today))/ (60*60)) > 0)				//新增的會議必定不能在過去
 		{
-			$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', '".$create_meeting_member_id."', '".$meeting_time."')";
+			$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', '".$moderator_id."', '".$meeting_time."')";
 			$result = $conn->query($sql);
 		}
 	}
 	
+	$sql = "select * from meeting_scheduler where group_id = '".$group_id."' and time = '".$meeting_time."'";
+	$result = $conn->query($sql);
+	$row=$result->fetch_array();
+	
+	$file = "../upload_space/group_upload_space/".$group_id."/".$row['meeting_id'];
+	mkdir($file);
+
 	$platform = $_SESSION["platform"];
 	if ($platform == "device")
 		header("Location: ../../../device/employee/employee_center.php");

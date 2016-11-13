@@ -7,11 +7,16 @@
 
 	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../../../login_check.php");
+//	require_once("../../../login_check.php");
 
 	$topic = $_POST['topic'];
 	
-	$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION['id'];
+	else
+		$id = "a@";
+	
+	$sql = "select * from group_meeting_now where member_id = '".$id."'";
 	$result=$conn->query($sql);
 													//看是否在會議中
 	$num_rows = $result->num_rows;	
@@ -24,7 +29,7 @@
 	}
 	
 	$sql = "select * from group_meeting_topics
-			where	meeting_id = '".$meeting_id."' and issue_id = '".$issue_id."'";
+			where	meeting_id = '".$meeting_id."'";
 	$result=$conn->query($sql);
 	$topic_id = $result->num_rows + 1;	
 	

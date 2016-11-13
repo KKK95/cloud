@@ -7,17 +7,18 @@
 
 		require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("login_check.php");
+//		require_once("../../login_check.php");
 		
 		
 		
-		$path = '../';
+		$path = './';
+		echo $_GET['upload_path'];
 		
-		if (isset($_GET['upload_path']))
+		if (isset($_GET['upload_path']) && isset($_FILES["fileToUpload"]))
 		{
 			$path = $path.$_GET['upload_path'];
 			$target_file = $path.basename($_FILES["fileToUpload"]["name"]);
-			
+			echo $target_file;
 			if ($_FILES["fileToUpload"]["size"] > 20000000) 					//不接受大於 20M 的檔案
 			{
 				echo "Sorry, your file is too large.";
@@ -30,16 +31,17 @@
 				else{
 					$status= "There was an error uploading the file, please try again!";
 					$status.= "filename: " .  basename( $_FILES['fileToUpload']['name']);
-					echo "$status";
 				}
 			}
 		}
-		
+		else
+		echo "Sorry, upload failed.";
+		/*
 		if ( false !== ($rst = strpos($_GET['upload_path'], "user_upload_space")) )		//在我的空間
 			header("Location: my_upload_space.php?basic_path=".$_GET['upload_path']); 
 		else
 			header("Location: group_upload_space.php?basic_path=".$_GET['upload_path']);
-		
+		*/
 		
 		
 		

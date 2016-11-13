@@ -1,7 +1,8 @@
 ﻿<?php
 		
-		//127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/3/4/&file_name=test2.pdf
-			
+		/*
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/3/4/&file_name=test2.pdf
+		*/	
 		if(!isset($_SESSION))
 		{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
@@ -10,6 +11,7 @@
 	//	require_once("../../login_check.php");
 		
 		$path = "./";
+		$file_name = mb_convert_encoding($_GET['file_name'],"BIG-5","UTF-8");
 		
 		if ( isset($_GET['download_path']) && isset($_GET['file_name']) )			// $_GET['download_path'] 即為傳入要下載的檔案名稱 (含路徑)
 		{

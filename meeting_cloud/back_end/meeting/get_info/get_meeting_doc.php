@@ -9,8 +9,13 @@
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
 	//	require_once("../../../login_check.php");	
-
-		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		
+		if (isset($_SESSION["id"]))
+			$id = $_SESSION["id"];
+		else
+			$id = "a@";
+		
+		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
 														
 		$num_rows = $result->num_rows;					//看是否在會議中
@@ -53,16 +58,20 @@
 							$json ['link']['obj_doc_list'] = array();
 							$json ['link']['obj_doc_list']['remark_name'] = array();
 							$json ['link']['obj_doc_list']['download'] = array();
+							$json ['link']['obj_doc_list']['open_doc'] = array();
 						}
 						$file=iconv("BIG5", "UTF-8",$file);
 						array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
 						array_push( $json ['link']['obj_doc_list']['download'], "../../../back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
+						array_push( $json ['link']['obj_doc_list']['open_doc'], "../../../back_end/".$path.$file );
 						//這邊要用 em_meeting_running 看 download.php 的相對路徑
 						//而不是 get_meeting_doc 看 download.php 的相對路徑
 					}
 				}
 			}
 		}
+		if ($first_file == 0)
+			$json ['link']['obj_doc_list'] = "none";
 	
 	echo json_encode($json);
 ?>
