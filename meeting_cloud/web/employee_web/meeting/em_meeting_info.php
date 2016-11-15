@@ -16,6 +16,11 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
 ?>
 
 
@@ -37,7 +42,9 @@
 		var get_num_of_doc = 0;
 		
 		var obj;
-
+		
+		
+		
 		function set_topic() 
 		{
 			set_topic_request = createRequest();
@@ -46,11 +53,12 @@
 		<?php
 				echo "var url = \"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\";";
 		?>
+				console.log(url);
 				set_topic_request.open("POST", url, true);
 				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 				set_topic_request.send("topic=" + document.set_new_topic_form.topic.value);						// 送出請求（由於為 GET 所以參數為 null）
 				document.set_new_topic_form.topic.value = "";
-				console.log(document.set_new_topic_form.topic.value);
+				request.onreadystatechange = displayResult;
 			}
 		}
 		
@@ -65,6 +73,7 @@
 		?>
 
 				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 				request.onreadystatechange = displayResult;		//千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
 			}
@@ -80,8 +89,10 @@
 					{
 						obj = eval('(' + request.responseText + ')');
 						
+						console.log(request.responseText);
 						if ( obj['contents'] && obj.contents['obj_meeting_topic'] && obj.contents.obj_meeting_topic != "none")
 						{
+							
 							get_num_of_meeting_topic = obj.contents.obj_meeting_topic.topic.length;
 							if (get_num_of_meeting_topic > now_num_of_meeting_topic)
 								add_new_topic();
@@ -129,6 +140,7 @@
 			
 		function add_new_topic() 
 		{  
+
 			var count = now_num_of_meeting_topic;
 			var meeting_topic_row = 0;
 			
@@ -164,7 +176,7 @@
 		<div id="divTop">
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
-					會議資訊
+					會議資訊 <?php echo $id; ?>
 						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
 						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
 						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
@@ -228,7 +240,7 @@
 				<table id="table">
 						<tr>
 							<td id="tableTittleCol2" style="border-radius: 4px;">
-								<input id="tableButton" type="button" onclick="goDeleteMember()" value="會議開始" style="border-radius: 4px;"/>
+								<input id="tableButton" type="button" onclick="self.location.href='../../../back_end/em_meeting_start.php?meeting_id=<?php echo $meeting_id; ?>'" value="會議開始" style="border-radius: 4px;"/>
 							</td>
 					    </tr>
 				</table>

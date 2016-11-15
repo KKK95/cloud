@@ -5,11 +5,19 @@
 	if(!isset($_SESSION))
 	{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
-	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
+	require_once("../../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-//	require_once("../../../login_check.php");
+//	require_once("../../../../login_check.php");
 	
-	$meeting_id = $_GET['meeting_id'];
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
+	
+	$sql = "select * from group_meeting_now where member_id = '".$id."'";
+	$result=$conn->query($sql);
+	$row=$result->fetch_array();
+	$meeting_id = $row['meeting_id'];
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
@@ -25,15 +33,18 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-	<link rel="stylesheet" type="text/css" href="../../main_css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../../main_css/main.css">
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	
-	<script language="JavaScript" src="../../main_js/leftBarSlide.js"></script>
+	<script language="JavaScript" src="../../../main_js/leftBarSlide.js"></script>
 	
 	<script>
-		var now_num_of_member = 0;
-		var get_num_of_member = 0;
+		var now_meeting_member = 0;
+		var get_now_meeting_member = 0;
+		
+		var join_meeting_member = 0;
+		var get_join_meeting_member = 0;
 		
 		var obj;
 
@@ -43,7 +54,7 @@
 			if (invite_member_request != null) 
 			{
 		<?php
-				echo "var url = \"../../../back_end/meeting/set_info/set_meeting_member.php?meeting_id=".$meeting_id."\";";
+				echo "var url = \"../../../../back_end/meeting/set_info/set_meeting_member.php?meeting_id=".$meeting_id."\";";
 		?>
 				set_topic_request.open("POST", url, true);
 				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -59,7 +70,7 @@
 			if (request != null) 
 			{
 		<?php
-				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=".$meeting_id."\";";
+				echo "var url = \"../../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=".$meeting_id."\";";
 		?>
 
 				request.open("GET", url, true);
@@ -80,9 +91,12 @@
 						
 						if ( obj['contents'] && obj.contents['obj_meeting_member_list'] && obj.contents.obj_meeting_member_list != "none")
 						{
-							get_num_of_member = obj.contents.obj_meeting_member_list.name.length;
-							if (get_num_of_member > now_num_of_member)
-								add_new_member();
+							get_join_meeting_member = obj.contents.obj_meeting_member_list.name.length;
+							get_now_meeting_member = obj.contents.now_meeting_member;
+							console.log("從server 收到有多少人已加入會議 : " + get_now_meeting_member);
+							console.log("有多少人已加入會議 : " + now_meeting_member);
+							if (join_meeting_member != get_join_meeting_member || now_meeting_member != get_now_meeting_member)
+								update_member_list();
 						}
 
 					}
@@ -118,29 +132,42 @@
 		
 		setInterval("get_meeting_member_list_request();", 1000) //每隔一秒發出一次查詢
 			
-		function add_new_member() 
+		function update_member_list()
 		{  
-			var count = now_num_of_member;
-			var mail;
-			var access;
-			for (var i = now_num_of_member; i < get_num_of_member; i++ )
+			var count_online = 0;
+			var count_offline = 0;
+			var online = 0;
+			var name = "";
+			
+			now_meeting_member = 0;
+			join_meeting_member = get_join_meeting_member;
+			
+			for (var i = 0; i < get_join_meeting_member; i++ )
 			{
-				count = count + 1;
-				mail = obj.contents.obj_meeting_member_list.mail[i];
-				access = obj.contents.obj_meeting_member_list.access[i];
+				name = obj.contents.obj_meeting_member_list.name[i];
+				online = obj.contents.obj_meeting_member_list.online[i];
+				console.log(obj.contents.obj_meeting_member_list.online[i]);
+				console.log(online);
+				if (online == 1)						//在線
+				{
+					count_online = count_online + 1;
+					document.getElementById("online" + count_online).innerHTML = 
+					'<td height="50px" name="online' + count_online + '" style="text-align:center;">' + name + '</td>';
+				}
+				else if (online == 0)
+				{
+					count_offline = count_offline + 1;
+					document.getElementById("offline" + count_offline).innerHTML =  
+					'<td height="50px" name="offline' + count_offline + '" style="text-align:center;">' + name + '</td>';
+				}	
 				
-				if (!mail)
-					mail = "none";
-				if (!access)
-					access = "none";
-				
-				document.getElementById("meeting_member" + count).innerHTML = document.getElementById("meeting_member" + count).innerHTML + 
-					'<td id = "tableValueCol1" style="width:150px">' + obj.contents.obj_meeting_member_list.name[i] + '</td>'	+
-					'<td id = "tableValueCol2" style="width:150px">' + access + '</td>'	+
-					'<td id = "tableValueCol2" style="width:300px">' + mail + '</td>';
-				
-				now_num_of_member = now_num_of_member + 1;
 			}
+			for (var i = count_online + 1; i < 30 ; i++)
+				document.getElementById("online" + i).innerHTML = "";
+			
+			for (var i = count_offline + 1; i < 30 ; i++)
+				document.getElementById("offline" + i).innerHTML = "";
+			now_meeting_member = count_online;
 		}
 		
 	</script>
@@ -228,6 +255,57 @@
 			
 		</div>
 	</div>
+	
+	<div id = "right table" style="height:515px;">
+		<dl style="margin:0;width:200;float:right;">
+			<table align=right border=1>
+				<table>
+				<tr>
+				<td id="tableTittle1">到場人</td>
+				</tr>
+				</table>
+			<div style="width:200px;height:200px;text-align:center;overflow:hidden;" >
+			<div style="width:220px;height:200px;overflow-y: auto;text-align:center;">
+				<table style="width:200;">
+				
+				<?php 
+					$join_meeting_member = 30;
+					for ( $i = 0 ; $i < $join_meeting_member ; $i++ )
+					{
+						echo "<tr id=\"online".$i."\" bgcolor=\"white\">";
+				//		echo "<td height=\"50px\" name=\"online".$i."\" style=\"text-align:center;\"></td>";
+						echo "</tr>";
+					}
+				?>
+				</table>
+			</div>
+			</div>
+			</table>
+			<table align=right border=1>
+				<table>
+				<tr>
+				<td id="tableTittle1">尚未</td>
+				</tr>
+				</table>
+			<div style="width:200px;height:260px;text-align:center;overflow:hidden;" >
+			<div style="width:220px;height:260px;overflow-y: auto;text-align:center;">
+				<table style="width:200;">
+				
+				<?php 
+					$join_meeting_member = 30;
+					for ( $i = 0 ; $i < $join_meeting_member ; $i++ )
+					{
+						echo "<tr id=\"offline".$i."\" bgcolor=\"white\">";
+				//		echo "<td height=\"50px\" name=\"offline".$i."\" style=\"text-align:center;\"></td>";
+						echo "</tr>";
+					}
+				?>
+					
+				</table>
+			</div>
+			</div>
+			</table>
+		</div>
 </body>
 </html>
 

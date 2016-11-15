@@ -153,10 +153,10 @@
 		
 		function add_new_doc() 
 		{  
-			var count = now_num_of_doc;
+			var count = 0;
 			var meeting_doc_row = 0;
 			
-			for (var i = now_num_of_doc; i < get_num_of_doc; i++ )
+			for (var i = 0; i < get_num_of_doc; i++ )
 			{
 				count = count + 1;
 				meeting_doc_row = count % 2;

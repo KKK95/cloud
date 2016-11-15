@@ -21,7 +21,7 @@
 	$leader_name = $row['name'];					//先抓出群組中的隊長
 	$group_name = $row['group_name'];
 	
-	$sql = "select m.id, m.name, m.mail 
+	$sql = "select m.id, m.name, m.mail
 			from group_member as gm, member as m, group_leader as gl
 			where 
 			gm.group_id = '".$group_id."'
@@ -50,6 +50,10 @@
 		function invite_member()
 		{
 			invite_member_form.submit();
+		}
+		function set_meeting_scheduler()
+		{
+			set_meeting_scheduler_form.submit();
 		}
 	</script>
 	
@@ -110,20 +114,82 @@
 	        		
 		        	<p id="conventionTittle">創立會議</p>
 					<table id="table">
-						<form name="set_meeting_scheduler_form" method=\"post\">
+						<form name="set_meeting_scheduler_form" method="post" action="../../../back_end/meeting/set_info/set_meeting_scheduler.php">
 							<tr>
 								<td id="tableTittle1">會議名稱</td>
-								<td id="tableValue1"><input id="tableValue1" type="text" name="name"/></td>
+								<td id="tableValue1"><input id="tableValue1" type="text" name="meeting_title"/></td>
 							</tr>
 							<tr>
 								<td id="tableTittle1">會議主席</td>
-								<td id="tableValue1"><input id="tableValue1" type="text" name="moderator"/></td>
+								<td id="tableValue1">
+									<select name="moderator_id">
+										<?php
+										
+											if ($num_rows==0)
+											{	$state = "";	}	
+											else
+											{	
+												
+												$state = "有群組成員";
+												for($i=1;$i<=$num_rows;$i++)
+												{
+													$row=$result->fetch_array();
+													echo "<option value=\"".$row['id']."\">".$row['name']."</option>";
+												}
+											}
+										?>
+									</select>
+								</td>
 							</tr>
 							<tr>
 								<td id="tableTittle2">會議創立日期</td>
-								<td id="tableValue2"><input id="tableValue2" type="text" name="date"/></td>
+								<td id="tableValue2">
+									<select name="year" size="1" onchange="changeDate()">
+									<script language="javascript">  
+										for(i=2016;i<2018;i++)
+										{document.write('<option value="'+i+'">'+i+'</option>');}
+									</script>
+									</select>年
+									<select name="month" onchange="changeDate()">
+									<script language="javascript">
+										for(i=1;i<=12;i++)
+										{document.write('<option value="'+i+'">'+i+'</option>');}
+									</script>
+									</select>月
+									<select name="day" onchange="changeDate()">
+									<script language="javascript">
+										for(i=1;i<=31;i++)
+										{document.write('<option value="'+i+'">'+i+'</option>');}
+									</script>
+									</select>日
+									<script language="javascript">
+									function changeDate()
+									{
+										var UserIndex = document.update.day.selectedIndex+1;
+										var TempDate = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+										if ((document.update.year.selectedIndex % 4 == 0 && document.update.year.selectedIndex % 100 != 0) || document.update.year.selectedIndex % 400 == 0)
+										{TempDate[1]++;}
+										if(document.update.day.options.length!=TempDate[document.update.month.selectedIndex])
+										{
+											var TempStr = '<select size="1" name="day">';
+											for(i=1;i<=TempDate[document.update.month.selectedIndex];i++)
+											{
+												TempStr+='<option value="'+i+'"';
+												if(i==UserIndex){TempStr+=' selected';}
+												TempStr+='>'+i+'</option>';
+											}
+											document.update.day.outerHTML=TempStr+'</select>';
+										}
+									}
+									</script>時
+									<select name="hour" onchange="changeDate()">
+									<script language="javascript">
+										for(i=0;i<=23;i++)
+										{document.write('<option value="'+i+'">'+i+'</option>');}
+									</script>
+								</td>
 							</tr>
-							
+							<input type="hidden" name="group_id" value="<?php echo $group_id; ?>" />
 						</form>
 					</table>
 					
@@ -235,7 +301,16 @@
 								<table id="table">
 									<?php    
 										
-										
+										$sql = "select m.id, m.name, m.mail
+												from group_member as gm, member as m, group_leader as gl
+												where 
+												gm.group_id = '".$group_id."'
+												and (gm.member_id = m.id or gl.member_id = m.id)
+												and gl.group_id = gm.group_id
+												group by m.id";
+
+										$result=$conn->query($sql);						//再抓出群組中的成員
+										$num_rows = $result->num_rows;
 										
 										if ($num_rows==0)
 										{	$state = "";	}	
@@ -320,7 +395,7 @@
 								{				
 									for($i=$end_meeting ; $i<=$num_of_meeting ; $i++) 
 									{
-										if ($i != $end_meeting)	$scheduler_row=$$scheduler_result->fetch_array();
+										if ($i != $end_meeting)	$scheduler_row = $scheduler_result->fetch_array();
 										
 										$meeting_date = date("Y-m-d", strtotime($scheduler_row['time']));
 										$meeting_time = date("H:i", strtotime($scheduler_row['time']));
