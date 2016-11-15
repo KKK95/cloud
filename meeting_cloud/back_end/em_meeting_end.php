@@ -26,7 +26,7 @@
 		$sql = "delete form group_meeting_now where member_id = '".$_SESSION["id"]."'";
 		
 		$result = $conn->query($sql);
-		header("Location: ../web/employee/employee_center.php");
+		header("Location: ../web/employee/employee_web/employee_center.php");
 	}	
 	
 ?>
