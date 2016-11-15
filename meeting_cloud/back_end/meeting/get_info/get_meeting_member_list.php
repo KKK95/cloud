@@ -17,19 +17,29 @@
 		$id = "a@";
 	
 	$meeting_running = 0;
+	$num_of_meeting_member = 0;
 	
 	$sql = "select * from group_meeting_now where member_id = '".$id."'";
 	$result=$conn->query($sql);
 													
 	$num_rows = $result->num_rows;					//看是否在會議中
-	if ($num_rows==0)								//否
+	if (isset($_GET['meeting_id']))							//否
 	{	$meeting_id = $_GET['meeting_id'];	}
-	else											//是
+	if ($num_rows!=0)										//是
 	{
-		$row=$result->fetch_array();
-		$meeting_id = $row['meeting_id'];
-		$meeting_running = 1;
+		if (isset($_GET['meeting_id']))
+		{
+			$row=$result->fetch_array();					//要知道他查詢的列表是否和他正在開會相關
+			if ($meeting_id == $row['meeting_id'])
+				$meeting_running = 1;
+		}
+		else 	
+		{
+			$row=$result->fetch_array();
+			$meeting_id = $row['meeting_id'];
+		}	
 	}
+
 
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result=$conn->query($sql);
@@ -38,7 +48,7 @@
 	
 	$sql = "select scheduler.*, member.name
 			from meeting_scheduler as scheduler, member
-			where scheduler.meeting_id = '".$_GET['meeting_id']."' and scheduler.moderator_id = member.id";
+			where scheduler.meeting_id = '".$meeting_id."' and scheduler.moderator_id = member.id";
 	
 	$result = $conn->query($sql);
 	$row = $result->fetch_array();
@@ -78,7 +88,22 @@
 			
 			if ($meeting_running == 0)
 				array_push ($json['contents']['obj_meeting_member_list']['online'], 0);
+			if ($meeting_running == 1)															//如果要取得正在會議中 的與會者列表
+			{
+				$member_meeting_now_sql = "select * from group_meeting_now where member_id = '".$row['member_id']."'";
+				$member_meeting_now_result = $conn->query($member_meeting_now_sql);
+				$member_meeting_now_row = $member_meeting_now_result->fetch_array();
+				
+				if (isset($member_meeting_now_row['meeting_id']))								
+				{
+					array_push ($json['contents']['obj_meeting_member_list']['online'], 1);
+					$num_of_meeting_member = $num_of_meeting_member + 1;
+				}
+				else
+					array_push ($json['contents']['obj_meeting_member_list']['online'], 0);
+			}
 		}
+		$json['contents']['now_meeting_member'] = $num_of_meeting_member;
 	}
 			
 	echo json_encode( $json );
