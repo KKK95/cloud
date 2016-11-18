@@ -6,21 +6,17 @@
 
 	require_once("../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../back_end/login_check.php");
+	require_once("../../login_check.php");
 	
+	$meeting_time = date("Y-m-d H:i:s");
 	//查詢會員有多少會議
 	$id = $_SESSION['id'];
 	
 	$sql = "select scheduler.*, member.name
-			from meeting_scheduler as scheduler, member
-			where scheduler.group_id in 
-			(select gl.group_id
-				FROM group_leader as gl, group_member as gm
-				where gm.member_id = '".$id."' or gl.member_id = '".$id."'
-                group by gl.group_id
-			)
-			and member.id = scheduler.moderator_id
-            order by scheduler.time desc";
+			from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
+			where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
+			and member.id = scheduler.moderator_id and scheduler.time > '".$meeting_time."'
+			order by scheduler.time";
 			
 	$result = $conn->query($sql);
 ?>
@@ -35,6 +31,215 @@
         
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         
+		
+		
+	<script>
+		var meeting_now_list = 0;
+		var get_meeting_now_list = 0;
+		
+		var now_meeting_list = 0;
+		var get_meeting_list = 0;
+		
+		var now_meeting_record_list = 0;
+		var get_meeting_record_list = 0;
+		
+		var obj;
+		
+		
+		function get_meeting_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = '../../back_end/meeting/get_info/get_meeting_list.php';
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		function get_meeting_now_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = '../../back_end/meeting/get_info/get_meeting_running_list.php';
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		function get_meeting_record_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = '../../back_end/meeting/get_info/get_meeting_record_list.php';
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		
+		
+		function displayResult() 
+		{	
+			if (request.readyState == 4) 				//唯有確定請求已處理完成（readyState 為 4）時，而且 HTTP 回應為 200 OK
+			{
+				if (request.status == 200) 
+				{
+					if (	request.responseText.indexOf("{") != -1	)
+					{
+						obj = eval('(' + request.responseText + ')');
+						
+						console.log(request.responseText);
+						if ( obj['contents'] && obj.contents['obj_meeting_now_list'] && obj.contents.obj_meeting_now_list != "none")
+						{
+							get_meeting_now_list = obj.contents.obj_meeting_now_list.topic.length;
+							if ( get_meeting_now_list != meeting_now_list)
+								update_meeting_now_list();
+						}
+						if ( obj['contents'] && obj.contents['obj_meeting_list'] && obj.contents.obj_meeting_list != "none")
+						{
+							get_meeting_list = obj.contents.obj_meeting_list.topic.length;
+							if (get_meeting_list != now_meeting_list)
+								update_meeting_list();
+						}
+						if ( obj['contents'] && obj.contents['obj_meeting_record_list'] && obj.contents.obj_meeting_record_list != "none")
+						{
+							get_meeting_record_list = obj.contents.obj_meeting_record_list.topic.length;
+							if (get_meeting_record_list != now_meeting_record_list)
+								update_meeting_record_list();
+						}
+					}
+					else	console.log(request.responseText);
+						
+				}
+			}
+		}
+		function createRequest() 
+		{
+			try 
+			{
+				request = new XMLHttpRequest();
+			} catch (tryMS) 
+			{
+				try 
+				{
+					request = new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (otherMS) 
+				{
+					try 
+					{
+						request = new ActiveXObject("Microsoft.XMLHTTP");
+					} catch (failed) 
+					{
+						request = null;
+					}
+				}
+			}
+
+			return request;
+		}
+		
+		setInterval("get_meeting_now_list_request();", 1000) //每隔一秒發出一次查詢
+		setInterval("get_meeting_record_list_request();", 1200) //每隔一秒發出一次查詢
+		setInterval("get_meeting_list_request();", 1100) //每隔一秒發出一次查詢
+			
+		function update_meeting_now_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var link_id = "";
+			
+			for (var i = 0; i < get_meeting_now_list; i++ )
+			{
+				
+				topic = obj.contents.obj_meeting_now_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_now_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_now_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_now_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_now_list.meeting_id[i];
+				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_now_list" + i).innerHTML = document.getElementById("meeting_now_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			meeting_now_list = get_meeting_now_list;
+		}
+		
+		function update_meeting_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var link_id = "";
+			
+			for (var i = 0; i < get_meeting_list; i++ )
+			{
+				
+				topic = obj.contents.obj_meeting_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_list.meeting_id[i];
+				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_list" + i).innerHTML = document.getElementById("meeting_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_list = get_meeting_list;
+		}
+		
+		function update_meeting_record_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var link_id = "";
+			
+			for (var i = 0; i < get_meeting_record_list; i++ )
+			{
+				topic = obj.contents.obj_meeting_record_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_record_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_record_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_record_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
+				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_record_list" + i).innerHTML = document.getElementById("meeting_record_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_record_list = get_meeting_record_list;
+		}
+	</script>
+		
+		
+		
         <script language="JavaScript" src="../main_js/leftBarSlide.js"></script>
         
         <title>智會GO</title>
@@ -85,104 +290,93 @@
 	        		</dt>
 	        	</dl>
 	        	
+				
 	        	
 	        	<div id="main_in_main">
-	        		
+					<div id="main_sub">
+			        	<p id="conventionTittle">進行中的會議</p><!--管理員/紀錄-->
+					
+						<table id="table">
+							<tr>
+							<table id="table">
+								<td id="tableTittleCol1" style="width:335px">會議標題</td>
+								<td id="tableTittleCol2" style="width:110px">日期</td>
+								<td id="tableTittleCol1" style="width:70px">時間</td>
+								<td id="tableTittleCol2" style="width:100px">召集人</td>
+							</table>
+							</tr>
+						    <tr>
+							<div style="width:600px; height:125px; overflow:hidden;" >
+							<div style="width:615px; height:125px; overflow-y: auto;">
+								<table id="table">
+								<?php
+									$meeting_now_list = 10;
+									
+									for ( $i = 0; $i < $meeting_now_list ; $i++)
+										echo "<tr id=\"meeting_now_list".$i."\"></tr>";
+								?>
+								</table>
+							</div>
+							</div>
+							</tr>
+					    </table>
+				    </div>
+					
 	        		<div id="main_sub">
 			        	<p id="conventionTittle">將至會議</p><!--管理員/紀錄-->
 					
 						<table id="table">
 							<tr>
-								<td id="tableTittleCol1">會議標題</td>
-								<td id="tableTittleCol2">日期</td>
-								<td id="tableTittleCol1">時間</td>
-								<td id="tableTittleCol2">召集人</td>
-						    </tr>
-						    
-							<?php	
-								if (isset($result))
-									$num_rows = $result->num_rows;	
-								else
-									$num_rows = 0;
-								
-								$today = date("Y-m-d");
-								$end_meeting = 0;
-							if ( $num_rows == 0 )
-							{	echo "目前尚未建立關於你的會議群組";	}
-							else
-							{			
-													
-								for($i=1 ; $i<=$num_rows ; $i++) 
-								{
-									$row=$result->fetch_array();
-									$meeting_date = date("Y-m-d", strtotime($row['time']));
-									$meeting_time = date("H:i", strtotime($row['time']));
+							<table id="table">
+								<td id="tableTittleCol1" style="width:335px">會議標題</td>
+								<td id="tableTittleCol2" style="width:110px">日期</td>
+								<td id="tableTittleCol1" style="width:70px">時間</td>
+								<td id="tableTittleCol2" style="width:100px">召集人</td>
+							</table>
+							</tr>
+						    <tr>
+							<div style="width:600px; height:125px; overflow:hidden;" >
+							<div style="width:615px; height:125px; overflow-y: auto;">
+								<table id="table">
+								<?php
+									$meeting_now_list = 10;
 									
-									if ((strtotime($today) - strtotime($meeting_date)) > 0)		//昨天的事
-									{	$end_meeting = $i;	break;	}
-									$title = $row['title'];
-									$meeting_id = $row['meeting_id'];
-									$moderator = $row['name'];
-
-									echo "<tr><!--最多五欄-->";
-									
-									echo "<td>";
-									echo "<a style=\"color:#333333;width:auto;line-height:200%;\" 
-											href=\"./meeting/em_meeting_info.php?meeting_id=".$meeting_id."\">".$title."</a> ";					
-									echo "</td>";
-									
-									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
-									echo "<td id=\"tableValueCol1\">$meeting_time</td>";
-									echo "<td id=\"tableValueCol2\">$moderator</td>";
-									echo "</tr>";
-								}
-							}
-						    ?>
+									for ( $i = 0; $i < $meeting_now_list ; $i++)
+										echo "<tr id=\"meeting_list".$i."\"></tr>";
+								?>
+								</table>
+							</div>
+							</div>
+							</tr>
 					    </table>
 				    </div>
 				    
 				    <div id="main_sub">
-					    <p id="conventionTittle">結束會議</p><!--管理員/紀錄-->
+			        	<p id="conventionTittle">會議紀錄</p><!--管理員/紀錄-->
 					
 						<table id="table">
 							<tr>
-								<td id="tableTittleCol1">會議標題</td>
-								<td id="tableTittleCol2">日期</td>
-								<td id="tableTittleCol1">時間</td>
-								<td id="tableTittleCol2">召集人</td>
-						    </tr>
-						    
-						    <?php
-							if ($end_meeting == 0)
-							{	echo "你還未開過會呢~";	}
-							else
-							{				
-								for($i=$end_meeting ; $i<=$num_rows ; $i++) 
-								{
-									if ($i != $end_meeting)	$row=$result->fetch_array();
+							<table id="table">
+								<td id="tableTittleCol1" style="width:335px">會議標題</td>
+								<td id="tableTittleCol2" style="width:110px">日期</td>
+								<td id="tableTittleCol1" style="width:70px">時間</td>
+								<td id="tableTittleCol2" style="width:100px">召集人</td>
+							</table>
+							</tr>
+						    <tr>
+							<div style="width:600px; height:125px; overflow:hidden;" >
+							<div style="width:615px; height:125px; overflow-y: auto;">
+								<table id="table">
+								<?php
+									$meeting_now_list = 10;
 									
-									$meeting_date = date("Y-m-d", strtotime($row['time']));
-									$meeting_time = date("H:i", strtotime($row['time']));
-									
-									$title = $row['title'];
-									$meeting_id = $row['meeting_id'];
-									$moderator = $row['name'];
-
-									echo "<tr><!--最多五欄-->";
-
-									echo "<td>";
-									echo "<a style=\"color:#333333;width:auto;line-height:200%;\" 
-											href=\"./meeting/em_meeting_info.php?meeting_id=".$meeting_id."\">".$title."</a> ";					
-									echo "</td>";
-									
-									echo "<td id=\"tableValueCol2\">$meeting_date</td>";
-									echo "<td id=\"tableValueCol1\">$meeting_time</td>";
-									echo "<td id=\"tableValueCol2\">$moderator</td>";
-									echo "</tr>";
-								}
-							}
-						    ?>
-						    
+									for ( $i = 0; $i < $meeting_now_list ; $i++)
+										echo "<tr id=\"meeting_record_list".$i."\"></tr>";
+								?>
+								</table>
+							</div>
+							</div>
+							</tr>
 					    </table>
 				    </div>
 

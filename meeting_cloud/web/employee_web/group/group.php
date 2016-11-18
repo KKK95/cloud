@@ -55,6 +55,163 @@
 		{
 			set_meeting_scheduler_form.submit();
 		}
+		
+		
+		
+		var meeting_now_list = 0;
+		var get_meeting_now_list = 0;
+		
+		var now_meeting_list = 0;
+		var get_meeting_list = 0;
+		
+		var now_meeting_record_list = 0;
+		var get_meeting_record_list = 0;
+		
+		var obj;
+		
+		
+		function get_meeting_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				<?php echo "var url = '../../../back_end/meeting/get_info/get_meeting_list.php?group_id=".$group_id."';		";	?>
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+
+		function get_meeting_record_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				<?php echo "var url = '../../../back_end/meeting/get_info/get_meeting_record_list.php?group_id=".$group_id."';		";	?>
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		
+		
+		function displayResult() 
+		{	
+			if (request.readyState == 4) 				//唯有確定請求已處理完成（readyState 為 4）時，而且 HTTP 回應為 200 OK
+			{
+				if (request.status == 200) 
+				{
+					if (	request.responseText.indexOf("{") != -1	)
+					{
+						obj = eval('(' + request.responseText + ')');
+						
+						console.log(request.responseText);
+						if ( obj['contents'] && obj.contents['obj_meeting_list'] && obj.contents.obj_meeting_list != "none")
+						{
+							get_meeting_list = obj.contents.obj_meeting_list.topic.length;
+							if (get_meeting_list != now_meeting_list)
+								update_meeting_list();
+						}
+						else if ( obj['contents'] && obj.contents['obj_meeting_record_list'] && obj.contents.obj_meeting_record_list != "none")
+						{
+							get_meeting_record_list = obj.contents.obj_meeting_record_list.topic.length;
+							if (get_meeting_record_list != now_meeting_record_list)
+								update_meeting_record_list();
+						}
+					}
+					else	console.log(request.responseText);
+						
+				}
+			}
+		}
+		function createRequest() 
+		{
+			try 
+			{
+				request = new XMLHttpRequest();
+			} catch (tryMS) 
+			{
+				try 
+				{
+					request = new ActiveXObject("Msxml2.XMLHTTP");
+				} catch (otherMS) 
+				{
+					try 
+					{
+						request = new ActiveXObject("Microsoft.XMLHTTP");
+					} catch (failed) 
+					{
+						request = null;
+					}
+				}
+			}
+
+			return request;
+		}
+		
+		setInterval("get_meeting_record_list_request();", 1200) //每隔一秒發出一次查詢
+		setInterval("get_meeting_list_request();", 1100) //每隔一秒發出一次查詢
+		
+		function update_meeting_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var meeting_id = "";
+			
+			for (var i = 0; i < get_meeting_list; i++ )
+			{
+				
+				topic = obj.contents.obj_meeting_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_list.meeting_id[i];
+				link = '../meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_list" + i).innerHTML = document.getElementById("meeting_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_list = get_meeting_list;
+		}
+		
+		function update_meeting_record_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var meeting_id = "";
+			
+			for (var i = 0; i < get_meeting_record_list; i++ )
+			{
+				topic = obj.contents.obj_meeting_record_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_record_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_record_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_record_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
+				link = '../meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_record_list" + i).innerHTML = document.getElementById("meeting_record_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_record_list = get_meeting_record_list;
+		}
 	</script>
 	
 	<title>智會GO</title>
@@ -203,86 +360,33 @@
 				
 				<div id="main_sub">
 					<p id="conventionTittle">將至會議</p><!--管理員/紀錄-->
+				
 					<table id="table">
 						<tr>
-							<table id="table">
-								<tr>
-									<td id="tableTittleCol1" style="width:320px">會議標題</td>
-									<td id="tableTittleCol2" style="width:110px">日期</td>
-									<td id="tableTittleCol1" style="width:70px">時間</td>
-									<td id="tableTittleCol2" style="width:100px">召集人</td>
-								</tr>
-							</table>
+						<table id="table">
+							<td id="tableTittleCol1" style="width:335px">會議標題</td>
+							<td id="tableTittleCol2" style="width:110px">日期</td>
+							<td id="tableTittleCol1" style="width:70px">時間</td>
+							<td id="tableTittleCol2" style="width:100px">召集人</td>
+						</table>
 						</tr>
 						<tr>
-							<div style="width:600px; height:125px; overflow:hidden;" >
-							<div style="width:615px; height:125px; overflow-y: auto;">
-								<table id="table">
-									<?php	
-									
-									$id = "a@";
-		
-									$scheduler_sql = "select scheduler.*, member.name
-											from meeting_scheduler as scheduler, member
-											where scheduler.group_id in 
-											(select gl.group_id
-												FROM group_leader as gl, group_member as gm
-												where ( gm.member_id = '".$id."' or gl.member_id = '".$id."' ) and gl.group_id = '".$group_id."'
-												group by gl.group_id 
-											)
-											and member.id = scheduler.moderator_id
-											order by scheduler.time desc";
-											
-									$scheduler_result = $conn->query($scheduler_sql);
+						<div style="width:600px; height:125px; overflow:hidden;" >
+						<div style="width:615px; height:125px; overflow-y: auto;">
+							<table id="table">
+							<?php
+								$meeting_now_list = 10;
 								
-									if (isset($scheduler_result))
-										$num_of_meeting = $scheduler_result->num_rows;	
-									else
-										$num_of_meeting = 0;
-									
-									$today = date("Y-m-d");
-									$end_meeting = 0;
-									if ( $num_of_meeting == 0 )
-									{	echo "目前尚未建立關於你的會議群組";	}
-									else
-									{			
-															
-										for($i=1 ; $i<=$num_of_meeting ; $i++) 
-										{
-											$scheduler_row = $scheduler_result->fetch_array();
-											$meeting_date = date("Y-m-d", strtotime($scheduler_row['time']));
-											$meeting_time = date("H:i", strtotime($scheduler_row['time']));
-											
-											if ((strtotime($today) - strtotime($meeting_date)) > 0)		//昨天的事
-											{	$end_meeting = $i;	break;	}
-											$title = $scheduler_row['title'];
-											$meeting_id = $scheduler_row['meeting_id'];
-											$moderator = $scheduler_row['name'];
-
-											echo "<tr><!--最多五欄-->";
-											
-											echo "<td id=\"tableValueCol1\" style=\"width:320px\">";
-												echo "<a href=\"../meeting/em_meeting_info.php?meeting_id=".$meeting_id."\" style=\"color:#333333;width:auto;line-height:200%;\">".$title."</a> ";
-											echo "</td>";
-											
-											echo "<td id=\"tableValueCol2\" style=\"width:110px\">$meeting_date</td>";
-											echo "<td id=\"tableValueCol1\" style=\"width:70px\">$meeting_time</td>";
-											echo "<td id=\"tableValueCol2\" style=\"width:100px\">$moderator</td>";
-											echo "</tr>";
-										}
-									}
-									?>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									<td id="tableValueCol1" style="width:320px"><form id="6" name="6" method="post" action="../../back_end/em_meeting_start.php"><input type="hidden" name="meeting_id" value="6"/> <a href="" onclick="this.form.submit()" style="color:#333333;width:auto;line-height:200%;">group_b_testing_by_android</a> </form></td><td id="tableValueCol2" style="width:110px">2016-11-30</td><td id="tableValueCol1" style="width:70px">11:00</td><td id="tableValueCol2" style="width:100px">boy</td></tr>
-									
-									<tr></tr>
-								</table>
-							</div>
-							</div>
-						</tr>	
+								for ( $i = 0; $i < $meeting_now_list ; $i++)
+									echo "<tr id=\"meeting_list".$i."\"></tr>";
+							?>
+							</table>
+						</div>
+						</div>
+						</tr>
 					</table>
 				</div>
+				
 				<div id="main_sub">
 					<p id="conventionTittle">會員管理</p>
 					<table id="table">
@@ -364,64 +468,30 @@
 				
 				
 				<div id="main_sub">
-					<p id="conventionTittle">結束會議</p><!--管理員/紀錄-->
+					<p id="conventionTittle">會議紀錄</p><!--管理員/紀錄-->
 				
 					<table id="table">
 						<tr>
-							<table id="table">
-								<tr>
-									<td id="tableTittleCol1" style="width:320px">會議標題</td>
-									<td id="tableTittleCol2" style="width:110px">日期</td>
-									<td id="tableTittleCol1" style="width:70px">時間</td>
-									<td id="tableTittleCol2" style="width:100px">召集人</td>
-								</tr>
-							</table>
+						<table id="table">
+							<td id="tableTittleCol1" style="width:335px">會議標題</td>
+							<td id="tableTittleCol2" style="width:110px">日期</td>
+							<td id="tableTittleCol1" style="width:70px">時間</td>
+							<td id="tableTittleCol2" style="width:100px">召集人</td>
+						</table>
 						</tr>
 						<tr>
-							<div style="width:600px; height:125px; overflow:hidden;" >
+						<div style="width:600px; height:125px; overflow:hidden;" >
+						<div style="width:615px; height:125px; overflow-y: auto;">
+							<table id="table">
 							<?php
-							if ($num_of_meeting - $end_meeting >= 3)			//多於4筆資料的話框寬為 620px
-								$width = 620;
-							else
-								$width = 600;
-							echo "<div style=\"width:".$width."px; height:125px; overflow-y: auto;\">";
+								$meeting_now_list = 10;
+								
+								for ( $i = 0; $i < $meeting_now_list ; $i++)
+									echo "<tr id=\"meeting_record_list".$i."\"></tr>";
 							?>
-								<table id="table">
-						
-								<?php
-								if ($end_meeting == 0)
-								{	echo "沒有會議記錄";	}
-								else
-								{				
-									for($i=$end_meeting ; $i<=$num_of_meeting ; $i++) 
-									{
-										if ($i != $end_meeting)	$scheduler_row = $scheduler_result->fetch_array();
-										
-										$meeting_date = date("Y-m-d", strtotime($scheduler_row['time']));
-										$meeting_time = date("H:i", strtotime($scheduler_row['time']));
-										
-										$title = $scheduler_row['title'];
-										$meeting_id = $scheduler_row['meeting_id'];
-										$moderator = $scheduler_row['name'];
-
-										echo "<tr><!--最多五欄-->";
-										echo "<td id=\"tableValueCol1\" style=\"width:320px\">";
-											echo "<form id=\"".$meeting_id."\" name=\"".$meeting_id."\" method=\"post\" action=\"../../back_end/em_meeting_start.php\">";
-											echo "<input type=\"hidden\" name=\"meeting_id\" value=\"".$meeting_id."\"/> ";
-											echo "<a href=\"\" onclick=\"this.form.submit()\" style=\"color:#333333;width:auto;line-height:200%;\">".$title."</a> ";
-											echo "</form>" ;
-										echo "</td>";
-										
-										echo "<td id=\"tableValueCol2\" style=\"width:110px\">$meeting_date</td>";
-										echo "<td id=\"tableValueCol1\" style=\"width:70px\">$meeting_time</td>";
-										echo "<td id=\"tableValueCol2\" style=\"width:100px\">$moderator</td>";
-										echo "</tr>";
-									}
-								}
-								?>
-								</table>
-							</div>
-							</div>
+							</table>
+						</div>
+						</div>
 						</tr>
 					</table>
 				</div>
