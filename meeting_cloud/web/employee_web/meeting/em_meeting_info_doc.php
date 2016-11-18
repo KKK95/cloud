@@ -162,7 +162,7 @@
 				meeting_doc_row = count % 2;
 				if (meeting_doc_row == 0)	meeting_topic_row = 2;
 				
-				document.getElementById("doc_list" + count).innerHTML = document.getElementById("doc_list" + count).innerHTML + 
+				document.getElementById("doc_list" + count).innerHTML = 
 					'<a href="' + obj.link.obj_doc_list.open_doc[i] + '" style="color:#333333;width:auto;line-height:200%;">' + 
 					obj.link.obj_doc_list.remark_name[i] + '</a>';
 

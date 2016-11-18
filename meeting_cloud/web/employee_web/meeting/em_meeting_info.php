@@ -43,16 +43,16 @@
 		
 		var obj;
 		
-		
+		var meeting_id = <?php echo $meeting_id; ?>
 		
 		function set_topic() 
 		{
 			set_topic_request = createRequest();
 			if (set_topic_request != null) 
 			{
-		<?php
-				echo "var url = \"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\";";
-		?>
+
+				var url = '../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=' + meeting_id ;
+
 				console.log(url);
 				set_topic_request.open("POST", url, true);
 				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -68,9 +68,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-		<?php
-				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_info.php?meeting_id=".$meeting_id."\";";
-		?>
+				var url = '../../../back_end/meeting/get_info/get_meeting_info.php?meeting_id=' + meeting_id ;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -94,16 +92,8 @@
 						{
 							
 							get_num_of_meeting_topic = obj.contents.obj_meeting_topic.topic.length;
-							if (get_num_of_meeting_topic > now_num_of_meeting_topic)
+							if (get_num_of_meeting_topic != now_num_of_meeting_topic)
 								add_new_topic();
-						}
-						else if ( obj.link['obj_doc_list'] && obj.link.obj_doc_list != "none" )
-						{
-							
-			//				console.log(request.responseText);
-							get_num_of_doc = obj.link.obj_doc_list.remark_name.length;
-							if (get_num_of_doc > now_num_of_doc)
-								add_new_doc();
 						}
 					}
 					else	console.log(request.responseText);
@@ -141,20 +131,28 @@
 		function add_new_topic() 
 		{  
 
-			var count = now_num_of_meeting_topic;
+			var count = 0;
 			var meeting_topic_row = 0;
+			var topic = 0;
 			
-			for (var i = now_num_of_meeting_topic; i < get_num_of_meeting_topic; i++ )
+			for (var i = 0; i < get_num_of_meeting_topic; i++ )
 			{
 				count = count + 1;
 				meeting_topic_row = count % 2;
+				topic_id = obj.contents.obj_meeting_topic.topic_id[i];
+				
 				if (meeting_topic_row == 0)	meeting_topic_row = 2;
 				
 				document.getElementById("meeting_topic" + count).innerHTML = document.getElementById("meeting_topic" + count).innerHTML + 
-					'<td id = "tableValueCol' + meeting_topic_row + '">' + obj.contents.obj_meeting_topic.topic[i] + '</td>';
+					'<td id = "tableValueCol' + meeting_topic_row + '">' + 
+					'<a href = "./em_meeting_topic.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '" ' + 
+					'style = "color:#333333;width:auto;line-height:200%;">' +
+					obj.contents.obj_meeting_topic.topic[i] + 
+					'</a></td>';
 				
-				now_num_of_meeting_topic = now_num_of_meeting_topic + 1;
+				
 			}
+			now_num_of_meeting_topic = get_num_of_meeting_topic;
 		}
 		
 	</script>
