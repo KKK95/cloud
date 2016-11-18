@@ -12,9 +12,9 @@
 		
 														
 		$num_rows = $result->num_rows;					//看是否在會議中
-		if ($num_rows==0)								//否
+		if (isset($_GET['meeting_id']))							//否
 		{	$meeting_id = $_GET['meeting_id'];	}
-		else											//是
+		else if ($num_rows!=0)											//是
 		{
 			$row=$result->fetch_array();
 			$meeting_id = $row['meeting_id'];
@@ -35,7 +35,7 @@
 		$num_rows = $result->num_rows;
 		
 		if ($num_rows == 0)
-		{	echo "尚未設定任何問題";	}
+		{	$json ['contents']['obj_question'] = "none";	}
 		else
 		{
 			$json ['contents']['obj_question'] = array();

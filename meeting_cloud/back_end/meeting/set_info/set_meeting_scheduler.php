@@ -13,8 +13,9 @@
 	$today = date("Y-m-d H:i:s");
 	$meeting_title = $_POST['meeting_title'];
 	$moderator_id = $_POST['moderator_id'];
-	$meeting_time = $_POST['meeting_time'];
+	$meeting_time = $_POST['year']."-".str_pad($_POST['month'],2,'0',STR_PAD_LEFT)."-".str_pad($_POST['day'],2,'0',STR_PAD_LEFT)." ".str_pad($_POST['hour'],2,'0',STR_PAD_LEFT).":00:00";
 	
+	echo $meeting_time;
 	if ($moderator_id == "" || $moderator_id == "none")
 		$moderator_id = $_SESSION['id'];
 	
@@ -22,7 +23,7 @@
 	{
 		if (((strtotime($meeting_time) - strtotime($today))/ (60*60)) > 0)				//新增的會議必定不能在過去
 		{
-			$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', '".$moderator_id."', '".$meeting_time."')";
+			$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', '".$moderator_id."', '".$meeting_time."', 0 )";
 			$result = $conn->query($sql);
 		}
 	}
@@ -31,14 +32,28 @@
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	
-	$file = "../upload_space/group_upload_space/".$group_id."/".$row['meeting_id'];
+	$file = "../../upload_space/group_upload_space/".$group_id."/".$row['meeting_id'];
 	mkdir($file);
-
+	$meeting_id = $row['meeting_id'];
+	
+	$sql = "select * from group_member where group_id = '".$group_id."'";		//取得group 內所有人
+	$result = $conn->query($sql);
+	$num_rows = $result->num_rows;
+	
+	for ( $i = 1; $i <= $num_rows; $i++)
+	{
+		
+		$row=$result->fetch_array();
+		$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."')";
+		if ( $conn->query($invite_member_meeting_sql) )
+			echo "invite success";
+	}
+	
 	$platform = $_SESSION["platform"];
 	if ($platform == "device")
 		header("Location: ../../../device/employee/employee_center.php");
 	else if ($platform == "web")
-		header("Location: ../../../web/employee/employee_center.php");
+		header("Location: ../../../web/employee_web/group/group.php?group_id=".$group_id );
 	else
 		header("Location: ../../../web/employee/employee_center.php");
 		

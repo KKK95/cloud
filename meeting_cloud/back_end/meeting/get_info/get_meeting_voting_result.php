@@ -75,15 +75,14 @@
 				
 				$obj_issue = "obj_".$row['issue_id'];
 				$find_options = "select * from meeting_voting_options 
-								where issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' and issue_id = '".$row['issue_id']."'";
+								where issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' 
+								and meeting_id = '".$meeting_id."'";
 				
 				$options_result = $conn->query($find_options);
 				$num_options = $options_result->num_rows;	
 				if ($num_options != 0)
 				{
 					$json['contents'][$obj_issue] = array('option'=>array(), 'option_id'=>array(), 'result'=>array());
-	//				$json['contents'][$obj_issue] = array('option_id'=>array());
-	//				$json['contents'][$obj_issue] = array('result'=>array());
 
 					for($j=1 ; $j <= $num_options ; $j++) 
 					{
@@ -101,10 +100,5 @@
 				}
 			}
 		}
-		if ($_SESSION['platform'] == "device")
-			echo json_encode( $json );
-		else
-		{
-			$data = json_encode( $json );
-		}	echo "($data)";
+		echo json_encode( $json );
 ?>
