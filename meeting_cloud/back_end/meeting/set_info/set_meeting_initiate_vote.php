@@ -8,7 +8,6 @@
 	require_once("../../../login_check.php");	
 
 	
-	
 	if (isset($_SESSION["id"]))
 		$id = $_SESSION['id'];
 	else
@@ -16,7 +15,7 @@
 	
 	$datetime = date("Y-m-d H:i:s");
 	
-	if (isset($_GET['meeting_id'])
+	if (isset($_GET['meeting_id']))
 	{
 		$meeting_id = $_GET['meeting_id'];
 	}
@@ -28,18 +27,24 @@
 		$meeting_id = $row['meeting_id'];
 	}
 	
-	$option = $_POST['option'];
 	
-	if (isset($_POST['topic_id']))
+	if (isset($_GET['topic_id']))
+	{	$topic_id = $_GET['topic_id'];		}
+	else if (isset($_POST['topic_id']))
 	{	$topic_id = $_POST['topic_id'];		}
 	else
 	{	$topic_id = 0;	}
 	
-	$sql = "select * from group_meeting_now where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-	$result=$conn->query($sql);
-	$issue_id = $result->num_rows + 1;	
-	
-	$sql = "INSERT INTO meeting_vote value('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$issue."')";
-	
+	if (isset($_POST['issue']))
+	{
+		
+		$issue = $_POST['issue'];
+		$sql = "select * from meeting_vote where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+		$result=$conn->query($sql);
+		$issue_id = $result->num_rows + 1;	
+		
+		$sql = "INSERT INTO meeting_vote value('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$issue."')";
+		$conn->query($sql);
+	}
 	
 ?>

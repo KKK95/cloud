@@ -1,10 +1,10 @@
-<?php
+ï»¿<?php
 		//device/back_end
 		
 		if(!isset($_SESSION))
-		{  	session_start();	}			//¥Î session ¨ç¦¡, ¬Ý¥Î¤á¬O§_¤w¸gµn¿ý¤F
+		{  	session_start();	}			//ç”¨ session å‡½å¼, çœ‹ç”¨æˆ¶æ˜¯å¦å·²ç¶“ç™»éŒ„äº†
 
-		require_once("../../../connMysql.php");			//¤Þ¥ÎconnMysql.php ¨Ó³s±µ¸ê®Æ®w
+		require_once("../../../connMysql.php");			//å¼•ç”¨connMysql.php ä¾†é€£æŽ¥è³‡æ–™åº«
 	
 	//	require_once("../../../login_check.php");	
 	
@@ -15,7 +15,7 @@
 		
 		$datetime = date("Y-m-d H:i:s");
 		
-		if (isset($_GET['meeting_id'])
+		if (isset($_GET['meeting_id']))
 		{
 			$meeting_id = $_GET['meeting_id'];
 		}
@@ -27,8 +27,8 @@
 			$meeting_id = $row['meeting_id'];
 		}
 		
-		if (isset($_POST['topic_id']))
-		{	$topic_id = $_POST['topic_id'];	}
+		if (isset($_GET['topic_id']))
+		{	$topic_id = $_GET['topic_id'];	}
 		else
 		{	$topic_id = 0;	}
 		
@@ -41,12 +41,15 @@
 		
 		if( isset($question) )
 		{
-			$sql = "INSERT INTO meeting_questions value('$meeting_id', '$topic_id', '$question_id', '$question', '', '$datetime')";
+			$sql = "INSERT INTO meeting_questions value('".$meeting_id."', '".$topic_id."', '".$question_id."', '".$question."', '', '".$datetime."')";
 			
 			if	($conn->query($sql))
-				echo "µo°e¦¨¥\";
+			{	echo "ç™¼é€æˆåŠŸ";	}
 			else
-				echo "µo°e¥¢±Ñ";
+			{
+				echo $sql;
+			}
 		}
 		
+		//å¤§ç¥žå‡ºç”¢ UI çš„å¹³å‡é€Ÿåº¦æ˜¯?
 ?>

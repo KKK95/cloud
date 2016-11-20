@@ -1,10 +1,10 @@
-<?php
+ï»¿<?php
 		//device/back_end
 		
 		if(!isset($_SESSION))
-		{  	session_start();	}			//¥Î session ¨ç¦¡, ¬Ý¥Î¤á¬O§_¤w¸gµn¿ý¤F
+		{  	session_start();	}			//ç”¨ session å‡½å¼, çœ‹ç”¨æˆ¶æ˜¯å¦å·²ç¶“ç™»éŒ„äº†
 
-		require_once("../../../connMysql.php");			//¤Þ¥ÎconnMysql.php ¨Ó³s±µ¸ê®Æ®w
+		require_once("../../../connMysql.php");			//å¼•ç”¨connMysql.php ä¾†é€£æŽ¥è³‡æ–™åº«
 	
 		require_once("../../../login_check.php");
 		
@@ -15,7 +15,7 @@
 		else
 			$id = "a@";
 		
-		if (isset($_GET['meeting_id'])					//¨ú¥Xmeeting id
+		if (isset($_GET['meeting_id']))					//å–å‡ºmeeting id
 		{
 			$meeting_id = $_GET['meeting_id'];
 		}
@@ -27,7 +27,9 @@
 			$meeting_id = $row['meeting_id'];
 		}
 		
-		if (isset($_POST['topic_id'])					//¨ú¥Xtopic id
+		if ( isset($_GET['topic_id']) )
+			$topic_id = $_GET['topic_id'];
+		else if ( isset($_POST['topic_id']) )					//å–å‡ºtopic id
 			$topic_id = $_POST['topic_id'];
 		else
 			$topic_id = 0;
@@ -41,9 +43,9 @@
 			$sql = "UPDATE meeting_questions SET answer = '".$answer."'  
 					where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' and question_id = '".$question_id."'";	
 			if	($conn->query($sql))
-				echo "µo°e¦¨¥\";
+				echo "ç™¼é€æˆåŠŸ";
 			else
-				echo "µo°e¥¢±Ñ";
+				echo "ç™¼é€å¤±æ•—";
 		}
 		
 ?>

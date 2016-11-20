@@ -10,18 +10,18 @@
 		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
 		$result=$conn->query($sql);
 		
-														
+		
 		$num_rows = $result->num_rows;					//看是否在會議中
 		if (isset($_GET['meeting_id']))							//否
 		{	$meeting_id = $_GET['meeting_id'];	}
-		else if ($num_rows!=0)											//是
+		else if ($num_rows!=0)									//是
 		{
 			$row=$result->fetch_array();
 			$meeting_id = $row['meeting_id'];
 		}
 		
-		if (isset($_POST['topic_id']))
-		{	$topic_id = $_POST['topic_id'];	}
+		if (isset($_GET['topic_id']))
+		{	$topic_id = $_GET['topic_id'];	}
 		else
 		{	$topic_id = 0;	}
 		
@@ -44,7 +44,7 @@
 			$json ['contents']['obj_question']['question_id'] = array();
 			$json ['contents']['obj_question']['answer'] = array();
 			
-			for ($i = 1; i <= $num_rows; i++)
+			for ($i = 1; $i <= $num_rows; $i++)
 			{
 				$row=$result->fetch_array();
 				array_push ($json ['contents']['obj_question']['head_question'], $row['question']);

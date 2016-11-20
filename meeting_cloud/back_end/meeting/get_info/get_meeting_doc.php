@@ -23,7 +23,7 @@
 		{	$meeting_id = $_GET['meeting_id'];	}
 		else if ($num_rows!=0)											//是
 		{
-			$row=$result->fetch_array();
+			$row = $result->fetch_array();
 			$meeting_id = $row['meeting_id'];
 		}
 
@@ -32,7 +32,10 @@
 		$row=$result->fetch_array();
 		$group_id = $row['group_id'];
 		
-		$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/";
+		if (isset($_GET['topic_id']))
+		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/".$_GET['topic_id']."/";	}
+		else
+		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/";	}
 		$relative_path = "../../".$path;
 		$first_file = 0;
 		

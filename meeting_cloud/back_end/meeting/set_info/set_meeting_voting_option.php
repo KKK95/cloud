@@ -12,10 +12,8 @@
 	else
 		$id = "a@";
 	
-	if (isset($_GET['meeting_id'])
-	{
-		$meeting_id = $_GET['meeting_id'];
-	}
+	if (isset($_GET['meeting_id']))
+	{	$meeting_id = $_GET['meeting_id'];	}
 	else
 	{
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
@@ -24,19 +22,35 @@
 		$meeting_id = $row['meeting_id'];
 	}
 	
+	if (isset($_GET['topic_id']))
+	{	$topic_id = $_GET['topic_id'];		}
+	else if (isset($_POST['topic_id']))
+	{	$topic_id = $_POST['topic_id'];		}
+	else
+	{	$topic_id = 0;	}
 	
-	$option = $_POST['option'];
-	$issue_id = $_POST['issue_id'];
-	$topic_id = $_POST['topic_id'];
+	if (isset($_GET['issue_id']))
+	{	$issue_id = $_GET['issue_id'];		}
+	else if (isset($_POST['issue_id']))
+	{	$issue_id = $_POST['issue_id'];		}
+
 	
-	$sql = "select * from meeting_voting_options 
-			where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."' 
-			and		issue_id = '".$issue_id."'";
-	$result=$conn->query($sql);
-	$option_id = $result->num_rows + 1;	
-	
-	$sql = "INSERT INTO meeting_voting_options value
-			('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$option_id."', '".$option."', 0)";
-	
+	if (isset($_POST['option']) && isset($issue_id))
+	{
+
+		$option = $_POST['option'];
+		
+		$sql = "select * from meeting_voting_options 
+				where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."' 
+				and		issue_id = '".$issue_id."'";
+		$result=$conn->query($sql);
+		$option_id = $result->num_rows + 1;	
+		
+		$sql = "INSERT INTO meeting_voting_options value
+				('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$option_id."', '".$option."', 0)";
+		
+		$result=$conn->query($sql);
+		echo $sql;
+	}
 	
 ?>

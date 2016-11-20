@@ -20,7 +20,9 @@
 			$meeting_id = $row['meeting_id'];
 		}
 		
-		if (isset($_POST['topic_id']))
+		if (isset($_GET['topic_id']))
+		{	$topic_id = $_GET['topic_id'];	}
+		else if (isset($_POST['topic_id']))
 		{	$topic_id = $_POST['topic_id'];	}
 		else
 		{	$topic_id = 0;	}
@@ -43,7 +45,7 @@
 			$json ['contents']['obj_answer']['topic_id'] = array();
 			$json ['contents']['obj_answer']['question_id'] = array();
 			
-			for ($i = 1; i <= $num_rows; i++)
+			for ($i = 1; $i <= $num_rows; $i++)
 			{
 				$row=$result->fetch_array();
 				array_push ($json ['contents']['obj_answer']['head_answer'], $row['answer']);
