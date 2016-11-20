@@ -5,9 +5,9 @@
 	if(!isset($_SESSION))
 	{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
-	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
+	require_once("../../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-//	require_once("../../../login_check.php");
+//	require_once("../../../../login_check.php");
 	
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
@@ -59,7 +59,7 @@
 			set_voting_request = createRequest();
 			if (set_voting_request != null) 
 			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_initiate_vote.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = '../../../../back_end/meeting/set_info/set_meeting_initiate_vote.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 				set_voting_request.open("POST", url, true);
 				set_voting_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 				set_voting_request.send("issue=" + issue);						// 送出請求（由於為 GET 所以參數為 null）
@@ -72,7 +72,7 @@
 			update_option_request = createRequest();
 			if (update_option_request != null) 
 			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_voting_option.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&issue_id=' + issue_id;
+				var url = '../../../../back_end/meeting/set_info/set_meeting_voting_option.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&issue_id=' + issue_id;
 
 				update_option_request.open("POST", url, true);
 				update_option_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -97,19 +97,30 @@
 			}
 		}
 		*/
-		function get_option_list_request() 					//取得會議id
+		function get_voting_list_request() 					//取得會議id
 		{
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../back_end/meeting/get_info/get_meeting_voting_result.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = '../../../../back_end/meeting/get_info/get_meeting_voting_result.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		//千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
 			}
 		}
 		
-		
+		function get_meeting_member_list_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = '../../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=' + meeting_id;
+
+				request.open("GET", url, true);
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
 		
 		function displayResult() 
 		{	
@@ -127,6 +138,15 @@
 						{
 							get_num_of_voting = obj.contents.obj_voting_result.head_issue.length;
 								update_voting();
+						}
+						else if ( obj['contents'] && obj.contents['obj_meeting_member_list'] && obj.contents.obj_meeting_member_list != "none")
+						{
+							get_join_meeting_member = obj.contents.obj_meeting_member_list.name.length;
+							get_now_meeting_member = obj.contents.now_meeting_member;
+							console.log("從server 收到有多少人已加入會議 : " + get_now_meeting_member);
+							console.log("有多少人已加入會議 : " + now_meeting_member);
+							if (join_meeting_member != get_join_meeting_member || now_meeting_member != get_now_meeting_member)
+								update_member_list();
 						}
 
 					}
@@ -160,7 +180,10 @@
 			return request;
 		}
 		
-		setInterval("get_option_list_request();", 1000) //每隔一秒發出一次查詢
+		setInterval("get_voting_list_request();", 1000) //每隔一秒發出一次查詢
+		setInterval("get_meeting_member_list_request();", 1000)
+		
+		
 			
 		function update_voting() 
 		{  
@@ -202,7 +225,7 @@
 					'<tr>' + 
 						'<div style="width:600px; height:200px; overflow:hidden;">' +
 						'<div style="width:620px; height:200px; overflow-y: auto;">' +
-							'<form name="vote_form' + count + '" method="post" action="../../../back_end/meeting/set_info/set_meeting_vote.php">' + 
+							'<form name="vote_form' + count + '" method="post" action="../../../../back_end/meeting/set_info/set_meeting_vote.php">' + 
 							'<table id="table">' +
 		'<tr id = "voting' + count + '-option1"></tr><tr id = "voting' + count + '-option2"></tr>' + 
 		'<tr id = "voting' + count + '-option3"></tr><tr id = "voting' + count + '-option4"></tr>' +
@@ -271,6 +294,44 @@
 			now_num_of_voting = get_num_of_voting;
 		}
 		
+		
+		function update_member_list()
+		{  
+			var count_online = 0;
+			var count_offline = 0;
+			var online = 0;
+			var name = "";
+			
+			now_meeting_member = 0;
+			join_meeting_member = get_join_meeting_member;
+			
+			for (var i = 0; i < get_join_meeting_member; i++ )
+			{
+				name = obj.contents.obj_meeting_member_list.name[i];
+				online = obj.contents.obj_meeting_member_list.online[i];
+				console.log(obj.contents.obj_meeting_member_list.online[i]);
+				console.log(online);
+				if (online == 1)						//在線
+				{
+					count_online = count_online + 1;
+					document.getElementById("online" + count_online).innerHTML = 
+					'<td height="50px" name="online' + count_online + '" style="text-align:center;">' + name + '</td>';
+				}
+				else if (online == 0)
+				{
+					count_offline = count_offline + 1;
+					document.getElementById("offline" + count_offline).innerHTML =  
+					'<td height="50px" name="offline' + count_offline + '" style="text-align:center;">' + name + '</td>';
+				}	
+				
+			}
+			for (var i = count_online + 1; i < 30 ; i++)
+				document.getElementById("online" + i).innerHTML = "";
+			
+			for (var i = count_offline + 1; i < 30 ; i++)
+				document.getElementById("offline" + i).innerHTML = "";
+			now_meeting_member = count_online;
+		}
 	</script>
 	
 	<title>智會GO</title>
@@ -290,12 +351,10 @@
 		<div id="divTop">
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
-					會議資訊
-						<dt><a href="em_meeting_vote.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">投票</a></dt>
-						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">返回</a></dt>
-						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
-						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">返回群組</a></dt>
+						會議資訊
+						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
+						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
+						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
 			</dl>
@@ -316,13 +375,13 @@
 				<tr>
 					<table id="table">
 						<tr>
-							<td id="tableTittle1">發起投票</td>
+							<td id="tableTittle1">投票標題</td>
 							<form name="set_voting_form">
 								<td id="tableValueCol1"><input id="tableValue1" type="text" name="issue" /></td>
 							</form>
 						</tr>
 					</table>
-					<input id="tableButton" type="submit" value="確認送出" onclick="set_voting(document.set_voting_form.issue.value); set_voting_form.reset()"/>
+					<input id="tableButton" type="submit" value="發起投票" onclick="set_voting(document.set_voting_form.issue.value); set_voting_form.reset()"/>
 				</tr>
 				
 			</div>
@@ -330,6 +389,59 @@
 			
 			
 		</div>
+	</div>
+	
+	<!-- ============================================================================================================================== -->
+	
+	<div id = "right table" style="height:515px;">
+		<dl style="margin:0;width:200;float:right;">
+			<table align=right border=1>
+				<table>
+				<tr>
+				<td id="tableTittle1">到場人</td>
+				</tr>
+				</table>
+			<div style="width:200px;height:200px;text-align:center;overflow:hidden;" >
+			<div style="width:220px;height:200px;overflow-y: auto;text-align:center;">
+				<table style="width:200;">
+				
+				<?php 
+					$join_meeting_member = 30;
+					for ( $i = 0 ; $i < $join_meeting_member ; $i++ )
+					{
+						echo "<tr id=\"online".$i."\" bgcolor=\"white\">";
+				//		echo "<td height=\"50px\" name=\"online".$i."\" style=\"text-align:center;\"></td>";
+						echo "</tr>";
+					}
+				?>
+				</table>
+			</div>
+			</div>
+			</table>
+			<table align=right border=1>
+				<table>
+				<tr>
+				<td id="tableTittle1">尚未</td>
+				</tr>
+				</table>
+			<div style="width:200px;height:260px;text-align:center;overflow:hidden;" >
+			<div style="width:220px;height:260px;overflow-y: auto;text-align:center;">
+				<table style="width:200;">
+				
+				<?php 
+					$join_meeting_member = 30;
+					for ( $i = 0 ; $i < $join_meeting_member ; $i++ )
+					{
+						echo "<tr id=\"offline".$i."\" bgcolor=\"white\">";
+				//		echo "<td height=\"50px\" name=\"offline".$i."\" style=\"text-align:center;\"></td>";
+						echo "</tr>";
+					}
+				?>
+					
+				</table>
+			</div>
+			</div>
+			</table>
 	</div>
 </body>
 </html>

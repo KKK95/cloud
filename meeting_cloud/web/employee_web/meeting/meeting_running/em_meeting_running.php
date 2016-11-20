@@ -46,6 +46,9 @@
 		var join_meeting_member = 0;
 		var get_join_meeting_member = 0;
 		
+		var group_id = <?php echo $group_id; ?>;
+		var meeting_id = <?php echo $meeting_id; ?>;
+		
 		var obj;
 
 		function invite_member() 
@@ -69,9 +72,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-		<?php
-				echo "var url = \"../../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=".$meeting_id."\";";
-		?>
+				var url = '../../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=' + meeting_id;
 
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		//千萬不能加括號
@@ -190,10 +191,9 @@
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
 					會議資訊
-						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
-						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
-						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">返回群組</a></dt>
+						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
+						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
+						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
 			</dl>
