@@ -34,13 +34,19 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-	<link rel="stylesheet" type="text/css" href="../../main_css/main.css">
+	<link rel="stylesheet" type="text/css" href="../../../main_css/main.css">
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	
-	<script language="JavaScript" src="../../main_js/leftBarSlide.js"></script>
+	<script language="JavaScript" src="../../../main_js/leftBarSlide.js"></script>
 	
 	<script>
+		var now_meeting_member = 0;
+		var get_now_meeting_member = 0;
+		
+		var join_meeting_member = 0;
+		var get_join_meeting_member = 0;
+		
 		var now_num_of_voting = 0;
 		var get_num_of_voting = 0;
 		
@@ -50,6 +56,9 @@
 		var group_id = <?php echo $group_id; ?>;
 		var meeting_id = <?php echo $meeting_id; ?>;
 		var topic_id = <?php echo $topic_id; ?>;
+		
+		var get_voting_list_time = 200;
+		var get_meeting_member_list_time = 100;
 		
 		var obj;
 
@@ -99,6 +108,7 @@
 		*/
 		function get_voting_list_request() 					//取得會議id
 		{
+	//		get_voting_list_time = 1000;
 			request = createRequest();
 			if (request != null) 
 			{
@@ -111,6 +121,7 @@
 		
 		function get_meeting_member_list_request() 					//取得會議id
 		{
+	//		get_meeting_member_list_time = 1250;
 			request = createRequest();
 			if (request != null) 
 			{
@@ -120,6 +131,7 @@
 				request.onreadystatechange = displayResult;		//千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
 			}
+			
 		}
 		
 		function displayResult() 
@@ -180,8 +192,8 @@
 			return request;
 		}
 		
-		setInterval("get_voting_list_request();", 1000) //每隔一秒發出一次查詢
-		setInterval("get_meeting_member_list_request();", 1000)
+		setInterval("get_voting_list_request();", 900) //每隔一秒發出一次查詢
+		setInterval("get_meeting_member_list_request();", 400)
 		
 		
 			
@@ -352,10 +364,10 @@
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
 						會議資訊
-						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
-						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
-						<dt><a href="">登出</a></dt>
+						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">返回會議議題列表</a></dt>
+						<dt><a href="em_meeting_running_topic.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">返回議題</a></dt>
+						
+						<dt><a href="">結束會議</a></dt>
 				</dt>
 			</dl>
 			
@@ -421,7 +433,7 @@
 			<table align=right border=1>
 				<table>
 				<tr>
-				<td id="tableTittle1">尚未</td>
+				<td id="tableTittle1">尚未到場</td>
 				</tr>
 				</table>
 			<div style="width:200px;height:260px;text-align:center;overflow:hidden;" >

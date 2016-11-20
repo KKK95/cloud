@@ -46,6 +46,9 @@
 		var join_meeting_member = 0;
 		var get_join_meeting_member = 0;
 		
+		var now_num_of_meeting_topic = 0;
+		var get_num_of_meeting_topic = 0;
+		
 		var group_id = <?php echo $group_id; ?>;
 		var meeting_id = <?php echo $meeting_id; ?>;
 		
@@ -56,9 +59,7 @@
 			invite_member_request = createRequest();
 			if (invite_member_request != null) 
 			{
-		<?php
-				echo "var url = \"../../../../back_end/meeting/set_info/set_meeting_member.php?meeting_id=".$meeting_id."\";";
-		?>
+				var url = '../../../../back_end/meeting/set_info/set_meeting_member.php?meeting_id=' + meeting_id;
 				set_topic_request.open("POST", url, true);
 				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 				set_topic_request.send("member=" + document.invite_member_form.member.value);						// 送出請求（由於為 GET 所以參數為 null）
@@ -66,8 +67,39 @@
 			}
 		}
 		
+		function set_topic() 
+		{
+			set_topic_request = createRequest();
+			if (set_topic_request != null) 
+			{
+
+				var url = '../../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=' + meeting_id ;
+
+				console.log(url);
+				set_topic_request.open("POST", url, true);
+				set_topic_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				set_topic_request.send("topic=" + document.set_new_topic_form.topic.value);						// 送出請求（由於為 GET 所以參數為 null）
+				document.set_new_topic_form.topic.value = "";
+				request.onreadystatechange = displayResult;
+			}
+		}
 		
-		function get_meeting_member_list_request() 					//取得會議id
+		
+		function get_meeting_info_request() 					
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = '../../../../back_end/meeting/get_info/get_meeting_info.php?meeting_id=' + meeting_id ;
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		
+		function get_meeting_member_list_request() 					
 		{
 			request = createRequest();
 			if (request != null) 
@@ -98,6 +130,13 @@
 							console.log("有多少人已加入會議 : " + now_meeting_member);
 							if (join_meeting_member != get_join_meeting_member || now_meeting_member != get_now_meeting_member)
 								update_member_list();
+						}
+						else if ( obj['contents'] && obj.contents['obj_meeting_topic'] && obj.contents.obj_meeting_topic != "none")
+						{
+							
+							get_num_of_meeting_topic = obj.contents.obj_meeting_topic.topic.length;
+							if (get_num_of_meeting_topic != now_num_of_meeting_topic)
+								add_new_topic();
 						}
 
 					}
@@ -131,8 +170,9 @@
 			return request;
 		}
 		
-		setInterval("get_meeting_member_list_request();", 1000) //每隔一秒發出一次查詢
-			
+		setInterval("get_meeting_member_list_request();", 870) //每隔一秒發出一次查詢
+		setInterval("get_meeting_info_request();", 1000) //每隔一秒發出一次查詢
+		
 		function update_member_list()
 		{  
 			var count_online = 0;
@@ -171,6 +211,36 @@
 			now_meeting_member = count_online;
 		}
 		
+		
+		function add_new_topic() 
+		{  
+
+			var count = 0;
+			var meeting_topic_row = 0;
+			var topic = 0;
+			
+			for (var i = 0; i < get_num_of_meeting_topic; i++ )
+			{
+				count = count + 1;
+				meeting_topic_row = count % 2;
+				topic_id = obj.contents.obj_meeting_topic.topic_id[i];
+				
+				if (meeting_topic_row == 0)	meeting_topic_row = 2;
+				
+				document.getElementById("meeting_topic" + count).innerHTML = document.getElementById("meeting_topic" + count).innerHTML + 
+					'<td id = "tableValueCol' + meeting_topic_row + '">' + 
+					'<a href = "./em_meeting_running_topic.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '" ' + 
+					'style = "color:#333333;width:auto;line-height:200%;">' +
+					obj.contents.obj_meeting_topic.topic[i] + 
+					'</a></td>';
+				
+				
+			}
+			now_num_of_meeting_topic = get_num_of_meeting_topic;
+		}
+		
+		
+		
 	</script>
 	
 	<title>智會GO</title>
@@ -200,39 +270,59 @@
 			
 			
 			<div id="main_in_main">
+			
 				<?php
 					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
 				?>
 				<div id="main_sub">
-					<p id="conventionTittle">與會者名單</p>
+					<p id="conventionTittle">會議議題</p>
 					<table id="table">
-						<table id="table">
-							<tr>
+						<tr>
+							<table id="table">
+								<tr>
+									<td id="tableTittleCol1" > </td>
+								</tr>
+							</table>
+						</tr>
+						<tr>
+							<div style="width:600px; height:200px; overflow:hidden;">
+							<div style="width:620px; height:200px; overflow-y: auto;">
 								<table id="table">
-									<tr>
-										<td id="tableTittleCol1" style="width:150px">姓名</td>
-										<td id="tableTittleCol1" style="width:150px">職位</td>
-										<td id="tableTittleCol2" style="width:300px">e-mail</td>
-									</tr>
-								</table>
-							</tr>
-							<tr>
-								<div style="width:600px; height:200px; overflow:hidden;" >
-								<div style="width:620px; height:200px; overflow-y: auto;">
-									<table id="table">
+								
+								
+								
+									<?php    
+										$num_of_meeting_topic = 30;
+										for ($i =1; $i<=$num_of_meeting_topic; $i++)
+											echo "<tr id = \"meeting_topic".$i."\"></tr>";
+									?>    
 									
-										<?php    
-										$num_of_meeting_member = 30;
-										for ($i =1; $i<=$num_of_meeting_member; $i++)
-											echo "<tr id = \"meeting_member".$i."\"></tr>";
-										?>    
-										
-										<tr></tr>
-									</table>
-								</div>
-								</div>
-							</tr>
-						</table>
+									
+									<tr></tr>
+								</table>
+							</div>
+							</div>
+						</tr>
+						<tr>
+							<table id="table">
+								<tr>
+									<td id="tableTittle1">新增會議議題</td>
+									<?php
+										echo "<form name=\"set_new_topic_form\" method=\"post\"
+												action=\"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\">";
+									?>
+									<td id="tableValueCol1"><input id="tableValue1" type="text" name="topic" /></td>
+									
+									</form>
+								</tr>
+							</table>
+							<input id="tableButton" name="set_new_topic" type="submit" value="確認送出" onclick="set_topic();"/>
+						</tr>
+					</table>
+				</div>
+				
+				<div id="main_sub">
+					<table id="table">
 						<tr>
 							<table id="table">
 								<tr>
@@ -284,7 +374,7 @@
 			<table align=right border=1>
 				<table>
 				<tr>
-				<td id="tableTittle1">尚未</td>
+				<td id="tableTittle1">尚未到場</td>
 				</tr>
 				</table>
 			<div style="width:200px;height:260px;text-align:center;overflow:hidden;" >
@@ -305,7 +395,7 @@
 			</div>
 			</div>
 			</table>
-		</div>
+	</div>
 </body>
 </html>
 
