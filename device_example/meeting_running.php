@@ -1,0 +1,113 @@
+{
+	"link":
+	{
+		"get_topic_list":"back_end\/meeting\/get_info\/get_meeting_info.php?meeting_id=4",
+		"get_meeting_doc_list":"back_end\/meeting\/get_info\/get_meeting_doc.php",
+		"get_meeting_question":"back_end\/meeting\/get_info\/get_meeting_question.php",
+		"get_meeting_member_list":"back_end\/meeting\/get_info\/get_meeting_member_list.php",
+		"quit":"back_end\/meeting_end.php",
+		"update_info":"back_end\/meeting\/meeting_update_info.php"
+	},
+	"form":
+	{
+		"conn_to_local_server":
+		{
+			"func":"conn_to_local_server",
+			"addr":"back_end\/meeting\/conn_to_local_server.php",
+			"form":
+			{
+				"local_server_id":"none",
+				"member_ip":"none"
+			}
+		},
+		"get_meeting_voting_result":													//取得會議投票記錄
+		{
+			"func":"get_meeting_voting_result",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_voting_result.php",
+			"form":
+			{
+				"topic_id":"none",
+				"issue_id":"none"
+			}
+		},
+		"get_meeting_question":															//取得問題
+		{
+			"func":"get_question",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php",
+			"form":
+			{
+				"topic_id":"none"
+			}
+		},
+		"get_meeting_answer":															//取得回答
+		{
+			"func":"get_answer",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php",
+			"form":
+			{
+				"topic_id":"none"
+			}
+		},
+		"answer_question":																//回答問題
+		{
+			"func":"meeting_answer",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_answer.php",
+			"form":
+			{
+				"question_id":"none",
+				"topic_id":"none",
+				"answer":"none"
+			}
+		},
+		"vote_issue":																	//發起投票主題
+		{
+			"func":"vote_issue",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_initiate_vote.php",
+			"form":
+			{
+				"topic_id":"none",
+				"issue":"none"
+			}
+		},
+		"meeting_ask":																	//問問題
+		{
+			"func":"meeting_ask_question",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_question.php",
+			"form":
+			{
+				"question":"none",
+				"topic_id":"none"
+			}
+		},
+		"meeting_motion":																//提出議題
+		{
+			"func":"add_meeting_topic",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_topic.php",
+			"form":
+			{"topic":"none"}
+		},
+		"set_voting_option":															//為投票主題設定選項
+		{
+			"func":"add_voting_option",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_voting_option.php",
+			"form":
+			{
+				"topic_id":"none",
+				"issue_id":"none",
+				"option":"none"
+			}
+		},
+		"vote":																			//投票
+		{
+			"func":"add_voting_option",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_vote.php",		
+			"form":
+			{
+				"topic_id":"none",
+				"issue_id":"none",
+				"option_id":"none"
+			}
+		},
+		
+	}
+}
