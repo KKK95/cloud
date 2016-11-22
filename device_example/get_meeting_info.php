@@ -50,5 +50,14 @@
 				"topic_id":"none"
 			}
 		}
+		"get_topic_content":																					//取得會議議題中的內容
+		{
+			"func":"get_topic_content",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_content.php?meeting_id=4",
+			"form":
+			{
+				"topic_id":"none"
+			},
+		},
 	}
 }
