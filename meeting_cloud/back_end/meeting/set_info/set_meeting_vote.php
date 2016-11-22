@@ -73,7 +73,7 @@
 	
 	if ($_SESSION['platform'] == "web")
 	{
-		header("Location: ../../../web/employee_web/meeting/em_meeting_vote.php?meeting_id=".$meeting_id."&topic_id=".$topic_id);
+		header("Location: ../../../web/employee_web/meeting/meeting_running/em_meeting_running_vote.php?meeting_id=".$meeting_id."&topic_id=".$topic_id);
 	}	
 	
 	

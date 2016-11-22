@@ -36,7 +36,7 @@
 		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/".$_GET['topic_id']."/";	}
 		else
 		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/";	}
-		$relative_path = "../../".$path;
+		$relative_path = "../../".$path;			//get_meeting_doc 的相對路徑
 		$first_file = 0;
 		
 		$json = array
@@ -65,8 +65,8 @@
 						}
 						$file=iconv("BIG5", "UTF-8",$file);
 						array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
-						array_push( $json ['link']['obj_doc_list']['download'], "../../../back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
-						array_push( $json ['link']['obj_doc_list']['open_doc'], "../../../back_end/".$path.$file );
+						array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
+						array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/".$path.$file );
 						//這邊要用 em_meeting_running 看 download.php 的相對路徑
 						//而不是 get_meeting_doc 看 download.php 的相對路徑
 					}

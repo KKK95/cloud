@@ -18,9 +18,18 @@
 	
 	$result = $conn->query($sql);
 	$row = $result->fetch_array();
+	$meeting_id = $_GET['meeting_id'];
+	$moderator = $row['name'];
 	$meeting_date = date("Y-m-d", strtotime($row['time']));
 	$meeting_time = date("H:i", strtotime($row['time']));
-	$moderator = $row['name'];
+	
+	
+	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
+	$result = $conn->query($sql);
+	$row = $result->fetch_array();
+	$meeting_title = $row['title'];
+	$group_id = $row['group_id'];
+
 	
 	//以center 的角度來看的相對路徑
 	$json = array
@@ -30,11 +39,7 @@
 			"moderator" => $moderator,
 			"date" => $meeting_date,
 			"time" => $meeting_time,
-		),
-		"link" => array
-		(
-			"meeting_start" => "../../back_end/meeting_start.php?meeting_id=".$_GET['meeting_id'],				
-			"get_meeting_topic_form.php" => ".meeting/set_meeting_topic_form.php?meeting_id=".$_GET['meeting_id']
+			"meeting_id" => $_GET['meeting_id'],
 		),
 		
 	);

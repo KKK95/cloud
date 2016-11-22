@@ -1,5 +1,7 @@
 ﻿<?php
 
+//127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_topic.php?meeting_id=4
+
 	header("Content-Type: text/html; charset=UTF-8");
 	
 	if(!isset($_SESSION))
@@ -7,12 +9,12 @@
 
 	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../../../login_check.php");
+//	require_once("../../../login_check.php");
 	
 	$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
 	$result=$conn->query($sql);
 	
-													
+	
 	$num_rows = $result->num_rows;					//看是否在會議中
 	if (isset($_GET['meeting_id']))							//否
 	{	$meeting_id = $_GET['meeting_id'];	}
@@ -29,12 +31,17 @@
 	$json = array
 	(
 		"contents" => array(),
+		"form" => array
+		(
+			
+		),
 	);
+	$json['contents']['obj_meeting_topic'] = array();
+	
 	if ($num_rows==0)
-	{	$state = "會議還沒有設下議題";	}
+	{	$json['contents']['obj_meeting_topic'] = "none";	}
 	else
 	{
-		$json['contents']['obj_meeting_topic'] = array();
 		$json['contents']['obj_meeting_topic']['topic'] = array();
 		$json['contents']['obj_meeting_topic']['topic_id'] = array();
 	

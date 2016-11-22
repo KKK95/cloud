@@ -35,8 +35,6 @@
 				order by scheduler.time desc";
 	}
 	
-	$result = $conn->query($sql);
-	
 	$json = array
 	(	
 		"contents" => array(),

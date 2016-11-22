@@ -1,5 +1,7 @@
 ﻿<?php
 
+		//127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_voting_result.php?meeting_id=4&topic_id=1
+
 		header("Content-Type: text/html; charset=UTF-8");
 
 		if(!isset($_SESSION))
@@ -16,11 +18,11 @@
 		
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result = $conn->query($sql);
-														
+
 		$num_rows = $result->num_rows;					//看是否在會議中
-		if (isset($_GET['meeting_id']))							//否
+		if (isset($_GET['meeting_id']))					//否
 		{	$meeting_id = $_GET['meeting_id'];	}
-		else if ($num_rows!=0)											//是
+		else if ($num_rows!=0)							//是
 		{
 			$row = $result->fetch_array();
 			$meeting_id = $row['meeting_id'];
@@ -38,7 +40,7 @@
 		if ( isset($_GET['issue_id']) && $_GET['issue_id'] != "none")
 			$issue_id = $_GET['issue_id'];
 		
-		if ($topic_id != "" && $topic_id != "none")						 				//選擇某一議題內的投票
+		if ($topic_id != "" && $topic_id != "none")						//選擇某一議題內的投票
 		{
 
 			if ( $issue_id != "" && $issue_id != "none")				//某一議題內指定某一投票記錄
@@ -46,14 +48,14 @@
 				$issue_id = $_POST['issue_id'];
 				$sql = "select * from meeting_vote 
 						where meeting_id = '".$meeting_id."' and issue_id = '".$issue_id."' and topic_id = '".$topic_id."'";
+				$result = $conn->query($sql);
 				$num_voting = $result->num_rows;	
-				$result=$conn->query($sql);
 			}
 			else										//某一議題內的所有投票記錄
 			{
 				$sql = "select * from meeting_vote 
 						where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-				$result=$conn->query($sql);
+				$result = $conn->query($sql);
 				$num_voting = $result->num_rows;	
 			}
 		}

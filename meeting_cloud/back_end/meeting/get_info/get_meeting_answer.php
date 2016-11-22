@@ -1,5 +1,8 @@
 <?php
 
+		//測試用網址
+		//http://127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_answer.php?meeting_id=4&topic_id=2
+
 		if(!isset($_SESSION))
 		{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
@@ -7,10 +10,14 @@
 	
 		require_once("../../../login_check.php");	
 
-		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		if (isset($_SESSION["id"]))
+			$id = $_SESSION["id"];
+		else
+			$id = "a@";
+		
+		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
 		
-														
 		$num_rows = $result->num_rows;					//看是否在會議中
 		if (isset($_GET['meeting_id']))							//否
 		{	$meeting_id = $_GET['meeting_id'];	}
