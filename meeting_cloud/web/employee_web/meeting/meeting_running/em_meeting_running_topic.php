@@ -9,6 +9,11 @@
 	
 //	require_once("../../../../login_check.php");
 	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
+	
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
 	
@@ -17,16 +22,16 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	$moderator_id = $row['moderator_id'];					//看是否主席
 	
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	$meeting_topic = $row['topic'];
 	
-	if (isset($_SESSION["id"]))
-		$id = $_SESSION["id"];
-	else
-		$id = "a@";
+	
+	
+	
 ?>
 
 
@@ -64,6 +69,7 @@
 		var topic_id = <?php echo $topic_id; ?>;
 		
 		var obj;
+		var go_back = '../../../../';
 		
 		function upload_doc() 
 		{
@@ -76,7 +82,7 @@
 
 			if (upload_request != null) 
 			{
-				var url = '../../../../back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id + '/' + topic_id + '/';
+				var url = go_back + 'back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id + '/' + topic_id + '/';
 
 				upload_request.addEventListener('progress', function(e) {
 					var done = e.position || e.loaded, total = e.totalSize || e.total;
@@ -112,7 +118,7 @@
 			answer_request = createRequest();
 			if (answer_request != null) 
 			{
-				var url = '../../../../back_end/meeting/set_info/set_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&question_id=' + question_id;
+				var url = go_back + 'back_end/meeting/set_info/set_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&question_id=' + question_id;
 
 				console.log(url);
 				answer_request.open("POST", url, true);
@@ -129,7 +135,7 @@
 			ask_question_request = createRequest();
 			if (ask_question_request != null) 
 			{
-				var url = '../../../../back_end/meeting/set_info/set_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/set_info/set_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				console.log(url);
 				ask_question_request.open("POST", url, true);
@@ -145,7 +151,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../../back_end/meeting/get_info/get_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -159,7 +165,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../../back_end/meeting/get_info/get_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -173,7 +179,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../../back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		// 千萬不能加括號
@@ -186,7 +192,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../../back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=' + meeting_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_member_list.php?meeting_id=' + meeting_id;
 
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		//千萬不能加括號
@@ -335,7 +341,7 @@
 			for (var i = 1; i <= get_num_of_doc; i++ )
 			{
 				
-				link = obj.link.obj_doc_list.open_doc[i-1];
+				link = go_back + obj.link.obj_doc_list.open_doc[i-1];
 				doc_name = obj.link.obj_doc_list.remark_name[i-1];
 				
 				document.getElementById("doc_list" + i).innerHTML = 
@@ -417,7 +423,35 @@
 			
 			<div id="main_in_main">
 				<?php
-					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
+					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>";
+					echo $id;
+					if ($id == $moderator_id)
+					{
+						echo "<div id=\"main_sub\">".
+								"<p id=\"conventionTittle\">會議議題中的問題</p>".
+								"<table id=\"table\">".
+									"<tr>".
+										"<table id=\"table\">".
+											"<tr>".
+												"<td id=\"tableTittleCol1\" > </td>".
+											"</tr>".
+										"</table>".
+									"</tr>".
+									"<tr>".
+										"<table id=\"table\">".
+											"<tr>".
+												"<td id=\"tableTittle1\">結論</td>".
+												"<form name=\"meeting_minutes_form\">".
+													"<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"meeting_minutes\" /></td>".
+												"</form>".
+											"</tr>".
+										"</table>".
+										"<input id=\"tableButton\" type=\"submit\" value=\"確定結論\" onclick=\"set_meeting_minutes(document.meeting_minutes_form.meeting_minutes.value); meeting_minutes_form.reset()\"/>".
+									"</tr>".
+								"</table>".
+							"</div>";
+					}
+					
 				?>
 				<p id="conventionTittle">議題 - <?php echo $meeting_topic; ?></p>
 				<div id="main_sub">

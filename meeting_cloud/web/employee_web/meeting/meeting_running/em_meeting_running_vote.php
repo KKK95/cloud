@@ -9,24 +9,27 @@
 	
 //	require_once("../../../../login_check.php");
 	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
+	
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
-	$row=$result->fetch_array();
+	$row = $result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
-	
+	$moderator_id = $row['moderator_id'];					//看是否主席
+
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	$meeting_topic = $row['topic'];
 	
-	if (isset($_SESSION["id"]))
-		$id = $_SESSION["id"];
-	else
-		$id = "a@";
+	
 ?>
 
 
@@ -106,7 +109,7 @@
 			}
 		}
 		*/
-		function get_voting_list_request() 					//取得會議id
+		function get_voting_list_request() 					//取得議題中所有投票
 		{
 	//		get_voting_list_time = 1000;
 			request = createRequest();
@@ -119,7 +122,7 @@
 			}
 		}
 		
-		function get_meeting_member_list_request() 					//取得會議id
+		function get_meeting_member_list_request() 					//取得登錄人員名單
 		{
 	//		get_meeting_member_list_time = 1250;
 			request = createRequest();
@@ -250,24 +253,33 @@
 						'</div>' + 
 						'</div>' +
 					'</tr>' + 
-					'<tr>' +
-						'<form name="set_voting_option_form' + count + '">' +
-						'<table id="table">' + 
-							'<tr>' +
-								'<td id="tableTittle1">對投票提出選項</td>' +
+		<?php
+				if ( $id == $moderator_id )
+				{
+				echo "'<tr>' +".
+						"'<form name=\"set_voting_option_form' + count + '\">' +".
+						"'<table id=\"table\">' + ".
+							"'<tr>' +".
+								"'<td id=\"tableTittle1\">對投票提出選項</td>' +".
 								
-									'<td id="tableValueCol1"><input id="tableValue1" type="text" name="option" /></td>' + 
-									'<td>' +
-									'<input name="set_voting_option' + count + '" ' + 
-											'type="button" value="新增" ' +
-											'onclick="set_option(document.set_voting_option_form' + count + '.option.value, ' + voting_id + '); set_voting_option_form' + count + '.reset()" />' + 
-									'</td>' + 
+									"'<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"option\" /></td>' + ".
+									"'<td>' +".
+									"'<input name=\"set_voting_option' + count + '\" ' +". 
+											"'type=\"button\" value=\"新增\" ' +".
+											"'onclick=\"set_option(document.set_voting_option_form' + count + '.option.value, ' + voting_id + '); set_voting_option_form' + count + '.reset()\" />' +". 
+									"'</td>' +". 
 								 
-							'</tr>' + 
-						'</table>' + 
-						'</form>' +
-						'<div id = "vote' + count + '"> </div>' + 
-					'</tr>' +
+							"'</tr>' +". 
+						"'</table>' +".
+						"'</form>' +".
+						"'<div id = \"vote' + count + '\"> </div>' +". 
+					"'</tr>' +";
+				}
+				else
+				{
+					echo "'<tr><div id = \"vote' + count + '\"></div></tr>' + ";
+				}
+		?>
 					'</table>' + 
 					'</div>';	
 					
@@ -374,7 +386,7 @@
 			
 			<div id="main_in_main">
 				<?php
-					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
+					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>";
 				?>
 				<p id="conventionTittle">議題 - <?php echo $meeting_topic; ?></p>
 				
@@ -382,20 +394,23 @@
 					$num_of_voting = 30;
 					for ($i = 1; $i <= $num_of_voting; $i++)
 						echo "<div id = \"voting".$i."\"></div>";
+					
+					if ( $id == $moderator_id )
+					{
+					
+						echo "<tr>".
+								"<table id=\"table\">".
+									"<tr>".
+										"<td id=\"tableTittle1\">投票標題</td>".
+										"<form name=\"set_voting_form\">".
+											"<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"issue\" /></td>".
+										"</form>".
+									"</tr>".
+								"</table>".
+								"<input id=\"tableButton\" type=\"submit\" value=\"發起投票\" onclick=\"set_voting(document.set_voting_form.issue.value); set_voting_form.reset()\"/>".
+							"</tr>";
+					}
 				?> 
-				
-				<tr>
-					<table id="table">
-						<tr>
-							<td id="tableTittle1">投票標題</td>
-							<form name="set_voting_form">
-								<td id="tableValueCol1"><input id="tableValue1" type="text" name="issue" /></td>
-							</form>
-						</tr>
-					</table>
-					<input id="tableButton" type="submit" value="發起投票" onclick="set_voting(document.set_voting_form.issue.value); set_voting_form.reset()"/>
-				</tr>
-				
 			</div>
 			
 			

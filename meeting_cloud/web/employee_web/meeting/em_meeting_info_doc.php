@@ -16,6 +16,7 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	$over = $row['over'];
 ?>
 
 
@@ -37,7 +38,10 @@
 		var get_num_of_doc = 0;
 		
 		var obj;
-
+		
+		var group_id = <?php echo $group_id; ?>;
+		var meeting_id = <?php echo $meeting_id; ?>;
+		var go_back = '../../../';
 		
 		function upload_doc() 
 		{
@@ -50,9 +54,7 @@
 
 			if (upload_request != null) 
 			{
-			<?php
-				echo "var url = \"../../../back_end/upload_space/upload.php?upload_path=group_upload_space/".$group_id."/".$meeting_id."/\";";
-			?>
+				var url = go_back + 'back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id;
 							upload_request.addEventListener('progress', function(e) {
 							var done = e.position || e.loaded, total = e.totalSize || e.total;
 							console.log('upload_request progress: ' + (Math.floor(done/total*1000)/10) + '%');
@@ -83,9 +85,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-		<?php
-				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_doc.php?meeting_id=".$meeting_id."\";";
-		?>
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '/';
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		// 千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
@@ -163,7 +163,7 @@
 				if (meeting_doc_row == 0)	meeting_topic_row = 2;
 				
 				document.getElementById("doc_list" + count).innerHTML = 
-					'<a href="' + obj.link.obj_doc_list.open_doc[i] + '" style="color:#333333;width:auto;line-height:200%;">' + 
+					'<a href="' + go_back + obj.link.obj_doc_list.open_doc[i] + '" style="color:#333333;width:auto;line-height:200%;">' + 
 					obj.link.obj_doc_list.remark_name[i] + '</a>';
 
 				now_num_of_doc = now_num_of_doc + 1;
@@ -235,22 +235,23 @@
 							</div>
 							</div>
 						</tr>
-						<tr>
-							<table id="table">
-								<tr>
-									<td id="tableTittle1">上傳會議文件</td>
-							<?php
-								echo "<form name=\"upload_doc_form\" method=\"post\" enctype=\"multipart/form-data\" 
-										action=\"../../../back_end/upload_space/upload.php?upload_path=group_upload_space/".$group_id."/".$meeting_id."/\">";
-							?>
-									<td id="tableValueCol1"><input id="tableValueCol1" type="file" name="doc" /></td>
-									</form>
-									
-								</tr>
-							</table>
-							<input id="tableButton" name="upload_doc" type="submit" value="確認送出" onclick="upload_doc();"/>
-							
-						</tr>
+						<?php
+							if ( $over != 1 )
+							{
+								echo "<tr>".
+										"<table id=\"table\">".
+											"<tr>".
+												"<td id=\"tableTittle1\">上傳會議文件</td>".
+
+													"<form name=\"upload_doc_form\" method=\"post\" enctype=\"multipart/form-data\">".
+														"<td id=\"tableValueCol1\"><input id=\"tableValueCol1\" type=\"file\" name=\"doc\" /></td>".
+													"</form>".
+											"</tr>".
+										"</table>".
+										"<input id=\"tableButton\" name=\"upload_doc\" type=\"submit\" value=\"確認送出\" onclick=\"upload_doc();\"/>".
+									"</tr>";
+							}
+						?>
 					</table>
 				</div>
 				

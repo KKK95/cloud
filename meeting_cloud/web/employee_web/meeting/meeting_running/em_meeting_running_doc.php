@@ -5,9 +5,9 @@
 	if(!isset($_SESSION))
 	{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
-	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
+	require_once("../../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-//	require_once("../../../login_check.php");
+//	require_once("../../../../login_check.php");
 	
 	$meeting_id = $_GET['meeting_id'];
 	
@@ -37,7 +37,11 @@
 		var get_num_of_doc = 0;
 		
 		var obj;
-
+		
+		var group_id = <?php echo $group_id; ?>;
+		var meeting_id = <?php echo $meeting_id; ?>;
+		
+		var go_back = '../../../../';
 		
 		function upload_doc() 
 		{
@@ -50,24 +54,23 @@
 
 			if (upload_request != null) 
 			{
-			<?php
-				echo "var url = \"../../../back_end/upload_space/upload.php?upload_path=group_upload_space/".$group_id."/".$meeting_id."/\";";
-			?>
-							upload_request.addEventListener('progress', function(e) {
-							var done = e.position || e.loaded, total = e.totalSize || e.total;
-							console.log('upload_request progress: ' + (Math.floor(done/total*1000)/10) + '%');
-						}, false);
-						if ( upload_request.upload ) {
-							upload_request.upload.onprogress = function(e) {
-								var done = e.position || e.loaded, total = e.totalSize || e.total;
-								console.log('upload_request.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
-							};
-						}
-						upload_request.onreadystatechange = function(e) {
-							if ( 4 == this.readyState ) {
-								console.log(['upload_request upload complete', e]);
-							}
-						};
+				var url = go_back + 'back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id + '/';
+			
+					upload_request.addEventListener('progress', function(e) {
+					var done = e.position || e.loaded, total = e.totalSize || e.total;
+					console.log('upload_request progress: ' + (Math.floor(done/total*1000)/10) + '%');
+				}, false);
+				if ( upload_request.upload ) {
+					upload_request.upload.onprogress = function(e) {
+						var done = e.position || e.loaded, total = e.totalSize || e.total;
+						console.log('upload_request.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
+					};
+				}
+				upload_request.onreadystatechange = function(e) {
+					if ( 4 == this.readyState ) {
+						console.log(['upload_request upload complete', e]);
+					}
+				};
 				upload_request.open("POST", url, true);
 		//		upload_request.setRequestHeader("Content-Type", "multipart/form-data");			上傳文件不能有這個
 		
@@ -83,9 +86,8 @@
 			request = createRequest();
 			if (request != null) 
 			{
-		<?php
-				echo "var url = \"../../../back_end/meeting/get_info/get_meeting_doc.php?meeting_id=".$meeting_id."\";";
-		?>
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id;
+		
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		// 千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
@@ -154,18 +156,19 @@
 		function add_new_doc() 
 		{  
 			var count = 0;
-			var meeting_doc_row = 0;
+			var path = "";
 			
 			for (var i = 0; i < get_num_of_doc; i++ )
 			{
 				count = count + 1;
-				meeting_doc_row = count % 2;
-				if (meeting_doc_row == 0)	meeting_topic_row = 2;
+				path = go_back + obj.link.obj_doc_list.open_doc[i];
 				
 				document.getElementById("doc_list" + count).innerHTML = 
-					'<a href="' + obj.link.obj_doc_list.open_doc[i] + '" style="color:#333333;width:auto;line-height:200%;">' + 
+					'<a href="' + path + '" style="color:#333333;width:auto;line-height:200%;">' + 
 					obj.link.obj_doc_list.remark_name[i] + '</a>';
 
+				console.log(path);
+					
 				now_num_of_doc = now_num_of_doc + 1;
 			}
 			
@@ -190,10 +193,9 @@
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
 					會議資訊
-						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
-						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
-						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">返回群組</a></dt>
+						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
+						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
+						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
 			</dl>

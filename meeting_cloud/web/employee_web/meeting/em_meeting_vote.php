@@ -17,6 +17,7 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	$over = $row['over'];
 	
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result = $conn->query($sql);
@@ -81,22 +82,7 @@
 //				update_option_request.send("issue_id=" + issue_id);
 			}
 		}
-		/*
-		function vote_request(option_id, issue_id, id)
-		{
-			vote_request = createRequest();
-			if (set_topic_request != null) 
-			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_vote.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
-				vote_request.open("POST", url, true);
-				vote_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
-				vote_request.send("option_id=" + option_id);						// 送出請求（由於為 GET 所以參數為 null）
-				vote_request.send("issue_id=" + issue_id);
-				document.getElementById(id).value = "";
 
-			}
-		}
-		*/
 		function get_option_list_request() 					//取得會議id
 		{
 			request = createRequest();
@@ -215,24 +201,6 @@
 						'</div>' + 
 						'</div>' +
 					'</tr>' + 
-					'<tr>' +
-						'<form name="set_voting_option_form' + count + '">' +
-						'<table id="table">' + 
-							'<tr>' +
-								'<td id="tableTittle1">對投票提出選項</td>' +
-								
-									'<td id="tableValueCol1"><input id="tableValue1" type="text" name="option" /></td>' + 
-									'<td>' +
-									'<input name="set_voting_option' + count + '" ' + 
-											'type="button" value="新增" ' +
-											'onclick="set_option(document.set_voting_option_form' + count + '.option.value, ' + voting_id + '); set_voting_option_form' + count + '.reset()" />' + 
-									'</td>' + 
-								 
-							'</tr>' + 
-						'</table>' + 
-						'</form>' +
-						'<div id = "vote' + count + '"> </div>' + 
-					'</tr>' +
 					'</table>' + 
 					'</div>';	
 					
@@ -258,11 +226,6 @@
 								'<input id="tableValue2" type="text" name="text" value="票數：' + result + '　' + option + '" readonly="readonly"/>' +
 								'</td>';
 						}
-					}
-					if (obj.contents.obj_voting_result.member_vote[i] == 0)	//已投票
-					{
-						document.getElementById("vote" + count).innerHTML =
-						'<input id="tableButton" type="submit" value="送出投票" onclick="vote_form' + count + '.submit();"/>';
 					}
 				}
 				
@@ -293,8 +256,6 @@
 					會議資訊
 						<dt><a href="em_meeting_vote.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">投票</a></dt>
 						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">返回</a></dt>
-						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
 						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">返回群組</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
@@ -311,20 +272,23 @@
 					$num_of_voting = 30;
 					for ($i = 1; $i <= $num_of_voting; $i++)
 						echo "<div id = \"voting".$i."\"></div>";
+				
+					if ($over != 1)
+					{
+						echo "<tr>".
+								"<table id=\"table\">".
+									"<tr>".
+										"<td id=\"tableTittle1\">發起投票</td>".
+										"<form name=\"set_voting_form\">".
+											"<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"issue\" /></td>".
+										"</form>".
+									"</tr>".
+								"</table>".
+								"<input id=\"tableButton\" type=\"submit\" value=\"確認送出\"".
+								" onclick=\"set_voting(document.set_voting_form.issue.value); set_voting_form.reset()\"/>".
+							"</tr>";
+					}
 				?> 
-				
-				<tr>
-					<table id="table">
-						<tr>
-							<td id="tableTittle1">發起投票</td>
-							<form name="set_voting_form">
-								<td id="tableValueCol1"><input id="tableValue1" type="text" name="issue" /></td>
-							</form>
-						</tr>
-					</table>
-					<input id="tableButton" type="submit" value="確認送出" onclick="set_voting(document.set_voting_form.issue.value); set_voting_form.reset()"/>
-				</tr>
-				
 			</div>
 			
 			

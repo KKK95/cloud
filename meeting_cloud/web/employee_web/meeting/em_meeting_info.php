@@ -16,6 +16,7 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	$over = $row['over'];
 	
 	if (isset($_SESSION["id"]))
 		$id = $_SESSION["id"];
@@ -217,32 +218,39 @@
 							</div>
 							</div>
 						</tr>
-						<tr>
-							<table id="table">
-								<tr>
-									<td id="tableTittle1">新增會議議題</td>
-									<?php
-										echo "<form name=\"set_new_topic_form\" method=\"post\"
-												action=\"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\">";
-									?>
-									<td id="tableValueCol1"><input id="tableValue1" type="text" name="topic" /></td>
-									
-									</form>
-								</tr>
-							</table>
-							<input id="tableButton" name="set_new_topic" type="submit" value="確認送出" onclick="set_topic();"/>
-						</tr>
+						<?php
+							if ($over != 1)
+							{
+								echo "<tr>".
+										"<table id=\"table\">".
+											"<tr>".
+												"<td id=\"tableTittle1\">新增會議議題</td>".
+												"<form name = \"set_new_topic_form\" >".
+													"<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"topic\" /></td>".
+												"</form>".
+											"</tr>".
+										"</table>".
+										"<input id=\"tableButton\" name=\"set_new_topic\" type=\"submit\" value=\"確認送出\" onclick=\"set_topic();\"/>".
+									"</tr>";
+							}
+						?>
 					</table>
 				</div>
 				
-				<table id="table">
-						<tr>
-							<td id="tableTittleCol2" style="border-radius: 4px;">
-								<input id="tableButton" type="button" onclick="self.location.href='../../../back_end/em_meeting_start.php?meeting_id=<?php echo $meeting_id; ?>'" value="會議開始" style="border-radius: 4px;"/>
-							</td>
-					    </tr>
-				</table>
-				
+				<?php
+					if ($over != 1)
+					{
+						echo "<table id=\"table\">".
+									"<tr>".
+										"<td id=\"tableTittleCol2\" style=\"border-radius: 4px;\">".
+											"<input id=\"tableButton\" type=\"button\"".
+											" onclick=\"self.location.href='../../../back_end/em_meeting_start.php?meeting_id=<?php echo $meeting_id; ?>'\"".
+											" value=\"會議開始\" style=\"border-radius: 4px;\"/>".
+										"</td>".
+									"</tr>".
+							"</table>";
+					}
+				?>
 			</div>
 			
 		</div>

@@ -39,6 +39,8 @@
 	
 	<script language="JavaScript" src="../../../main_js/leftBarSlide.js"></script>
 	
+	<script language="javascript"><!--#Include File="re.js"--></script>
+	
 	<script>
 		var now_meeting_member = 0;
 		var get_now_meeting_member = 0;
