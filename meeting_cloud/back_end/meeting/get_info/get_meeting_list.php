@@ -20,19 +20,39 @@
 	
 	if (isset($_GET['group_id']))
 	{
+	/*
 		$sql = "select scheduler.*, member.name
-				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
+				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m, group_meeting_now as g_m_n
 				where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
 				and member.id = scheduler.moderator_id and scheduler.over = 0 and scheduler.group_id = '".$_GET['group_id']."'
+				and g_m_n.meeting_id != scheduler.meeting_id 
+				order by scheduler.time";
+	*/			
+		$sql = "select scheduler.*, member.name
+				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
+				where scheduler.meeting_id not in 
+						(select g_m_n.meeting_id from group_meeting_now as g_m_n where 1)
+				and j_m_m.member_id = '".$id."' and scheduler.group_id = '".$_GET['group_id']."' 
+				and scheduler.meeting_id = j_m_m.meeting_id and scheduler.over = 0 
+				and member.id = scheduler.moderator_id 
 				order by scheduler.time";
 	}
 	else
 	{
+/*		$sql = "select scheduler.*, member.name
+				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m, group_meeting_now as g_m_n
+				where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
+				and member.id = scheduler.moderator_id and scheduler.over = 0 and g_m_n.meeting_id != scheduler.meeting_id 
+				order by scheduler.time";
+*/				
 		$sql = "select scheduler.*, member.name
 				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
-				where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
-				and member.id = scheduler.moderator_id and scheduler.over = 0 
+				where scheduler.meeting_id not in 
+						(select g_m_n.meeting_id from group_meeting_now as g_m_n where 1)
+				and j_m_m.member_id = '".$id."' and scheduler.meeting_id = j_m_m.meeting_id and scheduler.over = 0 
+				and member.id = scheduler.moderator_id
 				order by scheduler.time";
+		
 	}
 	
 	$json = array

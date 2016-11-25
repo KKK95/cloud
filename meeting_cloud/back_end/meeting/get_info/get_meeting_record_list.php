@@ -20,18 +20,16 @@
 	
 	if (isset($_GET['group_id']))
 	{
-		$sql = "select scheduler.*, member.name
-				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
-				where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
-				and member.id = scheduler.moderator_id and scheduler.over = 1 and scheduler.group_id = '".$_GET['group_id']."'
-				order by scheduler.time desc";
+		$sql = "select record.*, scheduler.title ".
+			  "from meeting_record as record, meeting_scheduler as scheduler ".
+			  "where meeting_record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id";
 	}
 	else
 	{
 		$sql = "select scheduler.*, member.name
-				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m
+				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m, meeting_record as record
 				where scheduler.meeting_id = j_m_m.meeting_id and j_m_m.member_id = '".$id."'
-				and member.id = scheduler.moderator_id and scheduler.over = 1
+				and member.id = scheduler.moderator_id and scheduler.over = 1 and record.meeting_id = scheduler.meeting_id
 				order by scheduler.time desc";
 	}
 	

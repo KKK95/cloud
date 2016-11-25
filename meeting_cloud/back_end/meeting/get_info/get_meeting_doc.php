@@ -43,32 +43,34 @@
 		(
 			"link" => array(),
 		);
-		
-		if ($opendir = opendir($relative_path))
+		if (is_dir($relative_path) != false)
 		{
-			while (($file = readdir($opendir)) !==FALSE)
-			{	
-				//if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'xml')			這個是指定某種檔案
+			if ($opendir = opendir($relative_path))
+			{
+				while (($file = readdir($opendir)) !==FALSE)
+				{	
+					//if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'xml')			這個是指定某種檔案
 
-				if ($file != "." && $file != "..")				//有點就不是目錄
-				{
-					
-					if ( strstr($file, '.') )
+					if ($file != "." && $file != "..")				//有點就不是目錄
 					{
-						if( $first_file == 0 )
+						
+						if ( strstr($file, '.') )
 						{
-							$first_file = 1;
-							$json ['link']['obj_doc_list'] = array();
-							$json ['link']['obj_doc_list']['remark_name'] = array();
-							$json ['link']['obj_doc_list']['download'] = array();
-							$json ['link']['obj_doc_list']['open_doc'] = array();
+							if( $first_file == 0 )
+							{
+								$first_file = 1;
+								$json ['link']['obj_doc_list'] = array();
+								$json ['link']['obj_doc_list']['remark_name'] = array();
+								$json ['link']['obj_doc_list']['download'] = array();
+								$json ['link']['obj_doc_list']['open_doc'] = array();
+							}
+							$file=iconv("BIG5", "UTF-8",$file);
+							array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
+							array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
+							array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/".$path.$file );
+							//這邊要用 em_meeting_running 看 download.php 的相對路徑
+							//而不是 get_meeting_doc 看 download.php 的相對路徑
 						}
-						$file=iconv("BIG5", "UTF-8",$file);
-						array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
-						array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
-						array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/".$path.$file );
-						//這邊要用 em_meeting_running 看 download.php 的相對路徑
-						//而不是 get_meeting_doc 看 download.php 的相對路徑
 					}
 				}
 			}
