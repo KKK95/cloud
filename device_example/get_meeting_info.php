@@ -10,11 +10,12 @@
 	{
 		"meeting_start":"back_end\/meeting_start.php?meeting_id=4",												//會議開始
 		"get_doc_list":"back_end\/upload_space\/upload.php?upload_path=group_upload_space\/3\/4\/",				//取得會議文件列表
-		"get_topic_list":"back_end\/meeting\/get_info\/get_meeting_info.php?meeting_id=4"						//取得會議議題
+		"get_topic_list":"back_end\/meeting\/get_info\/get_meeting_info.php?meeting_id=4",						//取得會議議題
+		"get_member_list":"back_end\/meeting\/get_info\/get_meeting_member_list.php?meeting_id=4"				//取得與會人員名單
 	},
 	"form":
 	{
-		"get_topic_doc_list":																					//取得會議議題附件列表
+		"get_topic_doc_list":																					//取得會議議題中的附件列表
 		{
 			"func":"get_doc_list",
 			"addr":"back_end\/upload_space\/upload.php?upload_path=group_upload_space\/3\/4\/",
@@ -23,7 +24,7 @@
 				"topic_id":"none"
 			}
 		},
-		"get_guestion":																							//取得會議議題中的問題
+		"get_question":																							//取得會議議題中的問題
 		{
 			"func":"get_question_list",
 			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php?meeting_id=4",
@@ -41,7 +42,7 @@
 				"topic_id":"none"
 			}
 		},
-		"get_voting_result":																					//取得會議議題中的投票狀態
+		"get_voting_result":																					//取得會議議題中的投票結果
 		{
 			"func":"get_voting_result",
 			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php?meeting_id=4",
@@ -49,7 +50,7 @@
 			{
 				"topic_id":"none"
 			}
-		}
+		},
 		"get_topic_content":																					//取得會議議題中的內容
 		{
 			"func":"get_topic_content",
@@ -59,5 +60,6 @@
 				"topic_id":"none"
 			},
 		},
+
 	}
 }

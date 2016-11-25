@@ -1,12 +1,10 @@
-{
+?{
 	"link":
 	{
-		"get_topic_list":"back_end\/meeting\/get_info\/get_meeting_info.php?meeting_id=4",
-		"get_meeting_doc_list":"back_end\/meeting\/get_info\/get_meeting_doc.php",
-		"get_meeting_question":"back_end\/meeting\/get_info\/get_meeting_question.php",
-		"get_meeting_member_list":"back_end\/meeting\/get_info\/get_meeting_member_list.php",
-		"quit":"back_end\/meeting_end.php",
-		"update_info":"back_end\/meeting\/meeting_update_info.php"
+		"get_doc_list":"back_end\/upload_space\/upload.php?upload_path=group_upload_space\/10\/27\/",				//取得會議文件列表
+		"get_topic_list":"back_end\/meeting\/get_info\/get_meeting_info.php?meeting_id=27",						//取得會議議題
+		"get_member_list":"back_end\/meeting\/get_info\/get_meeting_member_list.php?meeting_id=27"				//取得與會人員名單
+		"quit":"back_end\/meeting_end.php"
 	},
 	"form":
 	{
@@ -20,56 +18,44 @@
 				"member_ip":"none"
 			}
 		},
-		"get_meeting_voting_result":													//取得會議投票記錄
+		"get_topic_doc_list":																					//取得會議議題中的附件列表
 		{
-			"func":"get_meeting_voting_result",
-			"addr":"back_end\/meeting\/get_info\/get_meeting_voting_result.php",
+			"func":"get_doc_list",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_doc.php?meeting_id=27",
+			"form":
+			{
+				"topic_id":"none"
+			}
+		},
+		"get_voting_result":																					//取得會議議題中的投票結果
+		{
+			"func":"get_voting_result",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_voting_result.php?meeting_id=27",
 			"form":
 			{
 				"topic_id":"none",
 				"issue_id":"none"
 			}
 		},
-		"get_meeting_question":															//取得問題
+		"get_question":																							//取得會議議題中的問題
 		{
-			"func":"get_question",
+			"func":"get_meeting_question",
 			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php",
 			"form":
 			{
 				"topic_id":"none"
 			}
 		},
-		"get_meeting_answer":															//取得回答
+		"get_answer":																							//取得會議議題中的答案
 		{
-			"func":"get_answer",
-			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php",
+			"func":"get_answer_list",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_question.php?meeting_id=27",
 			"form":
 			{
 				"topic_id":"none"
 			}
 		},
-		"answer_question":																//回答問題
-		{
-			"func":"meeting_answer",
-			"addr":"back_end\/meeting\/set_info\/set_meeting_answer.php",
-			"form":
-			{
-				"question_id":"none",
-				"topic_id":"none",
-				"answer":"none"
-			}
-		},
-		"vote_issue":																	//發起投票主題
-		{
-			"func":"vote_issue",
-			"addr":"back_end\/meeting\/set_info\/set_meeting_initiate_vote.php",
-			"form":
-			{
-				"topic_id":"none",
-				"issue":"none"
-			}
-		},
-		"meeting_ask":																	//問問題
+		"meeting_ask":																							//在某一個議題中提出問題
 		{
 			"func":"meeting_ask_question",
 			"addr":"back_end\/meeting\/set_info\/set_meeting_question.php",
@@ -79,35 +65,92 @@
 				"topic_id":"none"
 			}
 		},
-		"meeting_motion":																//提出議題
+		"get_topic_content":																					//取得會議議題中的內容
+		{
+			"func":"get_topic_content",
+			"addr":"back_end\/meeting\/get_info\/get_meeting_content.php?meeting_id=27",
+			"form":
+			{
+				"topic_id":"none"
+			}
+		},
+		"meeting_motion":																						//動議
 		{
 			"func":"add_meeting_topic",
 			"addr":"back_end\/meeting\/set_info\/set_meeting_topic.php",
 			"form":
-			{"topic":"none"}
+			{
+				"topic":"none"
+			}
 		},
-		"set_voting_option":															//為投票主題設定選項
+		"vote":																									//投票 
 		{
-			"func":"add_voting_option",
-			"addr":"back_end\/meeting\/set_info\/set_meeting_voting_option.php",
+			"func":"vote",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_vote.php",
+			"form":
+			{
+				"topic_id":"none",																				//議題id
+				"issue_id":"none",																				//投票主票id
+				"option_id":"none"																				//選項id
+			}
+		}
+		
+<!-- ==================================================================================================================================== -->		
+		
+		"set_vote":																								//發起投票
+		{
+			"func":"set_vote",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_initiate_vote.php?meeting_id=27",
+			"form":
+			{
+				"issue":"none",																					//投票主票
+				"topic_id":"none"																				//
+			}
+		},
+		"set_vote_option":
+		{
+			"func":"set_vote_option",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_voting_option.php?meeting_id=27",
+			"form":
+			{
+				"option":"none",
+				"topic_id":"none",
+				"issue_id":"none"
+			}
+		},
+		"set_answer":
+		{
+			"func":"answer",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_answer.php?meeting_id=27",
 			"form":
 			{
 				"topic_id":"none",
-				"issue_id":"none",
-				"option":"none"
+				"question_id":"none",
+				"answer":"none"
 			}
 		},
-		"vote":																			//投票
+		"set_topic_content":
 		{
-			"func":"add_voting_option",
-			"addr":"back_end\/meeting\/set_info\/set_meeting_vote.php",		
+			"func":"set_content",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_content.php?meeting_id=27",
 			"form":
 			{
-				"topic_id":"none",
-				"issue_id":"none",
-				"option_id":"none"
+				"content":"none",
+				"topic_id":"none"
 			}
 		},
+		"set_topic_meeting_minutes":
+		{
+			"func":"set_meeting_minutes",
+			"addr":"back_end\/meeting\/set_info\/set_meeting_minutes.php?meeting_id=27",
+			"form":
+			{
+				"meeting_minutes":"none",
+				"topic_id":"none"
+			}
+		}
+		
+		
 		
 	}
 }
