@@ -16,7 +16,11 @@
 		
 		if (isset($_GET['upload_path']) && isset($_FILES["fileToUpload"]))
 		{
-			$path = $path.$_GET['upload_path'];
+			$path = $path.$_GET['upload_path'].'/';
+			if (is_dir($path) == false)
+				mkdir($path);
+				
+			
 			$target_file = $path.basename($_FILES["fileToUpload"]["name"]);
 			echo $target_file;
 			if ($_FILES["fileToUpload"]["size"] > 20000000) 					//不接受大於 20M 的檔案
