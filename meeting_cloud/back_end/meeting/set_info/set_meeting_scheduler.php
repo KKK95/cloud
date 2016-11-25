@@ -13,10 +13,12 @@
 	$today = date("Y-m-d H:i:s");
 	$meeting_title = $_POST['meeting_title'];
 	$moderator_id = $_POST['moderator_id'];
-	if (isset($_POST['meeting_time']))
+	if ( isset($_POST['meeting_time']) )
 		$meeting_time = $_POST['meeting_time'];
 	else
 		$meeting_time = $_POST['year']."-".str_pad($_POST['month'],2,'0',STR_PAD_LEFT)."-".str_pad($_POST['day'],2,'0',STR_PAD_LEFT)." ".str_pad($_POST['hour'],2,'0',STR_PAD_LEFT).":00:00";
+	
+	echo $meeting_time;
 	
 	if ( isset($_POST["group_id"]) )
 		$group_id = $_POST["group_id"];
@@ -55,6 +57,13 @@
 				if ( $conn->query($invite_member_meeting_sql) )
 					echo "invite success";
 			}
+			
+			$sql = "select * from group_leader where group_id = '".$group_id."'";		//取得group 內所有人
+			$result = $conn->query($sql);
+			$row = $result->fetch_array();
+			$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$moderator_id."')";
+			$conn->query($invite_member_meeting_sql);
+			
 			echo $meeting_id;
 		}
 		else
