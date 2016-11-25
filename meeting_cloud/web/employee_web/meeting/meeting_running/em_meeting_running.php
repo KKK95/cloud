@@ -268,6 +268,29 @@
 						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
+			<?php
+				
+				$meeting_record_sql = "select record.*, scheduler.title ".
+									  "from meeting_record as record, meeting_scheduler as scheduler ".
+									  "where meeting_record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id";
+									  
+				$meeting_record_result = $conn->query($meeting_record_sql);
+				
+				$num_of_meeting_record = $meeting_record_result->num_rows;
+				
+				for ( $i = 1; $i <= $num_of_meeting_record; $i++)
+				{
+					$meeting_record_row = $meeting_record_result->fetch_array();
+					$record_id = $meeting_record_row['meeting_id'];
+					$record_title = $meeting_record_row['title'];
+					echo '<dt id="memberBar" class="left">'.
+							'過往記錄'.
+							'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'">'.$record_title.'</a></dt>'
+						 '</dt>';
+
+				}
+				
+			?>
 			</dl>
 			
 			
@@ -328,7 +351,7 @@
 						<tr>
 							<table id="table">
 								<tr>
-									<td id="tableTittle1">新增與會者</td>
+									<td id="tableTittle1">邀請與會者</td>
 									<?php
 										echo "<form name=\"set_member_form\" method=\"post\"
 												action=\"../../../back_end/meeting/set_info/set_meeting_topic.php?meeting_id=".$meeting_id."\">";
@@ -338,7 +361,7 @@
 									</form>
 								</tr>
 							</table>
-							<input id="tableButton" type="submit" value="確認送出" onclick="invite_member();"/>
+							<input id="tableButton" type="submit" value="送出邀請" onclick="invite_member();"/>
 						</tr>
 					</table>
 				</div>
