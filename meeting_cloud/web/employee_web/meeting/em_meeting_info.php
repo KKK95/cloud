@@ -132,11 +132,11 @@
 		function add_new_topic() 
 		{  
 
-			var count = 0;
+			var count = now_num_of_meeting_topic;
 			var meeting_topic_row = 0;
 			var topic = 0;
 			
-			for (var i = 0; i < get_num_of_meeting_topic; i++ )
+			for (var i = now_num_of_meeting_topic; i < get_num_of_meeting_topic; i++ )
 			{
 				count = count + 1;
 				meeting_topic_row = count % 2;
@@ -244,7 +244,7 @@
 									"<tr>".
 										"<td id=\"tableTittleCol2\" style=\"border-radius: 4px;\">".
 											"<input id=\"tableButton\" type=\"button\"".
-											" onclick=\"self.location.href='../../../back_end/em_meeting_start.php?meeting_id=<?php echo $meeting_id; ?>'\"".
+											" onclick=\"self.location.href='../../../back_end/em_meeting_start.php?meeting_id=".$meeting_id."'\"".
 											" value=\"會議開始\" style=\"border-radius: 4px;\"/>".
 										"</td>".
 									"</tr>".

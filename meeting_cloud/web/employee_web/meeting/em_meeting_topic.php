@@ -18,6 +18,7 @@
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
 	$over = $row['over'];
+	$moderator_id = $row['moderator_id'];
 	
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result = $conn->query($sql);
@@ -52,8 +53,11 @@
 		var now_num_of_doc = 0;
 		var get_num_of_doc = 0;
 		
-		var now_num_of_content = 1;
+		var now_num_of_content = 0;
 		var get_num_of_content = 0;
+		
+		var now_num_of_meeting_minutes = 0;
+		var get_num_of_meeting_minutes = 0;
 		
 		var group_id = <?php echo $group_id; ?>;
 		var meeting_id = <?php echo $meeting_id; ?>;
@@ -61,6 +65,7 @@
 		var over = <?php echo $over; ?>;
 		
 		var obj;
+		var go_back = '../../../';
 		
 		function upload_doc() 
 		{
@@ -73,7 +78,7 @@
 
 			if (upload_request != null) 
 			{
-				var url = '../../../back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id + '/' + topic_id;
+				var url = go_back + 'back_end/upload_space/upload.php?upload_path=group_upload_space/' + group_id + '/' + meeting_id + '/' + topic_id;
 
 				upload_request.addEventListener('progress', function(e) {
 					var done = e.position || e.loaded, total = e.totalSize || e.total;
@@ -105,7 +110,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		// 千萬不能加括號
@@ -132,6 +137,8 @@
 			now_num_of_doc = get_num_of_doc;
 		}
 		
+		
+		
 		function answer_request(answer,question_id,id)
 		{
 
@@ -141,7 +148,7 @@
 			answer_request = createRequest();
 			if (answer_request != null) 
 			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&question_id=' + question_id;
+				var url = go_back + 'back_end/meeting/set_info/set_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '&question_id=' + question_id;
 
 				console.log(url);
 				answer_request.open("POST", url, true);
@@ -158,7 +165,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../back_end/meeting/get_info/get_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_answer.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -193,7 +200,7 @@
 			ask_question_request = createRequest();
 			if (ask_question_request != null) 
 			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/set_info/set_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				console.log(url);
 				ask_question_request.open("POST", url, true);
@@ -209,7 +216,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../back_end/meeting/get_info/get_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_question.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -257,7 +264,7 @@
 			set_content_request = createRequest();
 			if (set_content_request != null) 
 			{
-				var url = '../../../back_end/meeting/set_info/set_meeting_content.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/set_info/set_meeting_content.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				console.log(url);
 				set_content_request.open("POST", url, true);
@@ -273,7 +280,7 @@
 			request = createRequest();
 			if (request != null) 
 			{
-				var url = '../../../back_end/meeting/get_info/get_meeting_content.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_content.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -288,18 +295,54 @@
 			var content = "";
 			var content_id = 0;
 			
-			for (var i = now_num_of_content; i <= get_num_of_content; i++ )
+			for (var i = now_num_of_content; i < get_num_of_content; i++ )
 			{
 				
-				content = obj.contents.obj_content.head_content[i-1];
-				content_id = obj.contents.obj_content.content_id[i-1];
+				content = obj.contents.obj_content.head_content[i];
+				content_id = obj.contents.obj_content.content_id[i];
 
 				document.getElementById("meeting_content" + content_id).innerHTML = 
-					'<td id = "tableValueCol1">說明：</td>' + 
 					'<td id = "tableValueCol2">' + content + '</td>';
 			}
 			
 			now_num_of_content = get_num_of_content;
+		}
+		
+		
+		function get_meeting_minutes_request() 					//取得會議id
+		{
+			request = createRequest();
+			if (request != null) 
+			{
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_minutes.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id;
+
+				request.open("GET", url, true);
+				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
+				request.onreadystatechange = displayResult;		//千萬不能加括號
+				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+			}
+		}
+		
+		function update_meeting_minutes() 
+		{
+			
+			var meeting_minutes = "";
+			var meeting_minutes_id = 0;
+			
+			for (var i = now_num_of_meeting_minutes; i < get_num_of_meeting_minutes; i++ )
+			{
+				
+				meeting_minutes = obj.contents.obj_meeting_minutes.head_meeting_minutes[i];
+				meeting_minutes_id = obj.contents.obj_meeting_minutes.meeting_minutes_id[i];
+				
+				console.log(meeting_minutes);
+				console.log(meeting_minutes_id);
+				
+				document.getElementById("meeting_minutes" + meeting_minutes_id).innerHTML = 
+					'<td id = "tableValueCol1">' + meeting_minutes + '</td>';
+			}
+			
+			now_num_of_meeting_minutes = get_num_of_meeting_minutes;
 		}
 		
 		
@@ -335,6 +378,13 @@
 							get_num_of_content = obj.contents.obj_content.head_content.length;
 							if ( get_num_of_content > now_num_of_content )
 								update_content();
+							console.log(request.responseText);
+						}
+						else if ( obj['contents'] && obj.contents['obj_meeting_minutes'] && obj.contents.obj_meeting_minutes != "none")
+						{
+							get_num_of_meeting_minutes = obj.contents.obj_meeting_minutes.head_meeting_minutes.length;
+							if ( get_num_of_meeting_minutes > now_num_of_meeting_minutes )
+								update_meeting_minutes();
 							console.log(request.responseText);
 						}
 						else if ( obj['link'] && obj.link['obj_doc_list'] && obj.link.obj_doc_list != "none" )
@@ -375,10 +425,11 @@
 			return request;
 		}
 		
-		setInterval("get_topic_answer_request();", 1000) //每隔一秒發出一次查詢
-		setInterval("get_topic_question_request();", 1100) //每隔一秒發出一次查詢
-		setInterval("get_meeting_doc_list_request();", 1300)
-		setInterval("get_content_request();", 1400) //每隔一秒發出一次查詢
+		setInterval("get_topic_answer_request();", 1000) 		//議題回答
+		setInterval("get_topic_question_request();", 1100) 		//議題問題
+		setInterval("get_meeting_doc_list_request();", 1300)	//議題附件
+		setInterval("get_content_request();", 1600) 			//議題說明
+		setInterval("get_meeting_minutes_request();", 2000) 	//議題決議
 
 	</script>
 	
@@ -408,9 +459,8 @@
 			
 			
 			<div id="main_in_main">
-				<?php
-					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
-				?>
+
+				<p id="conventionTittle">會議 - <?php echo $meeting_title; ?></p>
 				<p id="conventionTittle">議題 - <?php echo $meeting_topic; ?></p>
 				
 				<div id="main_sub">
@@ -451,10 +501,39 @@
 												"</form>".
 											"</tr>".
 										"</table>".
-										"<input id=\"tableButton\" name=\"set_content\" type=\"submit\" value=\"確認送出\" onclick=\"set_content();\"/>".
+										"<input id=\"tableButton\" name=\"set_content\" type=\"submit\" value=\"確認送出\" onclick=\"set_content(); set_content_form.reset()\"/>".
 									"</tr>";
 							}
 						?>
+					</table>
+				</div>
+				
+				<div id="main_sub">
+					<p id="conventionTittle">決議</p>
+					<table id="table">
+						<tr>
+							<table id="table">
+								<tr>
+									<td id="tableTittleCol1" > </td>
+								</tr>
+							</table>
+						</tr>
+						<tr>
+							<div style="width:600px; height:200px; overflow:hidden;">
+							<div style="width:620px; height:200px; overflow-y: auto;">
+								<table id="table">
+								
+									<?php    
+										$num_of_meeting_minutes = 30;
+										for ($i = 1; $i <= $num_of_meeting_minutes; $i++)
+										{	echo "<tr id = \"meeting_minutes".$i."\"></tr>";	}
+									?>    
+									
+									<tr></tr>
+								</table>
+							</div>
+							</div>
+						</tr>
 					</table>
 				</div>
 				

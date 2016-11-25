@@ -82,13 +82,16 @@
 		
 		function get_meeting_doc_list_request()					//取得會議文件列表 
 		{
+			var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id;
 			request = createRequest();
+			console.log(url);
 			if (request != null) 
 			{
-				var url = go_back + 'back_end/meeting/get_info/get_meeting_doc.php?meeting_id=' + meeting_id + '/';
+				
 				request.open("GET", url, true);
 				request.onreadystatechange = displayResult;		// 千萬不能加括號
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
+				request.onreadystatechange = displayResult;		// 千萬不能加括號
 			}
 		}
 		
@@ -103,16 +106,10 @@
 					{
 						obj = eval('(' + request.responseText + ')');
 						
-						if ( obj['contents'] && obj.contents['obj_meeting_topic'] && obj.contents.obj_meeting_topic != "none")
-						{
-							get_num_of_meeting_topic = obj.contents.obj_meeting_topic.topic.length;
-							if (get_num_of_meeting_topic > now_num_of_meeting_topic)
-								add_new_topic();
-						}
-						else if ( obj.link['obj_doc_list'] && obj.link.obj_doc_list != "none" )
+						if (  obj['link'] && obj.link['obj_doc_list'] && obj.link.obj_doc_list != "none" )
 						{
 							
-			//				console.log(request.responseText);
+							console.log(request.responseText);
 							get_num_of_doc = obj.link.obj_doc_list.remark_name.length;
 							if (get_num_of_doc > now_num_of_doc)
 								add_new_doc();
