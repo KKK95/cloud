@@ -11,25 +11,38 @@
 	
 	
 	$today = date("Y-m-d H:i:s");
-	$meeting_title = $_POST['meeting_title'];
-	$moderator_id = $_POST['moderator_id'];
+	
+	// 日期
+	
 	if ( isset($_POST['meeting_time']) )
 		$meeting_time = $_POST['meeting_time'];
 	else
 		$meeting_time = $_POST['year']."-".str_pad($_POST['month'],2,'0',STR_PAD_LEFT)."-".str_pad($_POST['day'],2,'0',STR_PAD_LEFT)." ".str_pad($_POST['hour'],2,'0',STR_PAD_LEFT).":00:00";
 	
-	echo $meeting_time;
+	// 會議記錄人 id
+	
+	if ( isset($_POST['minutes_taker_id']) )
+		$minutes_taker_id = $_POST['minutes_taker_id'];
+	else $minutes_taker_id = $_SESSION['id'];
+	
+	// 會議群組 id
 	
 	if ( isset($_POST["group_id"]) )
 		$group_id = $_POST["group_id"];
 	else 
 		$group_id = 0;
 	
+	// 會議主題
+	
+	$meeting_title = $_POST['meeting_title'];
 
+	// 主席 id
+	
 	if ($moderator_id == "" || $moderator_id == "none")
 		$moderator_id = $_SESSION['id'];
 	
-	$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', '".$moderator_id."', '".$meeting_time."', 0 )";
+	$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', ".
+												"'".$moderator_id."', '".$minutes_taker_id."', '".$meeting_time."', 0 )";
 	
 	if ( ((strtotime($meeting_time) - strtotime($today))/(60*60)) > 0 )				//新增的會議必定不能在過去
 	{
@@ -44,27 +57,28 @@
 			$file = "../../upload_space/group_upload_space/".$group_id."/".$row['meeting_id'];
 			mkdir($file);
 			
-			
-			$sql = "select * from group_member where group_id = '".$group_id."'";		//取得group 內所有人
-			$result = $conn->query($sql);
-			$num_rows = $result->num_rows;
-			
-			for ( $i = 1; $i <= $num_rows; $i++)
+			if ($group_id != 0)
 			{
+				$sql = "select * from group_member where group_id = '".$group_id."'";		//取得group 內所有人
+				$result = $conn->query($sql);
+				$num_rows = $result->num_rows;
 				
-				$row=$result->fetch_array();
+				for ( $i = 1; $i <= $num_rows; $i++)
+				{
+					$row=$result->fetch_array();
+					$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."')";
+					if ( $conn->query($invite_member_meeting_sql) )
+						echo "invite success";
+				}
+				
+				$sql = "select * from group_leader where group_id = '".$group_id."'";		//取得group 內所有人
+				$result = $conn->query($sql);
+				$row = $result->fetch_array();
+				
 				$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."')";
-				if ( $conn->query($invite_member_meeting_sql) )
-					echo "invite success";
+				$conn->query($invite_member_meeting_sql);
 			}
-			
-			$sql = "select * from group_leader where group_id = '".$group_id."'";		//取得group 內所有人
-			$result = $conn->query($sql);
-			$row = $result->fetch_array();
-			$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$moderator_id."')";
-			$conn->query($invite_member_meeting_sql);
-			
-			echo $meeting_id;
+
 		}
 		else
 		{

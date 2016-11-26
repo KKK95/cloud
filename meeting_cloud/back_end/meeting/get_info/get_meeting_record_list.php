@@ -20,9 +20,11 @@
 	
 	if (isset($_GET['group_id']))
 	{
-		$sql = "select record.*, scheduler.title ".
-			  "from meeting_record as record, meeting_scheduler as scheduler ".
-			  "where meeting_record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id";
+		$group_id = $_GET['group_id'];
+		$sql = "select record.*, scheduler.title, scheduler.time, member.name ".
+			  "from meeting_record as record, meeting_scheduler as scheduler, member ".
+			  "where record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id and member.id = scheduler.moderator_id ".
+			  "and scheduler.over = 1";
 	}
 	else
 	{

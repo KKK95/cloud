@@ -30,7 +30,7 @@
 		
 		if (isset($_GET['topic_id']))
 		{	$topic_id = $_GET['topic_id'];	}
-		else if(isset($_POST['topic_id']))
+		else if (isset($_POST['topic_id']))
 		{	$topic_id = $_POST['topic_id'];	}
 		else
 		{	$topic_id = 0;	}
@@ -39,8 +39,12 @@
 		(
 			"contents" => array(),
 		);
-			
-		$sql = "select * from meeting_questions where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+		
+		if ( $topic_id == 0)
+			$sql = "select * from meeting_questions where meeting_id = '".$meeting_id."'";
+		else
+			$sql = "select * from meeting_questions where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+		
 		$result=$conn->query($sql);									
 		$num_rows = $result->num_rows;
 		
@@ -57,10 +61,13 @@
 			for ($i = 1; $i <= $num_rows; $i++)
 			{
 				$row=$result->fetch_array();
-				array_push ($json ['contents']['obj_question']['head_question'], $row['question']);
-				array_push ($json ['contents']['obj_question']['topic_id'], $row['topic_id']);
-				array_push ($json ['contents']['obj_question']['question_id'], $row['question_id']);
-				array_push ($json ['contents']['obj_question']['answer'], $row['answer']);
+				if ( isset($row['question_id']) )
+				{
+					array_push ($json ['contents']['obj_question']['head_question'], $row['question']);
+					array_push ($json ['contents']['obj_question']['topic_id'], $row['topic_id']);
+					array_push ($json ['contents']['obj_question']['question_id'], $row['question_id']);
+					array_push ($json ['contents']['obj_question']['answer'], $row['answer']);
+				}
 			}
 		}
 		

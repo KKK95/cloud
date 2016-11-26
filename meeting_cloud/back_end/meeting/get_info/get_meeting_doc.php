@@ -17,7 +17,7 @@
 		
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
-														
+
 		$num_rows = $result->num_rows;					//看是否在會議中
 		if (isset($_GET['meeting_id']))							//否
 		{	$meeting_id = $_GET['meeting_id'];	}
