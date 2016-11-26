@@ -11,7 +11,7 @@
 	{
 		"form":
 		{
-			"login":
+			"build_meeting":
 			{
 				"func":"build_meeting",
 				"addr":"back_end\/meeting\/set_info\/set_meeting_scheduler.php",
