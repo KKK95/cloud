@@ -17,12 +17,21 @@
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
 	
+	$sql = "select * from group_meeting_now where member_id = '".$id."' and meeting_id = '".$meeting_id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../../employee_center.php" );
+	
+	
+	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
 	$moderator_id = $row['moderator_id'];					//看是否主席
+	$minutes_taker_id = $row['minutes_taker_id'];
 	$over = $row['over'];
 	
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
@@ -588,7 +597,7 @@
 							</div>
 						</tr>
 						<?php
-							if ($id == $moderator_id)
+							if ($id == $moderator_id || $id == $minutes_taker_id)
 							{
 								echo "<tr>".
 										"<table id=\"table\">".
@@ -634,7 +643,7 @@
 							</div>
 						</tr>
 						<?php
-							if ($id == $moderator_id)
+							if ($id == $moderator_id || $id == $minutes_taker_id)
 							{
 								echo "<tr>".
 										"<table id=\"table\">".

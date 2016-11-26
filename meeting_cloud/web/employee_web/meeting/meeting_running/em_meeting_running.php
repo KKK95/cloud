@@ -17,6 +17,10 @@
 	$sql = "select * from group_meeting_now where member_id = '".$id."'";
 	$result=$conn->query($sql);
 	$row=$result->fetch_array();
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../../employee_center.php" );
+	
 	$meeting_id = $row['meeting_id'];
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
@@ -24,6 +28,7 @@
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
+	
 	
 	
 ?>
@@ -272,7 +277,8 @@
 				
 				$meeting_record_sql = "select record.*, scheduler.title ".
 									  "from meeting_record as record, meeting_scheduler as scheduler ".
-									  "where meeting_record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id";
+									  "where record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id ".
+									  "and scheduler.over = 1";
 									  
 				$meeting_record_result = $conn->query($meeting_record_sql);
 				
@@ -285,7 +291,8 @@
 					$record_title = $meeting_record_row['title'];
 					echo '<dt id="memberBar" class="left">'.
 							'過往記錄'.
-							'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'">'.$record_title.'</a></dt>'
+							'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'&state=meeting_now&meeting_now_id='.$meeting_id.'">'.
+							$record_title.'</a></dt>'.
 						 '</dt>';
 
 				}

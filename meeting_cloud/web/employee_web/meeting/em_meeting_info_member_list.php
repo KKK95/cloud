@@ -11,6 +11,12 @@
 	
 	$meeting_id = $_GET['meeting_id'];
 	
+	$sql = "select * from join_meeting_member where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../employee_center.php" );
+	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();

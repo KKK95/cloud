@@ -15,7 +15,12 @@
 		$id = "a@";
 	
 	$meeting_id = $_GET['meeting_id'];
-
+	$sql = "select * from join_meeting_member where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../employee_center.php" );
+	
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
@@ -63,10 +68,21 @@
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
 					會議資訊
-						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">返回會議議題列表</a></dt>
-						<dt><a href="em_meeting_running_vote.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">投票</a></dt>
+					<?php
+						if (!isset($_GET['state']))
+						{
+							echo '<dt><a href="../employee_center.php">返回</a></dt>';
+						}
+						else if ( $_GET['state'] == "meeting_now" )
+						{
+							echo '<dt><a href="./meeting_running/em_meeting_running.php?meeting_id='.$_GET['meeting_now_id'].'">返回</a></dt>';
+						}
+						else if ( $_GET['state'] == "group" )
+						{
+							echo '<dt><a href="../group/group.php?group_id='.$group_id.'">返回</a></dt>';
+						}
 						
-						<dt><a href="">結束會議</a></dt>
+					?>
 				</dt>
 			</dl>
 			<p id="conventionTittle">會議 - <?php echo $meeting_title; ?></p>
@@ -136,7 +152,7 @@
 											   
 						$meeting_minutes_result = $conn->query($meeting_minutes_sql);
 						$num_of_meeting_minutes = $meeting_minutes_result->num_rows;
-						
+
 								for ($j = 1; $j <= $num_of_meeting_minutes; $j++)
 								{	
 									$meeting_minutes_row = $meeting_minutes_result->fetch_array();

@@ -9,7 +9,18 @@
 	
 //	require_once("../../../../login_check.php");
 	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
+	
 	$meeting_id = $_GET['meeting_id'];
+	
+	$sql = "select * from group_meeting_now where member_id = '".$id."' and meeting_id = '".$meeting_id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../../employee_center.php" );
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);

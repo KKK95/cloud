@@ -52,16 +52,14 @@
 	        	<dl style="margin:0;width:20%;float:left;">
 	        		<dt id="memberBar" class="left">
 	        			會員專區
-		        			<dt><a href="">會員瀏覽</a></dt>
-		        			<dt><a href="">會員資料</a></dt>
+							<dt><a href="../employee_center.php">回主頁</a></dt>
 		        			<dt><a href="">修改密碼</a></dt>
-		        			<dt><a href="">會員管理</a></dt>
-							
-		        			<dt><a href="">登出</a></dt>
+							<dt><a href="">個人雲端</a></dt>
+		        			<dt><a href="../../../logout.php">登出</a></dt>
 	        		</dt>
 					<dt id="group" class="left">
 	        			會議群組
-		        			<dt><a href="./group/group_list.php">會議群組列表</a></dt>
+		        			<dt><a href="./build_group_form.php">建立群組</a></dt>
 	        		</dt>
 	        		<dt id="conventionBar" class="left">
 	        			會議專區
@@ -70,17 +68,7 @@
 		        			<dt><a href="">會議管理</a></dt>
 		        			<dt><a href="">修改請求</a></dt>
 	        		</dt>
-					<dt id="cloud" class="left">
-	        			雲端專區
-		        			<dt><a href="">個人雲端</a></dt>
-							<dt><a href="">群組雲端</a></dt>
-	        		</dt>
-					<dt id="talk" class="left">
-	        			討論區
-		        			<dt><a href="">會議聊天室</a></dt>
-							<dt><a href="">會議紀錄</a></dt>
-	        		</dt>
-					
+
 	        	</dl>
 	        	
 	        	

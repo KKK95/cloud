@@ -9,8 +9,20 @@
 	
 //	require_once("../../../login_check.php");
 	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
+	
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
+	
+	$sql = "select * from join_meeting_member where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../employee_center.php" );
+	
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
@@ -19,16 +31,14 @@
 	$group_id = $row['group_id'];
 	$over = $row['over'];
 	$moderator_id = $row['moderator_id'];
+	$minutes_taker_id = $row['minutes_taker_id'];
 	
 	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	$meeting_topic = $row['topic'];
 	
-	if (isset($_SESSION["id"]))
-		$id = $_SESSION["id"];
-	else
-		$id = "a@";
+	
 ?>
 
 

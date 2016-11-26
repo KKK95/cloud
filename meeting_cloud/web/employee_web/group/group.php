@@ -9,6 +9,34 @@
 	
 //	require_once("../../../login_check.php");
 	
+	if (isset($_SESSION['id']))
+		$id = $_SESSION['id'];
+	else
+		$id = 'a@';
+	
+	$group_id = $_GET['group_id'];
+	
+	$sql = "select * from member
+			where member.id in
+			(
+				select gl.member_id from group_leader as gl 
+				where gl.group_id = '".$group_id."' 
+			) and member.id = '".$id."'";
+	$result = $conn->query($sql);
+	$in_group = $result->num_rows;
+	
+	$sql = "select * from member
+			where member.id in
+			(
+				select gm.member_id from group_member as gm 
+				where gm.group_id = '".$group_id."'
+			) and member.id = '".$id."'";
+	$result = $conn->query($sql);
+	$in_group = $result->num_rows + $in_group;
+	if ($in_group != 1)
+		header("Location: ../employee_center.php" );
+	
+	
 	$sql = "select gl.member_id, m.name, gl.group_name
 			from group_leader as gl, member as m
 			where 
@@ -16,7 +44,6 @@
 			
 	$result = $conn->query($sql);
 	$row = $result->fetch_array();
-	$group_id = $_GET['group_id'];
 	$leader_id = $row['member_id'];
 	$leader_name = $row['name'];					//先抓出群組中的隊長
 	$group_name = $row['group_name'];
@@ -51,12 +78,8 @@
 		{
 			invite_member_form.submit();
 		}
-		function set_meeting_scheduler()
-		{
-			set_meeting_scheduler_form.submit();
-		}
-		
-		
+
+		var group_id = <?php echo $group_id; ?>;
 		
 		var meeting_now_list = 0;
 		var get_meeting_now_list = 0;
@@ -68,14 +91,14 @@
 		var get_meeting_record_list = 0;
 		
 		var obj;
-		
+		var go_back = '../../../';
 		
 		function get_meeting_list_request() 					//取得會議id
 		{
 			request = createRequest();
 			if (request != null) 
 			{
-				<?php echo "var url = '../../../back_end/meeting/get_info/get_meeting_list.php?group_id=".$group_id."';		";	?>
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_list.php?group_id=' + group_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -84,12 +107,45 @@
 			}
 		}
 
+		function update_meeting_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var meeting_id = "";
+			
+			for (var i = 0; i < get_meeting_list; i++ )
+			{
+				
+				topic = obj.contents.obj_meeting_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_list.meeting_id[i];
+				link = '../meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_list" + i).innerHTML = document.getElementById("meeting_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_list = get_meeting_list;
+		}
+		
+		setInterval("get_meeting_record_list_request();", 1200) 
+		setInterval("get_meeting_list_request();", 1100) 
+		
 		function get_meeting_record_list_request() 					//取得會議id
 		{
+			console.log("fuck you");
 			request = createRequest();
 			if (request != null) 
 			{
-				<?php echo "var url = '../../../back_end/meeting/get_info/get_meeting_record_list.php?group_id=".$group_id."';		";	?>
+				var url = go_back + 'back_end/meeting/get_info/get_meeting_record_list.php?group_id=' + group_id;
 
 				request.open("GET", url, true);
 				request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
@@ -97,6 +153,35 @@
 				request.send(null);								// 送出請求（由於為 GET 所以參數為 null）
 			}
 		}
+		
+		function update_meeting_record_list() 
+		{  
+			var link = "";
+			var topic = "";
+			var meeting_date = "";
+			var meeting_time = "";
+			var moderator = "";
+			var meeting_id = "";
+			
+			for (var i = 0; i < get_meeting_record_list; i++ )
+			{
+				topic = obj.contents.obj_meeting_record_list.topic[i];
+				meeting_date = obj.contents.obj_meeting_record_list.meeting_day[i];
+				meeting_time = obj.contents.obj_meeting_record_list.meeting_time[i];
+				moderator = obj.contents.obj_meeting_record_list.moderator[i];
+				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
+				link = '../meeting/meeting_record.php?state=group&meeting_id=' + meeting_id;
+				
+				document.getElementById("meeting_record_list" + i).innerHTML = document.getElementById("meeting_record_list" + i).innerHTML + 
+					'<td id = "tableValueCol1" style="width:320px;">' + 
+					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
+					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
+					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
+					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
+			}
+			now_meeting_record_list = get_meeting_record_list;
+		}
+	
 		
 		
 		function displayResult() 
@@ -153,65 +238,10 @@
 			return request;
 		}
 		
-		setInterval("get_meeting_record_list_request();", 1200) //每隔一秒發出一次查詢
-		setInterval("get_meeting_list_request();", 1100) //每隔一秒發出一次查詢
 		
-		function update_meeting_list() 
-		{  
-			var link = "";
-			var topic = "";
-			var meeting_date = "";
-			var meeting_time = "";
-			var moderator = "";
-			var meeting_id = "";
-			
-			for (var i = 0; i < get_meeting_list; i++ )
-			{
-				
-				topic = obj.contents.obj_meeting_list.topic[i];
-				meeting_date = obj.contents.obj_meeting_list.meeting_day[i];
-				meeting_time = obj.contents.obj_meeting_list.meeting_time[i];
-				moderator = obj.contents.obj_meeting_list.moderator[i];
-				meeting_id = obj.contents.obj_meeting_list.meeting_id[i];
-				link = '../meeting/em_meeting_info.php?meeting_id=' + meeting_id;
-				
-				document.getElementById("meeting_list" + i).innerHTML = document.getElementById("meeting_list" + i).innerHTML + 
-					'<td id = "tableValueCol1" style="width:320px;">' + 
-					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
-					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
-					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
-					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
-			}
-			now_meeting_list = get_meeting_list;
-		}
 		
-		function update_meeting_record_list() 
-		{  
-			var link = "";
-			var topic = "";
-			var meeting_date = "";
-			var meeting_time = "";
-			var moderator = "";
-			var meeting_id = "";
-			
-			for (var i = 0; i < get_meeting_record_list; i++ )
-			{
-				topic = obj.contents.obj_meeting_record_list.topic[i];
-				meeting_date = obj.contents.obj_meeting_record_list.meeting_day[i];
-				meeting_time = obj.contents.obj_meeting_record_list.meeting_time[i];
-				moderator = obj.contents.obj_meeting_record_list.moderator[i];
-				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
-				link = '../meeting/em_meeting_info.php?meeting_id=' + meeting_id;
-				
-				document.getElementById("meeting_record_list" + i).innerHTML = document.getElementById("meeting_record_list" + i).innerHTML + 
-					'<td id = "tableValueCol1" style="width:320px;">' + 
-					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
-					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
-					'<td id="tableValueCol1" style="width:70px;">' + meeting_time + '</td>' +
-					'<td id="tableValueCol2" style="width:100px;">' + moderator + '</td>';
-			}
-			now_meeting_record_list = get_meeting_record_list;
-		}
+		
+		
 	</script>
 	
 	<title>智會GO</title>
@@ -230,17 +260,17 @@
 	<div id="divOrigin">
 		<div id="divTop">
 			<dl style="margin:0;width:20%;float:left;">
-				<dt id="memberBar" class="left">
+				<dl style="margin:0;width:20%;float:left;">
+	        		<dt id="memberBar" class="left">
 	        			會員專區
-		        			<dt><a href="">會員瀏覽</a></dt>
-		        			<dt><a href="">會員資料</a></dt>
+							<dt><a href="../employee_center.php">回主頁</a></dt>
 		        			<dt><a href="">修改密碼</a></dt>
-		        			<dt><a href="">會員管理</a></dt>
-							
-		        			<dt><a href="">登出</a></dt>
+							<dt><a href="">個人雲端</a></dt>
+		        			<dt><a href="../../../logout.php">登出</a></dt>
 	        		</dt>
 					<dt id="group" class="left">
 	        			會議群組
+							<dt><a href="./build_group_form.php">建立群組</a></dt>
 		        			<dt><a href="./group_list.php">會議群組列表</a></dt>
 	        		</dt>
 	        		<dt id="conventionBar" class="left">
@@ -250,16 +280,8 @@
 		        			<dt><a href="">會議管理</a></dt>
 		        			<dt><a href="">修改請求</a></dt>
 	        		</dt>
-					<dt id="cloud" class="left">
-	        			雲端專區
-		        			<dt><a href="">個人雲端</a></dt>
-							<dt><a href="">群組雲端</a></dt>
-	        		</dt>
-					<dt id="talk" class="left">
-	        			討論區
-		        			<dt><a href="">會議聊天室</a></dt>
-							<dt><a href="">會議紀錄</a></dt>
-	        		</dt>
+
+	        	</dl>
 			</dl>
 			
 			
@@ -286,11 +308,38 @@
 											{	$state = "";	}	
 											else
 											{	
-												
-												$state = "有群組成員";
-												for($i=1;$i<=$num_rows;$i++)
+												for( $i = 1; $i <= $num_rows; $i++ )
 												{
-													$row=$result->fetch_array();
+													$row = $result->fetch_array();
+													echo "<option value=\"".$row['id']."\">".$row['name']."</option>";
+												}
+											}
+										?>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td id="tableTittle1">會議記錄</td>
+								<td id="tableValue1">
+									<select name="minutes_taker_id">
+										<?php
+											$sql = "select m.id, m.name, m.mail
+													from group_member as gm, member as m, group_leader as gl
+													where 
+													gm.group_id = '".$group_id."'
+													and (gm.member_id = m.id or gl.member_id = m.id)
+													and gl.group_id = gm.group_id
+													group by m.id";
+
+											$result=$conn->query($sql);						//再抓出群組中的成員
+											$num_rows = $result->num_rows;
+											if ($num_rows==0)
+											{	$state = "";	}	
+											else
+											{	
+												for( $i = 1; $i <= $num_rows; $i++ )
+												{
+													$row = $result->fetch_array();
 													echo "<option value=\"".$row['id']."\">".$row['name']."</option>";
 												}
 											}
@@ -338,12 +387,13 @@
 											document.update.day.outerHTML=TempStr+'</select>';
 										}
 									}
-									</script>時
-									<select name="hour" onchange="changeDate()">
-									<script language="javascript">
-										for(i=0;i<=23;i++)
-										{document.write('<option value="'+i+'">'+i+'</option>');}
 									</script>
+									<select name="hour" onchange="changeDate()">
+										<script language="javascript">
+											for( i = 0; i <= 23; i++)
+											{document.write('<option value="' + i + '">' + i + '</option>');}
+										</script>
+									</select>時
 								</td>
 							</tr>
 							<input type="hidden" name="group_id" value="<?php echo $group_id; ?>" />
@@ -352,7 +402,7 @@
 					
 					<tr>
 						<td id="tableTittleCol1" style="border-radius: 4px;">
-							<input id="tableButton" type="button" onclick="set_meeting_scheduler();" value="新增會議" style="border-radius: 4px;"/>
+							<input id="tableButton" type="button" name="set_meeting_scheduler" onclick="set_meeting_scheduler_form.submit()" value="新增會議" style="border-radius: 4px;" />
 						</td>
 					</tr>
 					
