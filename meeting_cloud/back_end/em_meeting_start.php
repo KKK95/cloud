@@ -16,39 +16,60 @@
 	else if (isset($_GET["meeting_id"]))
 		$meeting_id = $_GET["meeting_id"];
 	
-	$sql = "select group_id from meeting_scheduler where meeting_id = '".$meeting_id."'";
+	if ( isset($_SESSION['id']) )
+		$id = $_SESSION['id'];
+	else
+		$id = 'a@';
+	
+	// 如果id 在join_meeting_member 才可以開始會議
+	$sql = "select * from join_meeting_member where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$result = $conn->query($sql);
+	$join_meeting = $result->num_rows;
+	if ($join_meeting != 1)
+		header("Location: ../web/employee_web/employee_center.php" );
+	
+	
+	
+	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
 	$row = $result->fetch_array();
 	$group_id = $row['group_id'];				//取得群組id
+	$moderator_id = $row['moderator_id'];
+	
+	if ( $moderator_id != $id )
+		$action = 'none';
+	else
+		$action = 'per';
 	
 	$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);	
 	$num_rows = $result->num_rows;			//要知道目前有沒有人開始了會議
-	if ($num_rows != 0)						//已有人開始了會議
+	if ($num_rows > 0)						//已有人開始了會議
 	{
-		$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$_SESSION["id"]."'";
+		$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
 		$result = $conn->query($sql);
 		$num_rows = $result->num_rows;		//要知道自己是否已開始了會議
-		echo $num_rows;
-		if ($num_rows != 1 )				//否
+
+		if ($num_rows == 0 )				//否
 		{
-			$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$_SESSION["id"]."', 'none', 'none')";
+			$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$id."', 'none', 'none', '".$action."')";
 			$result = $conn->query($sql);
 		}
 	}
 	else	//還沒開始會議
 	{
-		$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$_SESSION["id"]."', 'none', 'none')";
-		$result = $conn->query($sql);
+		$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$id."', 'none', 'none', '".$action."')";
+		$conn->query($sql);
+		echo $sql;
 		$sql = "INSERT INTO meeting_record value('".$meeting_id."', '".$group_id."', '".$meeting_time."')";
-		$result = $conn->query($sql);
+		$conn->query($sql);
+		echo $sql;
 	}
-	
-	if ($_SESSION['platform'] == "device")
-		header("Location: ../device/employee/meeting/em_meeting_running.php");
-	else if ($_SESSION['platform'] == "web")
+
+	if ( $_SESSION['platform'] == "device" )
+		echo "device/employee/meeting/meeting_running.php";
+	else if ( $_SESSION['platform'] == "web" )
 		header("Location: ../web/employee_web/meeting/meeting_running/em_meeting_running.php");
-	
-	//echo $_SESSION["id"];
+
 	
 ?>
