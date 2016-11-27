@@ -24,11 +24,17 @@
 	
 	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
 	$result = $conn->query($sql);
-	$row=$result->fetch_array();
+	$row = $result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
 	$over = $row['over'];
-	
+	$moderator_id = $row['moderator_id'];
+	$minutes_taker_id = $row['minutes_taker_id'];
+	$time = $row['time'];
+	$year = date("Y", strtotime($time));
+	$month = date("m", strtotime($time));
+	$day = date("d", strtotime($time));
+	$hour = date("H", strtotime($time));
 
 ?>
 
@@ -152,7 +158,7 @@
 				
 				if (meeting_topic_row == 0)	meeting_topic_row = 2;
 				
-				document.getElementById("meeting_topic" + count).innerHTML = document.getElementById("meeting_topic" + count).innerHTML + 
+				document.getElementById("meeting_topic" + count).innerHTML = 
 					'<td id = "tableValueCol1' + meeting_topic_row + '">' + 
 					'<a href = "./em_meeting_topic.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '" ' + 
 					'style = "color:#333333;width:auto;line-height:200%;">' +
@@ -184,12 +190,40 @@
 			<dl style="margin:0;width:20%;float:left;">
 				<dt id="memberBar" class="left">
 					會議資訊 <?php echo $id; ?>
+						
 						<dt><a href="em_meeting_info.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
 						<dt><a href="em_meeting_info_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
 						<dt><a href="em_meeting_info_member_list.php?meeting_id=<?php echo $meeting_id; ?>">與會者名單</a></dt>
 						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">返回群組</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
+				<?php
+				
+				$meeting_record_sql = "select record.*, scheduler.title ".
+									  "from meeting_record as record, meeting_scheduler as scheduler ".
+									  "where record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id ".
+									  "and scheduler.over = 1";
+									  
+				$meeting_record_result = $conn->query($meeting_record_sql);
+				
+				$num_of_meeting_record = $meeting_record_result->num_rows;
+				
+				for ( $i = 1; $i <= $num_of_meeting_record; $i++)
+				{
+					if ($i == 1)
+						echo '<dt id="memberBar" class="left">'.'過往記錄';
+					$meeting_record_row = $meeting_record_result->fetch_array();
+					$record_id = $meeting_record_row['meeting_id'];
+					$record_title = $meeting_record_row['title'];
+					echo	'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'&state=meeting_now&meeting_now_id='.$meeting_id.'">'.
+							$record_title.'</a></dt>';
+					
+					if ($i == $num_of_meeting_record)
+						echo '</dt>';
+
+				}
+				
+				?>
 			</dl>
 			
 			
@@ -197,6 +231,146 @@
 				<?php
 					echo "<p id=\"conventionTittle\">會議 - ".$meeting_title."</p>"
 				?>
+				
+				<?php
+					$sql = "select * from group_meeting_now where meeting_id = '".$meeting_id."'";
+
+					$result = $conn->query($sql);						//再抓出群組中的成員
+					$num_rows = $result->num_rows;
+				
+					if ( $num_rows == 0 && ( $moderator_id == $id || $minutes_taker_id == $id ) )
+					{
+						$sql = "select m.id, m.name, m.mail
+								from group_member as gm, member as m, group_leader as gl
+								where 
+								gm.group_id = '".$group_id."'
+								and (gm.member_id = m.id or gl.member_id = m.id)
+								and gl.group_id = gm.group_id
+								group by m.id";
+
+						$result=$conn->query($sql);						//再抓出群組中的成員
+						$num_rows = $result->num_rows;
+						
+						echo	'<div id="main_sub">'.
+							
+								'<p id="conventionTittle">更改會議資訊</p>'.
+								'<table id="table">'.
+								'<form name="update_meeting_scheduler_form" method="post" action="../../../back_end/meeting/update_info/update_meeting_scheduler.php">'.
+									'<tr>'.
+										'<td id="tableTittle1">會議名稱</td>'.
+										'<td id="tableValue1"><input id="tableValue1" type="text" name="meeting_title" value="'.$meeting_title.'"/></td>'.
+									'</tr>'.
+									'<tr>'.
+										'<td id="tableTittle1">會議主席</td>'.
+										'<td id="tableValue1">'.
+											'<select name="moderator_id">';
+												
+								if ($num_rows==0)
+								{	$state = "";	}	
+								else
+								{	
+									for( $i = 1; $i <= $num_rows; $i++ )
+									{
+										$row = $result->fetch_array();
+										if ($row['id'] == $moderator_id)
+											echo '<option value="'.$row['id'].'" selected="selected">'.$row['name'].'</option>';
+										else
+											echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
+									}
+								}
+
+						echo				'</select>'.
+										'</td>'.
+									'</tr>'.
+									'<tr>'.
+										'<td id="tableTittle1">會議記錄人</td>'.
+										'<td id="tableValue1">'.
+											'<select name="minutes_taker_id">';
+
+								$sql = "select m.id, m.name, m.mail
+										from group_member as gm, member as m, group_leader as gl
+										where 
+										gm.group_id = '".$group_id."'
+										and (gm.member_id = m.id or gl.member_id = m.id)
+										and gl.group_id = gm.group_id
+										group by m.id";
+
+								$result=$conn->query($sql);						//再抓出群組中的成員
+								$num_rows = $result->num_rows;
+								if ($num_rows==0)
+								{	$state = "";	}	
+								else
+								{	
+									for( $i = 1; $i <= $num_rows; $i++ )
+									{
+										$row = $result->fetch_array();
+										if ($row['id'] == $minutes_taker_id )
+											echo '<option value="'.$row['id'].'" selected="selected">'.$row['name'].'</option>';
+										else
+											echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
+									}
+								}
+
+						echo				'</select>'.
+										'</td>'.
+									'</tr>'.
+									'<tr>'.
+										'<td id="tableTittle2">會議創立日期</td>'.
+										'<td id="tableValue2">'.
+											'<select name="year" size="1" >';
+											for($i = 2016; $i <= 2018; $i++)
+											{
+												if ( (int)$year == $i)
+													echo	'<option value="'.$i.'" selected="selected">'.$i.'</option>';
+												else
+													echo	'<option value="'.$i.'" >'.$i.'</option>';
+											}
+
+						echo				'</select>年'.
+											'<select name="month" >';
+											for($i = 1; $i <= 12; $i++)
+											{
+												if ( (int)$month == $i)
+													echo	'<option value="'.$i.'" selected="selected">'.$i.'</option>';
+												else
+													echo	'<option value="'.$i.'" >'.$i.'</option>';
+											}
+						echo				'</select>月'.
+											'<select name="day" >';
+											for($i = 1; $i <= 31; $i++)
+											{
+												if ( (int)$day == $i)
+													echo	'<option value="'.$i.'" selected="selected">'.$i.'</option>';
+												else
+													echo	'<option value="'.$i.'" >'.$i.'</option>';
+											}
+						echo				'</select>日'.
+											'<select name="hour" >';
+												for($i = 1; $i <= 31; $i++)
+												{
+													if ( (int)$hour == $i)
+														echo	'<option value="'.$i.'" selected="selected">'.$i.'</option>';
+													else
+														echo	'<option value="'.$i.'" >'.$i.'</option>';
+												}
+						echo				'</select>時'.
+										'</td>'.
+									'</tr>'.
+									'<input type="hidden" name="meeting_id" value="'.$meeting_id.'" />'.
+								'</form>'.
+							'</table>'.
+							
+							'<tr>'.
+								'<td id="tableTittleCol1" style="border-radius: 4px;">'.
+									'<input id="tableButton" type="button" name="update_meeting_scheduler" onclick="update_meeting_scheduler_form.submit()" value="修改" style="border-radius: 4px;" />'.
+								'</td>'.
+							'</tr>'.
+							
+						'</div>';
+					}
+				?>
+<!-- ==================================================================================================================================== -->
+				
 				<div id="main_sub">
 					<p id="conventionTittle">會議議題</p>
 					<table id="table">
