@@ -25,6 +25,12 @@
 		$minutes_taker_id = $_POST['minutes_taker_id'];
 	else $minutes_taker_id = $_SESSION['id'];
 	
+	// 主席 id
+	
+	if ( isset($_POST["moderator_id"]) )
+		$moderator_id = $_POST["moderator_id"];
+	else
+		$moderator_id = $_SESSION['id'];
 	// 會議群組 id
 	
 	if ( isset($_POST["group_id"]) )
@@ -36,10 +42,17 @@
 	
 	$meeting_title = $_POST['meeting_title'];
 
-	// 主席 id
+	
+
+	
+	
+	
 	
 	if ($moderator_id == "" || $moderator_id == "none")
 		$moderator_id = $_SESSION['id'];
+	
+	if ($minutes_taker_id == "" || $minutes_taker_id == "none")
+		$minutes_taker_id = $_SESSION['id'];
 	
 	$sql = "INSERT INTO meeting_scheduler value('', '".$group_id."', '".$meeting_title."', ".
 												"'".$moderator_id."', '".$minutes_taker_id."', '".$meeting_time."', 0 )";
