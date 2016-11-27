@@ -35,11 +35,11 @@
 	
 	if ($_SESSION['platform'] == "device")
 	{
-		header("Location: ../../device/employee/group/group.php?group_id=".$row['group_id']);
+		header("Location: ../../device/employee/group/group.php?group_id=".$_POST['group_id']);
 	}	
 	else if ($_SESSION['platform'] == "web")
 	{
-		header("Location: ../../web/employee_web/group/group.php?group_id=".$row['group_id']);
+		header("Location: ../../web/employee_web/group/group.php?group_id=".$_POST['group_id']);
 	}	
 
 ?>

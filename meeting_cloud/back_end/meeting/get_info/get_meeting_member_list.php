@@ -90,7 +90,8 @@
 				array_push ($json['contents']['obj_meeting_member_list']['online'], 0);
 			if ($meeting_running == 1)															//如果要取得正在會議中 的與會者列表
 			{
-				$member_meeting_now_sql = "select * from group_meeting_now where member_id = '".$row['member_id']."'";
+				$member_meeting_now_sql = "select * from group_meeting_now 
+										   where member_id = '".$row['member_id']."' and meeting_id = '".$meeting_id."'";
 				$member_meeting_now_result = $conn->query($member_meeting_now_sql);
 				$member_meeting_now_row = $member_meeting_now_result->fetch_array();
 				

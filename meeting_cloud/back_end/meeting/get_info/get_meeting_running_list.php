@@ -22,6 +22,7 @@
 					where j_m_m.member_id = '".$id."' and j_m_m.meeting_id = g_m_n.meeting_id 
 					and j_m_m.meeting_id = scheduler.meeting_id 
 					and member.id = scheduler.moderator_id and scheduler.group_id = '".$_GET['group_id']."' 
+					and scheduler.over != 1 
 					group by scheduler.meeting_id";
 		}
 		else
@@ -30,7 +31,8 @@
 					from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m, group_meeting_now as g_m_n
 					where j_m_m.member_id = '".$id."' and j_m_m.meeting_id = g_m_n.meeting_id 
 					and j_m_m.meeting_id = scheduler.meeting_id 
-					and member.id = scheduler.moderator_id
+					and member.id = scheduler.moderator_id 
+					and scheduler.over != 1 
 					group by scheduler.meeting_id";
 		}
 		$result=$conn->query($sql);

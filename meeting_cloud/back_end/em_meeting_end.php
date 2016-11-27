@@ -9,7 +9,24 @@
 	
 	require_once("../login_check.php");			
 	
+	$id = $_SESSION['id'];
 	
+	$sql = "select group_meeting_now.* from group_meeting_now, meeting_scheduler as scheduler 
+			where group_meeting_now.member_id = '".$id."' and scheduler.moderator_id = group_meeting_now.member_id 
+			group by member_id";
+	$result = $conn->query($sql);
+	$moderator = $result->num_rows;
+	
+	if ($moderator == 1)
+	{
+		$row = $result->fetch_array();
+		$meeting_id = $row['meeting_id'];
+		$sql = "update meeting_scheduler set over = 1 where meeting_id = '".$meeting_id."'";
+		$conn->query($sql);
+	}
+	
+	$sql = "delete from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$conn->query($sql);
 	
 	if ($_SESSION['platform'] == "device")
 	{
@@ -26,7 +43,7 @@
 		$sql = "delete form group_meeting_now where member_id = '".$_SESSION["id"]."'";
 		
 		$result = $conn->query($sql);
-		header("Location: ../web/employee/employee_web/employee_center.php");
+		header("Location: ../web/employee_web/employee_center.php");
 	}	
 	
 ?>

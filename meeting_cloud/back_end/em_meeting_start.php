@@ -41,31 +41,36 @@
 	else
 		$action = 'per';
 	
-	$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."'";
-	$result = $conn->query($sql);	
-	$num_rows = $result->num_rows;			//要知道目前有沒有人開始了會議
-	if ($num_rows > 0)						//已有人開始了會議
-	{
-		$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
-		$result = $conn->query($sql);
-		$num_rows = $result->num_rows;		//要知道自己是否已開始了會議
+	
+	
+		$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."'";
+		$result = $conn->query($sql);	
+		$num_rows = $result->num_rows;			//要知道目前有沒有人開始了會議
+		if ($num_rows > 0)						//已有人開始了會議
+		{
+			$sql = "select meeting_id from group_meeting_now where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+			$result = $conn->query($sql);
+			$num_rows = $result->num_rows;		//要知道自己是否已開始了會議
 
-		if ($num_rows == 0 )				//否
+			if ($num_rows == 0 )				//否
+			{
+				$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$id."', 'none', 'none', '".$action."')";
+				$result = $conn->query($sql);
+			}
+		}
+		else	//還沒開始會議
 		{
 			$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$id."', 'none', 'none', '".$action."')";
-			$result = $conn->query($sql);
+			$conn->query($sql);
+			echo $sql;
+			$sql = "INSERT INTO meeting_record value('".$meeting_id."', '".$group_id."', '".$meeting_time."')";
+			$conn->query($sql);
+			echo $sql;
 		}
-	}
-	else	//還沒開始會議
-	{
-		$sql = "INSERT INTO group_meeting_now value('".$meeting_id."', '".$id."', 'none', 'none', '".$action."')";
-		$conn->query($sql);
-		echo $sql;
-		$sql = "INSERT INTO meeting_record value('".$meeting_id."', '".$group_id."', '".$meeting_time."')";
-		$conn->query($sql);
-		echo $sql;
-	}
 
+	$sql = "update join_meeting_member set joined = 1 where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
+	$conn->query($sql);	
+	
 	if ( $_SESSION['platform'] == "device" )
 		echo "device/employee/meeting/meeting_running.php";
 	else if ( $_SESSION['platform'] == "web" )

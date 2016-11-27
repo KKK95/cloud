@@ -66,7 +66,7 @@
 				for ( $i = 1; $i <= $num_rows; $i++)
 				{
 					$row=$result->fetch_array();
-					$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."')";
+					$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."', 0)";
 					if ( $conn->query($invite_member_meeting_sql) )
 						echo "invite success";
 				}
@@ -75,7 +75,7 @@
 				$result = $conn->query($sql);
 				$row = $result->fetch_array();
 				
-				$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."')";
+				$invite_member_meeting_sql = "INSERT INTO join_meeting_member value('".$meeting_id."', '".$row['member_id']."', 0)";
 				$conn->query($invite_member_meeting_sql);
 			}
 
