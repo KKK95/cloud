@@ -11,6 +11,11 @@
 	
 	$meeting_id = $_GET['meeting_id'];
 	$topic_id = $_GET['topic_id'];
+	
+	if (isset($_SESSION["id"]))
+		$id = $_SESSION["id"];
+	else
+		$id = "a@";
 	$sql = "select * from join_meeting_member where meeting_id = '".$meeting_id."' and member_id = '".$id."'";
 	$result = $conn->query($sql);
 	$join_meeting = $result->num_rows;
@@ -29,10 +34,7 @@
 	$row=$result->fetch_array();
 	$meeting_topic = $row['topic'];
 	
-	if (isset($_SESSION["id"]))
-		$id = $_SESSION["id"];
-	else
-		$id = "a@";
+
 ?>
 
 
