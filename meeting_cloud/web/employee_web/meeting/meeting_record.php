@@ -22,19 +22,23 @@
 		header("Location: ../employee_center.php" );
 	
 	
-	$sql = "select * from meeting_scheduler where meeting_id = '".$meeting_id."'";
+	$sql = "select scheduler.*, member.name from meeting_scheduler as scheduler, member 
+			where scheduler.meeting_id = '".$meeting_id."' 
+			and scheduler.moderator_id = member.id";
 	$result = $conn->query($sql);
 	$row=$result->fetch_array();
 	$meeting_title = $row['title'];
 	$group_id = $row['group_id'];
-	$moderator_id = $row['moderator_id'];					//看是否主席
+	$time = $row['time'];
+	$moderator = $row['name'];
 	
-	$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."'";
+
+	$sql = "select scheduler.*, member.name from meeting_scheduler as scheduler, member 
+			where scheduler.meeting_id = '".$meeting_id."' 
+			and scheduler.minutes_taker_id = member.id";
 	$result = $conn->query($sql);
-	
-	$num_of_topic = $result->num_rows;		//看有多少個議題
-	
-	
+	$row=$result->fetch_array();
+	$minutes_taker = $row['name'];
 	
 ?>
 
@@ -86,8 +90,85 @@
 				</dt>
 			</dl>
 			<p id="conventionTittle">會議 - <?php echo $meeting_title; ?></p>
-		<?php
 			
+			<div id="main_sub">
+					<table id="table">
+						<tr></tr>
+						<tr>
+							<table id="table">
+							<?php
+								echo '<tr>'.
+										'<td id="tableValueCol1" style="width:70px;">'.'時間 ：　'.
+										'</td>'.
+										'<td id="tableValueCol1" >'.$time.
+										'</td>'.
+									 '</tr>';
+								echo '<tr>'.
+										'<td id="tableValueCol1" style="width:70px;">'.'主席 ：　'.
+										'</td>'.
+										'<td id="tableValueCol1" >'.$moderator.
+										'</td>'.
+									 '</tr>';
+								echo '<tr>'.
+										'<td id="tableValueCol2" style="width:70px;">'.'紀錄 ：　'.
+										'</td>'.
+										'<td id="tableValueCol2" >'.$minutes_taker.
+										'</td>'.
+									 '</tr>';
+								echo '<tr>'.
+										'<td id="tableValueCol1" style="width:70px;">'.'出席 ：　'.
+										'</td>'.
+										'<td id="tableValueCol1" >';
+										
+								$join_member_sql = "select j_m_m.*, member.name from join_meeting_member as j_m_m, member
+													where j_m_m.meeting_id = '".$meeting_id."' and j_m_m.joined = 1
+													and j_m_m.member_id = member.id";
+								$join_member_result = $conn->query($join_member_sql);
+								$num_of_join_meeting_member = $join_member_result->num_rows;
+								for ($i = 1; $i <= $num_of_join_meeting_member; $i++)
+								{
+									$join_member_row=$join_member_result->fetch_array();
+									echo $join_member_row['name'];
+									if ($i != $num_of_join_meeting_member)
+										echo "、";
+								}
+								echo 	'</td>'.
+									 '</tr>';
+									 
+								echo '<tr>'.
+										'<td id="tableValueCol1" style="width:70px;">'.'缺席 ：　'.
+										'</td>'.
+										'<td id="tableValueCol1" >';
+										
+								$join_member_sql = "select j_m_m.*, member.name from join_meeting_member as j_m_m, member
+													where j_m_m.meeting_id = '".$meeting_id."' and j_m_m.joined = 0
+													and j_m_m.member_id = member.id";
+								$join_member_result = $conn->query($join_member_sql);
+								$num_of_join_meeting_member = $join_member_result->num_rows;
+								if ( $num_of_join_meeting_member > 0)
+								{
+									for ($i = 1; $i <= $num_of_join_meeting_member; $i++)
+									{
+										$join_member_row=$join_member_result->fetch_array();
+										echo $join_member_row['name'];
+										if ($i != $num_of_join_meeting_member)
+											echo "、";
+									}
+								}
+								else
+									echo "缺席人數 0 人";
+								echo 	'</td>'.
+									 '</tr>';
+							?>
+							</table>
+						</tr>
+					</table>
+				</div>
+		<?php
+			$sql = "select * from group_meeting_topics where meeting_id = '".$meeting_id."'";
+			$result = $conn->query($sql);
+			
+			$num_of_topic = $result->num_rows;		//看有多少個議題
 			for ($i = 1; $i <= $num_of_topic; $i++)
 			{
 				$row = $result->fetch_array();
