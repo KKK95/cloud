@@ -227,7 +227,7 @@
 				meeting_time = obj.contents.obj_meeting_record_list.meeting_time[i];
 				moderator = obj.contents.obj_meeting_record_list.moderator[i];
 				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
-				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
+				link = './meeting/meeting_record.php?meeting_id=' + meeting_id;
 				
 				document.getElementById("meeting_record_list" + i).innerHTML = 
 					'<td id = "tableValueCol1" style="width:320px;">' + 
