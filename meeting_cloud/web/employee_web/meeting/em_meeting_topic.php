@@ -312,7 +312,7 @@
 				content_id = obj.contents.obj_content.content_id[i];
 
 				document.getElementById("meeting_content" + content_id).innerHTML = 
-					'<td id = "tableValueCol2">' + content + '</td>';
+					'<td id = "tableValueCol1">' + content + '</td>';
 			}
 			
 			now_num_of_content = get_num_of_content;

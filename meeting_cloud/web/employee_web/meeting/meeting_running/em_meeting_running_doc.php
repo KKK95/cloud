@@ -207,7 +207,7 @@
 						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
 						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
 						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
-						<dt><a href="">登出</a></dt>
+						<dt><a href="../../../../back_end/em_meeting_end.php">結束會議</a></dt>
 				</dt>
 			</dl>
 			

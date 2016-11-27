@@ -560,8 +560,36 @@
 						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">返回會議議題列表</a></dt>
 						<dt><a href="em_meeting_running_vote.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">投票</a></dt>
 						
-						<dt><a href="">結束會議</a></dt>
+						<dt><a href="../../../../back_end/em_meeting_end.php">結束會議</a></dt>
 				</dt>
+				
+				<?php
+				
+				$meeting_record_sql = "select record.*, scheduler.title ".
+									  "from meeting_record as record, meeting_scheduler as scheduler ".
+									  "where record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id ".
+									  "and scheduler.over = 1";
+									  
+				$meeting_record_result = $conn->query($meeting_record_sql);
+				
+				$num_of_meeting_record = $meeting_record_result->num_rows;
+				
+				for ( $i = 1; $i <= $num_of_meeting_record; $i++)
+				{
+					if ($i == 1)
+						echo '<dt id="memberBar" class="left">'.'過往記錄';
+					$meeting_record_row = $meeting_record_result->fetch_array();
+					$record_id = $meeting_record_row['meeting_id'];
+					$record_title = $meeting_record_row['title'];
+					echo	'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'&state=meeting_now&meeting_now_id='.$meeting_id.'">'.
+							$record_title.'</a></dt>';
+					
+					if ($i == $num_of_meeting_record)
+						echo '</dt>';
+
+				}
+				
+			?>
 			</dl>
 			
 			
@@ -696,7 +724,8 @@
 								<tr>
 									<td id="tableTittle1">對會議議題提出問題</td>
 									<form name="set_new_question_form">
-										<td id="tableValueCol1"><input id="tableValue1" type="text" name="question" /></td>
+										<td id="tableValueCol1"><textarea name="question" cols="50" rows="3" ></textarea></td>
+										
 									</form>
 								</tr>
 							</table>

@@ -386,7 +386,7 @@
 						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">返回會議議題列表</a></dt>
 						<dt><a href="em_meeting_running_topic.php?meeting_id=<?php echo $meeting_id; ?>&topic_id=<?php echo $topic_id; ?>">返回議題</a></dt>
 						
-						<dt><a href="">結束會議</a></dt>
+						<dt><a href="../../../../back_end/em_meeting_end.php">結束會議</a></dt>
 				</dt>
 			</dl>
 			

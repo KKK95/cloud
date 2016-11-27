@@ -8,6 +8,8 @@
 	
 	require_once("../../login_check.php");
 	
+	//http://127.0.0.1:8080/meeting_cloud/web/employee_web/employee_center.php
+	
 	$meeting_time = date("Y-m-d H:i:s");
 	//查詢會員有多少會議
 	$id = $_SESSION['id'];
@@ -170,7 +172,7 @@
 				meeting_id = obj.contents.obj_meeting_now_list.meeting_id[i];
 				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
 				
-				document.getElementById("meeting_now_list" + i).innerHTML = document.getElementById("meeting_now_list" + i).innerHTML + 
+				document.getElementById("meeting_now_list" + i).innerHTML = 
 					'<td id = "tableValueCol1" style="width:320px;">' + 
 					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
 					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
@@ -199,7 +201,7 @@
 				meeting_id = obj.contents.obj_meeting_list.meeting_id[i];
 				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
 				
-				document.getElementById("meeting_list" + i).innerHTML = document.getElementById("meeting_list" + i).innerHTML + 
+				document.getElementById("meeting_list" + i).innerHTML = 
 					'<td id = "tableValueCol1" style="width:320px;">' + 
 					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
 					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +
@@ -227,7 +229,7 @@
 				meeting_id = obj.contents.obj_meeting_record_list.meeting_id[i];
 				link = './meeting/em_meeting_info.php?meeting_id=' + meeting_id;
 				
-				document.getElementById("meeting_record_list" + i).innerHTML = document.getElementById("meeting_record_list" + i).innerHTML + 
+				document.getElementById("meeting_record_list" + i).innerHTML = 
 					'<td id = "tableValueCol1" style="width:320px;">' + 
 					'<a style="color:#333333;width:auto;line-height:200%;" href="' + link + '">' + topic + '</a></td>' +
 					'<td id="tableValueCol2" style="width:110px;">' + meeting_date + '</td>' +

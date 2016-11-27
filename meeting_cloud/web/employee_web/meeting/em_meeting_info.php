@@ -153,7 +153,7 @@
 				if (meeting_topic_row == 0)	meeting_topic_row = 2;
 				
 				document.getElementById("meeting_topic" + count).innerHTML = document.getElementById("meeting_topic" + count).innerHTML + 
-					'<td id = "tableValueCol' + meeting_topic_row + '">' + 
+					'<td id = "tableValueCol1' + meeting_topic_row + '">' + 
 					'<a href = "./em_meeting_topic.php?meeting_id=' + meeting_id + '&topic_id=' + topic_id + '" ' + 
 					'style = "color:#333333;width:auto;line-height:200%;">' +
 					obj.contents.obj_meeting_topic.topic[i] + 
@@ -234,7 +234,7 @@
 											"<tr>".
 												"<td id=\"tableTittle1\">新增會議議題</td>".
 												"<form name = \"set_new_topic_form\" >".
-													"<td id=\"tableValueCol1\"><input id=\"tableValue1\" type=\"text\" name=\"topic\" /></td>".
+													"<td id=\"tableValueCol1\"><textarea name=\"topic\" cols=\"50\" rows=\"3\"></textarea></td>".
 												"</form>".
 											"</tr>".
 										"</table>".

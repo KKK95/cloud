@@ -270,7 +270,7 @@
 					會議資訊
 						<dt><a href="em_meeting_running.php?meeting_id=<?php echo $meeting_id; ?>">會議議題</a></dt>
 						<dt><a href="em_meeting_running_doc.php?meeting_id=<?php echo $meeting_id; ?>">會議文件</a></dt>
-						<dt><a href="../group/group.php?group_id=<?php echo $group_id; ?>">結束會議</a></dt>
+						<dt><a href="../../../../back_end/em_meeting_end.php">結束會議</a></dt>
 						<dt><a href="">登出</a></dt>
 				</dt>
 			<?php
@@ -286,14 +286,16 @@
 				
 				for ( $i = 1; $i <= $num_of_meeting_record; $i++)
 				{
+					if ($i == 1)
+						echo '<dt id="memberBar" class="left">'.'過往記錄';
 					$meeting_record_row = $meeting_record_result->fetch_array();
 					$record_id = $meeting_record_row['meeting_id'];
 					$record_title = $meeting_record_row['title'];
-					echo '<dt id="memberBar" class="left">'.
-							'過往記錄'.
-							'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'&state=meeting_now&meeting_now_id='.$meeting_id.'">'.
-							$record_title.'</a></dt>'.
-						 '</dt>';
+					echo	'<dt><a href="../meeting_record.php?meeting_id='.$record_id.'&state=meeting_now&meeting_now_id='.$meeting_id.'">'.
+							$record_title.'</a></dt>';
+					
+					if ($i == $num_of_meeting_record)
+						echo '</dt>';
 
 				}
 				

@@ -289,8 +289,13 @@
 												'<td id = "tableValueCol1">'.$meeting_question_row['question'].'</td>'.
 											 "</tr>";
 										
+										if ( isset ($meeting_answer_row['answer']))
+											$answer = $meeting_answer_row['answer'];
+										else
+										$answer = "none";
+										
 										echo "<tr id = \"meeting_answer".$j."\">".
-												'<td id = "tableValueCol2">'.$meeting_answer_row['answer'].'</td>'.
+												'<td id = "tableValueCol2">'.$answer.'</td>'.
 											 "</tr>";
 									}
 					echo					"</table>".
