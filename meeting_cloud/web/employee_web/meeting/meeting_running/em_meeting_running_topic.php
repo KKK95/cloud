@@ -292,7 +292,7 @@
 				set_content_request.open("POST", url, true);
 				set_content_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); 
 				set_content_request.send("content=" + document.set_content_form.content.value);						// 送出請求（由於為 GET 所以參數為 null）
-				document.set_new_question_form.question.value = "";
+				document.set_content_form.content.value = "";
 				set_content_request.onreadystatechange = displayResult;
 			}
 		}
