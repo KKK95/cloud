@@ -319,7 +319,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td id="tableTittle1">會議記錄</td>
+								<td id="tableTittle1">會議記錄人</td>
 								<td id="tableValue1">
 									<select name="minutes_taker_id">
 										<?php
@@ -368,26 +368,6 @@
 										{document.write('<option value="'+i+'">'+i+'</option>');}
 									</script>
 									</select>日
-									<script language="javascript">
-									function changeDate()
-									{
-										var UserIndex = document.update.day.selectedIndex+1;
-										var TempDate = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
-										if ((document.update.year.selectedIndex % 4 == 0 && document.update.year.selectedIndex % 100 != 0) || document.update.year.selectedIndex % 400 == 0)
-										{TempDate[1]++;}
-										if(document.update.day.options.length!=TempDate[document.update.month.selectedIndex])
-										{
-											var TempStr = '<select size="1" name="day">';
-											for(i=1;i<=TempDate[document.update.month.selectedIndex];i++)
-											{
-												TempStr+='<option value="'+i+'"';
-												if(i==UserIndex){TempStr+=' selected';}
-												TempStr+='>'+i+'</option>';
-											}
-											document.update.day.outerHTML=TempStr+'</select>';
-										}
-									}
-									</script>
 									<select name="hour" onchange="changeDate()">
 										<script language="javascript">
 											for( i = 0; i <= 23; i++)
@@ -408,6 +388,9 @@
 					
 				</div>
 				
+<!-- ==================================================================================================================================== -->
+
+
 				<div id="main_sub">
 					<p id="conventionTittle">將至會議</p><!--管理員/紀錄-->
 				
@@ -436,7 +419,7 @@
 						</tr>
 					</table>
 				</div>
-				
+<!-- ==================================================================================================================================== -->				
 				<div id="main_sub">
 					<p id="conventionTittle">會員管理</p>
 					<table id="table">
@@ -515,7 +498,7 @@
 					</table>
 				</div>
 				
-				
+<!-- ==================================================================================================================================== -->				
 				
 				<div id="main_sub">
 					<p id="conventionTittle">會議紀錄</p><!--管理員/紀錄-->
