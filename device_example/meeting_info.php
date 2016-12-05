@@ -2,6 +2,7 @@
 	"contents":
 	{
 		"moderator":"apple",			//主席名稱
+		"moderator_id":"a@",			//主席id
 		"date":"2016-11-30",			//會議開始日期
 		"time":"09:00",					//會議開始時間
 		"meeting_id":"4",				//會議id

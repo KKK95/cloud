@@ -1,4 +1,10 @@
 ?{
+	"contents":
+	{
+		"moderator":"apple",			//主席名稱
+		"moderator_id":"a@",			//主席id
+		"local_server_ip":"192.168.0.101",
+	},
 	"link":
 	{
 		"get_doc_list":"back_end\/upload_space\/upload.php?upload_path=group_upload_space\/10\/27\/",				//取得會議文件列表
@@ -97,6 +103,16 @@
 		}
 		
 <!-- ==================================================================================================================================== -->		
+		
+		"set_presenter" => array																		//取得議題中的內容
+		(
+			"func" => "set_presenter",
+			"addr" => "back_end/meeting/set_info/set_presenter.php?meeting_id=".$meeting_id,
+			"form" => array
+			(
+				"presenter_id" => "none",																		//會議議題 id
+			),
+		),
 		
 		"set_vote":							//發起投票
 		{
