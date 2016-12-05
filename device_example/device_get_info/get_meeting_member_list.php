@@ -1,0 +1,16 @@
+?{
+	"contents":
+	{
+		"obj_meeting_member_list":
+		{
+			"name":["boy","cat","dog","apple"],
+			"mail":["","","",""],
+			"access":["em","em","em","em"],
+			"member_id":["b@","c@","d@","a@"],
+			"online":[1,1,0,1]
+		},
+			"now_meeting_member":3,
+			"persenter_id":"a@",
+			"persenter":"apple"
+	}
+}
