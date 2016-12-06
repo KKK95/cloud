@@ -15,6 +15,25 @@
 		else
 			$id = "a@";
 		
+		function file_size_unit($size,$decimal=2)
+		{
+
+			$size_unit = array('Bytes','KB','MB','GB','TB','PB','EB','ZB','YB');
+
+			$flag = 0;
+
+			while($size >= 1024)
+			{
+				$size = $size / 1024;
+				$flag++;
+			}
+
+			return array('size' => number_format($size,$decimal),'unit' => $size_unit[$flag]);
+
+		}
+
+
+		
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
 
@@ -63,11 +82,18 @@
 								$json ['link']['obj_doc_list']['remark_name'] = array();
 								$json ['link']['obj_doc_list']['download'] = array();
 								$json ['link']['obj_doc_list']['open_doc'] = array();
+								$json ['link']['obj_doc_list']['size'] = array();
+								$json ['link']['obj_doc_list']['date'] = array();
 							}
-							$file=iconv("BIG5", "UTF-8",$file);
+							$size = abs(filesize($relative_path.$file));
+							$size = file_size_unit($size);
+							array_push( $json ['link']['obj_doc_list']['size'], $size['size'].$size['unit'] );
+							array_push( $json ['link']['obj_doc_list']['date'], date("Y-m-d H:i", filectime($relative_path.$file)) );
+							$file = iconv("BIG5", "UTF-8",$file);
 							array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
 							array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path.$file."&file_name=".$file );
 							array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/".$path.$file );
+							
 							//這邊要用 em_meeting_running 看 download.php 的相對路徑
 							//而不是 get_meeting_doc 看 download.php 的相對路徑
 						}
@@ -83,7 +109,8 @@
 			$json ['link']['obj_doc_list']['remark_name'] = array();
 			$json ['link']['obj_doc_list']['download'] = array();
 			$json ['link']['obj_doc_list']['open_doc'] = array();
-			
+			$json ['link']['obj_doc_list']['size'] = array();
+			$json ['link']['obj_doc_list']['date'] = array();
 			
 		}
 	/*		
@@ -94,14 +121,24 @@
 			array_push( $json ['link']['obj_doc_list']['remark_name'], "i_don't_know");
 			array_push( $json ['link']['obj_doc_list']['download'], "https://drive.google.com/file/d/0Bz84tjygn2iQb21FMjJ4d0lmNzQ/view?usp=sharing" );
 			array_push( $json ['link']['obj_doc_list']['open_doc'], "https://drive.google.com/file/d/0Bz84tjygn2iQb21FMjJ4d0lmNzQ/view?usp=sharing" );
-			
+	*/		
 			array_push( $json ['link']['obj_doc_list']['remark_name'], "test_txt_download.txt");
 			array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/abc.txt&file_name=abc.txt" );
 			array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/group_upload_space/10/4/1/105calendar.pdf");
+			$size = abs(filesize("../../upload_space/group_upload_space/10/4/1/105calendar.pdf"));
+			$size = file_size_unit($size);
+			array_push( $json ['link']['obj_doc_list']['size'], $size['size'].$size['unit'] );
+			array_push( $json ['link']['obj_doc_list']['date'], date("Y-m-d H:i", filectime("../../upload_space/group_upload_space/10/4/1/105calendar.pdf")) );
+			
 			
 			array_push( $json ['link']['obj_doc_list']['remark_name'], "test_pdf_download.pdf");
 			array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/105calendar.pdf&file_name=105calendar.pdf" );
 			array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/group_upload_space/10/4/1/105calendar.pdf");
-	*/
+			$size = abs(filesize("../../upload_space/group_upload_space/10/4/1/105calendar.pdf"));
+			$size = file_size_unit($size);
+			array_push( $json ['link']['obj_doc_list']['size'], $size['size'].$size['unit'] );
+			array_push( $json ['link']['obj_doc_list']['date'], date("Y-m-d H:i", filectime("../../upload_space/group_upload_space/10/4/1/105calendar.pdf")) );
+	
+	
 	echo json_encode($json);
 ?>
