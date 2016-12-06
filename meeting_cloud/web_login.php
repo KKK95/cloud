@@ -18,6 +18,9 @@
 	
 	$access = $row['access'];
 	
+	//set 一個cookie 存a_id , 然後 set seesion[a_id] 每次作比對就ok 了吧?
+	
+/*
 	if (	isset($_SESSION["id"]) && ($_SESSION ["id"] != "")	)
 	{	
 		//登錄時, 這裏就分開了, 它會跟據你帳號本身的權限引導你去不同的頁面
@@ -31,7 +34,7 @@
 	}
 	if (	!isset($_SESSION["id"]) )
 	{
-		
+*/		
 		if ($_POST["pw"] == $pw)		//如果密碼正確
 		{
 			$_SESSION["id"] = $id;
@@ -67,6 +70,6 @@
 			header("Location: web_index.php?loginfail=true"); 
 		}
 		
-	}
+//	}
 
 ?>

@@ -10,29 +10,32 @@
 		
 	$result=$conn->query($sql);									//把上面查詢指令掉到 mysql_query 查詢, 由result得到查詢的結果
 	
-	$row=$result->fetch_array();								//只要一行資料
-		
+	$row = $result->fetch_array();								//只要一行資料
+	
+	$num_rows = $result->num_rows;
+	
 	$id = $row['id'];
 		
 	$pw = $row['pw'];
 	
 	$access = $row['access'];
-	
-	if (	isset($_SESSION["id"]) && ($_SESSION ["id"] != "")	)
+	/*
+	if (isset($_SESSION["id"]) && ($_SESSION ["id"] != "")	)
 	{	
 		//登錄時, 這裏就分開了, 它會跟據你帳號本身的權限引導你去不同的頁面
 			if ($row['access']=="em")
-				header("Location: device/employee/employee_center.php"); 
+				echo "#device/employee/employee_center.php"; 
 			else if ($row['access']=="ls")
 			{
 				echo "ok\n";
 				header("Location: local_server_center.php"); 
 			}
 	}
-	if (	!isset($_SESSION["id"])	)
+	*/
+	if ( $num_rows != 0 && isset($_POST["id"])	)
 	{
 		
-		if ($_POST["pw"] == $pw)		//如果密碼正確
+		if (isset($_POST["pw"]) && $_POST["pw"] == $pw)		//如果密碼正確
 		{
 			$_SESSION["id"] = $id;
 			$_SESSION["access"] = $access;
@@ -51,21 +54,30 @@
 
 			if ($row['access']=="em")
 			{
-				echo "ok\n";
 				header("Location: device/employee/employee_center.php"); 
 			}	
 			else if ($row['access']=="ls")
 			{
 				echo "ok\n";
-				header("Location: local_server_center.php"); 
+				header("Location: device/local_server/local_server_center.php"); 
 			}
 		}
-		else							//如果密碼不正確
+		else
 		{
-			echo "wrong pw\n";
-			header("Location: device_index.php?loginfail=true"); 
+			$_SESSION["id"] = $id;
+			$_SESSION["access"] = $access;
+			$_SESSION["platform"] = "device";
+			if ($row['access']=="em")
+			{
+				header("Location: device/employee/employee_center.php"); 
+			}	
 		}
 		
+	}
+	else							//如果密碼不正確
+	{
+		echo "wrong pw\n";
+		header("Location: device_index.php?loginfail=true"); 
 	}
 
 ?>

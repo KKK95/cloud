@@ -1,6 +1,6 @@
 ﻿<?php 
 
-	$state = "none";
+	//http://127.0.0.1:8080/meeting_cloud/device_index.php
 	
 	if (isset($_GET["loginfail"])) 
 	{ 
@@ -13,7 +13,7 @@
 		(
 			"login" => array 
 			(
-				"func" => "longin",
+				"func" => "login",
 				"addr" => "device_login.php",
 				"form" => array
 				(
@@ -21,7 +21,11 @@
 					"pw" => "none"
 				)
 			)
-		)
+		),
+		"state" => array
+		(
+			"login" => "true",
+		),
 	);
 	
 	echo json_encode( $json );

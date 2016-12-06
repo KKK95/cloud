@@ -19,10 +19,13 @@
 			{
 				if(document.loginform.id.value.length == 0)
 					window.alert("帳號未填寫!");
-				else if(document.loginform.pw.value.length == 0)
-					window.alert("密碼未填寫!");
 				else
 					loginform.submit();
+				
+				/*
+				else if(document.loginform.pw.value.length == 0)
+					window.alert("密碼未填寫!");
+				*/
 			}
 		</script>
         
