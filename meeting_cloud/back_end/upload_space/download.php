@@ -1,7 +1,13 @@
 ﻿<?php
 		
 		/*
-127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/3/4/&file_name=test2.pdf
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=../em_meeting_start.php&file_name=em_meeting_start.php
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/pta_290_8589296_44039.doc&file_name=pta_290_8589296_44039.doc
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/105calendar.pdf&file_name=105calendar.pdf
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/abc.txt&file_name=abc.txt
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=../test.doc&file_name=test.doc
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=../test.pdf&file_name=test.pdf
+127.0.0.1:8080/meeting_cloud/back_end/upload_space/download.php?download_path=group_upload_space/text.txt&file_name=test.txt
 		*/	
 		if(!isset($_SESSION))
 		{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
@@ -15,19 +21,21 @@
 		
 		if ( isset($_GET['download_path']) && isset($_GET['file_name']) )			// $_GET['download_path'] 即為傳入要下載的檔案名稱 (含路徑)
 		{
-			$path = $path . $_GET['download_path'] . $_GET['file_name'];
-			
+			$path = $_GET['download_path'];
 			
 			if ( false !== ($rst = strpos($_GET['file_name'], '.')) )
 			{
-			
+/*			
 				header("Content-type:application");
 				header("Content-Length: " .(string)(filesize($path)));
 				header("Content-Disposition: attachment; filename=".$_GET['file_name']);
 				readfile($path);
+*/
+
+
 			
-	//		echo $path;
-/*
+//			echo $path;
+			$file_name = mb_convert_encoding($path,"BIG-5","UTF-8");
 			$file_name = $_GET['file_name'];
 			$file_path = $path;
 			$file_size = filesize($path);
@@ -40,8 +48,10 @@
 			header('Content-Length: ' . $file_size);
 			header('Content-Disposition: attachment; filename="' . $file_name . '";');
 			header('Content-Transfer-Encoding: binary');
+			ob_clean();
+			flush();
 			readfile($path);
-*/
+
 			}
 /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
 			else
