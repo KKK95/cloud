@@ -9,6 +9,11 @@
 	
 	$start = 1;
 	
+	$platform = "device";
+		
+	if (isset ($_SESSION["platform"]))
+		$platform = $_SESSION["platform"];
+	
 	$empty = $post = array();
 	
 	foreach ($_POST as $varname => $varvalue)
@@ -33,11 +38,11 @@
 			member_id not in (	select id from member	)";
 	$conn->query($sql);
 	
-	if ($_SESSION['platform'] == "device")
+	if ($platform == "device")
 	{
 		header("Location: ../../device/employee/group/group.php?group_id=".$_POST['group_id']);
 	}	
-	else if ($_SESSION['platform'] == "web")
+	else if ($platform == "web")
 	{
 		header("Location: ../../web/employee_web/group/group.php?group_id=".$_POST['group_id']);
 	}	

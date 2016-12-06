@@ -106,7 +106,23 @@
 		}
 		$json['contents']['now_meeting_member'] = $num_of_meeting_member;
 	}
-			
+	
+	$sql = "select group_meeting_now.*, member.name from group_meeting_now, member 
+				where action = 'per' and member.id = group_meeting_now.member_id and meeting_id = '".$meeting_id."'";
+	$result = $conn->query($sql);
+	$row = $result->fetch_array();
+	$num_rows = $result->num_rows;
+	$member_id = $row['member_id'];
+	$name = $row['name'];
+		
+	if ($num_rows == 0)
+	{	$json ['contents']['presenter_id'] = "none";	}
+	else
+	{
+		$json ['contents']['presenter_id'] = $member_id;
+		$json ['contents']['presenter'] = $name;
+	}
+	
 	echo json_encode( $json );
 
 ?>

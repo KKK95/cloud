@@ -5,7 +5,7 @@
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+//		require_once("../../../login_check.php");	
 		
 		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
 		$result=$conn->query($sql);

@@ -9,36 +9,48 @@
 	
 	$start = 1;
 	
+	
+	
 	$datetime = date("Y-m-d H:i:s");
-	
-	echo $_SESSION['id'];
-	echo $_POST['group_name'];
-	
 	
 	$sql = "insert INTO group_leader (member_id, group_name, date_time) 
 			VALUES ('".$_SESSION['id']."', '".$_POST['group_name']."', '".$datetime."')";
 	
-	if($result = $conn->query($sql))
+	if($conn->query($sql))
 	{	
 	
 		$sql = "select group_id from group_leader where date_time = '".$datetime."' and member_id = '".$_SESSION['id']."'";			//要取得group id
 		
 		$result = $conn->query($sql);
 		
-		$row=$result->fetch_array();
+		$row = $result->fetch_array();
 		
 		$group_id = $row['group_id'];
 		
 		$file = "../upload_space/group_upload_space/".$group_id;
 		
+		echo $file;
+		
 		mkdir($file);
 		
 		$empty = $post = array();
-		
+	
 		foreach ($_POST as $varname => $varvalue)
 		{
-			if (empty($varvalue)) {
-				return ;
+			if (empty($varvalue))
+			{	
+				$sql = "delete from group_member		
+				where group_id = '".$row['group_id']."
+				member_id not in (	select id from member	)";
+				$conn->query($sql);
+				echo $sql;
+				if ($_SESSION['platform'] == "device")
+				{	echo "device/employee/group/group.php?group_id=".$row['group_id'];	}	
+				else 
+				{	
+					header( "Location: ../../web/employee_web/group/group.php?group_id=".$row['group_id'] );	
+				}		
+				return;
 			} 
 			else if ($start >= 2)
 			{
@@ -48,25 +60,14 @@
 												VALUES ('".$group_id."','"
 														  .$post[$varname]."')";
 				$conn->query($sql);
+				echo $sql;
 			}
 			$start = $start + 1;
 		}
 		
-		
+	
 		//刪除一些不在member 列表中的 member id
-		$sql = "delete from group_member		
-				where group_id = '".$row['group_id']."
-				member_id not in (	select id from member	)";
-		$conn->query($sql);
 		
-		if ($_SESSION['platform'] == "device")
-		{
-			echo "device/employee/group/group.php?group_id=".$row['group_id'];
-		}	
-		else if ($_SESSION['platform'] == "web")
-		{
-			header("Location: ../../web/employee_web/group/group.php?group_id=".$row['group_id']);
-		}	
 	}
 	else
 		echo "failed";

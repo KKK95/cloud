@@ -8,23 +8,25 @@
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+//		require_once("../../../login_check.php");	
 		
 		if (isset($_SESSION["id"]))
 			$id = $_SESSION["id"];
 		else
 			$id = "a@";
 		
-		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
 		
 		
 		$num_rows = $result->num_rows;					//看是否在會議中
 		if (isset($_GET['meeting_id']))							//否
 		{	$meeting_id = $_GET['meeting_id'];	}
+		else if (isset($_POST['meeting_id']))
+		{	$meeting_id = $_POST['meeting_id'];	}
 		else if ($num_rows!=0)									//是
 		{
-			$row=$result->fetch_array();
+			$row = $result->fetch_array();
 			$meeting_id = $row['meeting_id'];
 		}
 		
@@ -40,8 +42,9 @@
 			"contents" => array(),
 		);
 			
-		$sql = "select * from meeting_minutes where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-		$result=$conn->query($sql);									
+		$sql = "select * from meeting_minutes where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'
+				group by meeting_minutes_id";
+		$result = $conn->query($sql);									
 		$num_rows = $result->num_rows;
 		
 		if ($num_rows == 0)

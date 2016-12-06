@@ -33,10 +33,10 @@
 		$group_id = $row['group_id'];
 		
 		if (isset($_GET['topic_id']))
-		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/".$_GET['topic_id']."/";	}
+		{	$path = "group_upload_space/".$group_id."/".$meeting_id."/".$_GET['topic_id']."/";	}
 		else
-		{	$path = "upload_space/group_upload_space/".$group_id."/".$meeting_id."/";	}
-		$relative_path = "../../".$path;			//get_meeting_doc 的相對路徑
+		{	$path = "group_upload_space/".$group_id."/".$meeting_id."/";	}
+		$relative_path = "../../upload_space/".$path;			//get_meeting_doc 的相對路徑
 		$first_file = 0;
 		
 		$json = array
@@ -49,9 +49,9 @@
 			{
 				while (($file = readdir($opendir)) !==FALSE)
 				{	
-					//if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'xml')			這個是指定某種檔案
+				//	if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) == 'xml')			//這個是指定某種檔案
 
-					if ($file != "." && $file != "..")				//有點就不是目錄
+					if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($file, '.') + 1)) != 'ini')				//有點就不是目錄
 					{
 						
 						if ( strstr($file, '.') )
@@ -66,8 +66,8 @@
 							}
 							$file=iconv("BIG5", "UTF-8",$file);
 							array_push( $json ['link']['obj_doc_list']['remark_name'], $file);
-							array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path."&file_name=".$file );
-							array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/".$path.$file );
+							array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=".$path.$file."&file_name=".$file );
+							array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/".$path.$file );
 							//這邊要用 em_meeting_running 看 download.php 的相對路徑
 							//而不是 get_meeting_doc 看 download.php 的相對路徑
 						}
@@ -75,8 +75,33 @@
 				}
 			}
 		}
+		
 		if ($first_file == 0)
-			$json ['link']['obj_doc_list'] = "none";
-	
+		{
+		//	$json ['link']['obj_doc_list'] = "none";
+			$json ['link']['obj_doc_list'] = array();
+			$json ['link']['obj_doc_list']['remark_name'] = array();
+			$json ['link']['obj_doc_list']['download'] = array();
+			$json ['link']['obj_doc_list']['open_doc'] = array();
+			
+			
+		}
+	/*		
+			array_push( $json ['link']['obj_doc_list']['remark_name'], "calender");
+			array_push( $json ['link']['obj_doc_list']['download'], "https://drive.google.com/file/d/0Bz84tjygn2iQei1SbHVNX1g4cEU/view?usp=sharing" );
+			array_push( $json ['link']['obj_doc_list']['open_doc'], "https://drive.google.com/file/d/0Bz84tjygn2iQei1SbHVNX1g4cEU/view?usp=sharing" );
+			
+			array_push( $json ['link']['obj_doc_list']['remark_name'], "i_don't_know");
+			array_push( $json ['link']['obj_doc_list']['download'], "https://drive.google.com/file/d/0Bz84tjygn2iQb21FMjJ4d0lmNzQ/view?usp=sharing" );
+			array_push( $json ['link']['obj_doc_list']['open_doc'], "https://drive.google.com/file/d/0Bz84tjygn2iQb21FMjJ4d0lmNzQ/view?usp=sharing" );
+			
+			array_push( $json ['link']['obj_doc_list']['remark_name'], "test_txt_download.txt");
+			array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/abc.txt&file_name=abc.txt" );
+			array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/group_upload_space/10/4/1/105calendar.pdf");
+			
+			array_push( $json ['link']['obj_doc_list']['remark_name'], "test_pdf_download.pdf");
+			array_push( $json ['link']['obj_doc_list']['download'], "back_end/upload_space/download.php?download_path=group_upload_space/10/4/1/105calendar.pdf&file_name=105calendar.pdf" );
+			array_push( $json ['link']['obj_doc_list']['open_doc'], "back_end/upload_space/group_upload_space/10/4/1/105calendar.pdf");
+	*/
 	echo json_encode($json);
 ?>

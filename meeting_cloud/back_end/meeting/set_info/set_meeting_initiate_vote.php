@@ -5,7 +5,7 @@
 
 	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../../../login_check.php");	
+//	require_once("../../../login_check.php");	
 
 	
 	if (isset($_SESSION["id"]))
@@ -40,11 +40,12 @@
 		
 		$issue = $_POST['issue'];
 		$sql = "select * from meeting_vote where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-		$result=$conn->query($sql);
+		$result = $conn->query($sql);
 		$issue_id = $result->num_rows + 1;	
 		
 		$sql = "INSERT INTO meeting_vote value('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$issue."')";
 		$conn->query($sql);
 	}
 	
+	echo '#'.$issue_id;
 ?>

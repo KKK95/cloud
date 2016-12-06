@@ -1,21 +1,21 @@
 ﻿<?php
 
 		//測試用網址
-		//http://127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_question.php?meeting_id=4&topic_id=2
+		//http://127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_question.php?meeting_id=4&topic_id=1
 
 		if(!isset($_SESSION))
 		{  	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+//		require_once("../../../login_check.php");	
 		
 		if (isset($_SESSION["id"]))
 			$id = $_SESSION["id"];
 		else
 			$id = "a@";
 		
-		$sql = "select * from group_meeting_now where member_id = '".$_SESSION["id"]."'";
+		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result=$conn->query($sql);
 		
 		

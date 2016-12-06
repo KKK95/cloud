@@ -5,16 +5,23 @@
 		header("Content-Type: text/html; charset=UTF-8");
 
 		if(!isset($_SESSION))
-		{	session_start();	}			//用 session 函式, 看用戶是否已經登錄了
+		{	session_start();	}						//用 session 函式, 看用戶是否已經登錄了
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+//		require_once("../../../login_check.php");	
+		
+		
 		
 		if (isset($_SESSION["id"]))
 			$id = $_SESSION["id"];
 		else
 			$id = "a@";
+		
+		$platform = "device";
+		
+		if (isset ($_SESSION["platform"]))
+			$platform = $_SESSION["platform"];
 		
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
 		$result = $conn->query($sql);
@@ -30,38 +37,41 @@
 	//==============================================取得會議id===================================================
 		$topic_id = "";
 		$issue_id = "";
-		if (isset($_POST['topic_id']) && $_POST['topic_id'] != "none")
+		if ( isset($_POST['topic_id']) )
 			$topic_id = $_POST['topic_id'];
-		else if (isset($_GET['topic_id']) && $_GET['topic_id'] != "none")
+		else if ( isset($_GET['topic_id']) )
 			$topic_id = $_GET['topic_id'];
 		
-		if ( isset($_POST['issue_id']) && $_POST['issue_id'] != "none")
+		if ( isset($_POST['issue_id']) )
 			$issue_id = $_POST['issue_id'];
-		if ( isset($_GET['issue_id']) && $_GET['issue_id'] != "none")
+		if ( isset($_GET['issue_id']) )
 			$issue_id = $_GET['issue_id'];
 		
-		if ($topic_id != "" && $topic_id != "none")						//選擇某一議題內的投票
+		if ($topic_id != "" && $topic_id != "none" && $topic_id != 0)						//選擇某一議題內的投票
 		{
 
 			if ( $issue_id != "" && $issue_id != "none")				//某一議題內指定某一投票記錄
 			{
 				$issue_id = $_POST['issue_id'];
 				$sql = "select * from meeting_vote 
-						where meeting_id = '".$meeting_id."' and issue_id = '".$issue_id."' and topic_id = '".$topic_id."'";
+						where meeting_id = '".$meeting_id."' and issue_id = '".$issue_id."' and topic_id = '".$topic_id."'
+						order by topic_id";
 				$result = $conn->query($sql);
 				$num_voting = $result->num_rows;	
 			}
 			else										//某一議題內的所有投票記錄
 			{
 				$sql = "select * from meeting_vote 
-						where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+						where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'
+						order by topic_id";
 				$result = $conn->query($sql);
 				$num_voting = $result->num_rows;	
 			}
 		}
 		else											//取出所有投票記錄
 		{
-			$sql = "select * from meeting_vote where meeting_id = '".$meeting_id."'";
+			$sql = "select * from meeting_vote where meeting_id = '".$meeting_id."'
+					order by topic_id";
 			$result=$conn->query($sql);
 			$num_voting = $result->num_rows;	
 		}
@@ -94,9 +104,11 @@
 				array_push( $json['contents']['obj_voting_result']['topic_id'], $row['topic_id']);
 				array_push( $json['contents']['obj_voting_result']['issue_id'], $row['issue_id']);
 				
+				
+				//只是要知道會員有沒有投票
 				$member_vote_sql = "select * from meeting_member_vote 
-									where meeting_id = '".$meeting_id."' and issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' ".
-									"and member_id = '".$id."'";
+									where meeting_id = '".$meeting_id."' and issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' 
+									and member_id = '".$id."'";
 									
 				/*
 					select * from meeting_member_vote 
@@ -110,30 +122,35 @@
 				else
 					array_push( $json['contents']['obj_voting_result']['member_vote'], 0);
 				
-				$obj_issue = "obj_".$row['issue_id'];
+				if ($platform == "web")	$obj_issue = "obj_".$row['issue_id'];
+				else	$obj_issue = "obj_".$i;
+				
 				$find_options = "select * from meeting_voting_options 
 								where issue_id = '".$row['issue_id']."' and topic_id = '".$row['topic_id']."' 
-								and meeting_id = '".$meeting_id."'";
+								and meeting_id = '".$meeting_id."'
+								order by option_id";
 				
 				$options_result = $conn->query($find_options);
 				$num_options = $options_result->num_rows;	
 				if ($num_options != 0)
 				{
+					
 					$json['contents'][$obj_issue] = array('option'=>array(), 'option_id'=>array(), 'result'=>array());
 
 					for($j=1 ; $j <= $num_options ; $j++) 
 					{
 						$option = $options_result->fetch_array();
-						if (isset($option['votes']))
-							$votes = $option['votes'];
-						else
-							$votes = 0;
+						if (isset($option['votes']))	$votes = $option['votes'];
+						else							$votes = 0;
 
 						array_push( $json['contents'][$obj_issue]['option'], $option['voting_option']);
 						array_push( $json['contents'][$obj_issue]['option_id'], $option['option_id']);
 						array_push ($json['contents'][$obj_issue]['result'], $votes);
 					}
-					
+				}
+				else if ($platform == "device")
+				{
+					$json['contents'][$obj_issue] = "none";
 				}
 			}
 		}

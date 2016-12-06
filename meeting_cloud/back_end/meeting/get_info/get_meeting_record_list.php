@@ -1,5 +1,6 @@
 ﻿<?php
 
+	//沒有group id 的話則會從 join_meeting_member 那邊看你參加了甚麼會議
 	
 	//127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_doc.php?meeting_id=4
 	header("Content-Type: text/html; charset=UTF-8");
@@ -26,7 +27,7 @@
 			  "where record.group_id = '".$group_id."' and record.meeting_id = scheduler.meeting_id and member.id = scheduler.moderator_id ".
 			  "and scheduler.over = 1";
 	}
-	else
+	else			
 	{
 		$sql = "select scheduler.*, member.name
 				from meeting_scheduler as scheduler, member, join_meeting_member as j_m_m, meeting_record as record

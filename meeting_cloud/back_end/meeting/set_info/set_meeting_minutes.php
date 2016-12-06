@@ -32,17 +32,30 @@
 	else if (isset($_GET['topic_id']))						//否
 	{	$topic_id = $_GET['topic_id'];	}
 	
-	
-	$sql = "select * from meeting_minutes
-			where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-	$result = $conn->query($sql);
-	$meeting_minutes_id = $result->num_rows + 1;	
-	
 	if (isset($_POST['meeting_minutes']))
 	{
 		$meeting_minutes = $_POST['meeting_minutes'];
-		$sql = "INSERT INTO meeting_minutes value('".$meeting_id."', '".$topic_id."', '".$meeting_minutes_id."', '".$meeting_minutes."')";
-		$result = $conn->query($sql);
+		if (isset($_POST['meeting_minutes_id']))
+		{
+			$meeting_minutes_id = $_POST['meeting_minutes_id'];
+			$sql = "update meeting_minutes set meeting_minutes = '".$meeting_minutes."' 
+					where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' and meeting_minutes_id = '".$meeting_minutes_id."'";
+		}
+		else
+		{
+			$sql = "select * from meeting_minutes
+					where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+			$result = $conn->query($sql);
+			$meeting_minutes_id = $result->num_rows + 1;	
+			
+			$sql = "INSERT INTO meeting_minutes value('".$meeting_id."', '".$topic_id."', '".$meeting_minutes_id."', '".$meeting_minutes."')";
+		}
+	
+		if ($conn->query($sql))
+			echo "add meeting minutes success";
+		else
+			if ($conn->query($sql))
+			echo "add meeting minutes failed";
 	}
 	
 ?>

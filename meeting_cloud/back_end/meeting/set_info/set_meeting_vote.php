@@ -5,9 +5,14 @@
 
 	require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-	require_once("../../../login_check.php");	
+//	require_once("../../../login_check.php");	
 
 	$result = 0;
+	
+	$platform = "device";
+		
+	if (isset ($_SESSION["platform"]))
+		$platform = $_SESSION["platform"];
 	
 	if (isset($_SESSION["id"]))
 		$id = $_SESSION['id'];
@@ -16,6 +21,8 @@
 	
 	if (isset($_GET['meeting_id']))
 	{	$meeting_id = $_GET['meeting_id'];	}
+	else if ( isset($_POST['meeting_id']) )
+	{	$meeting_id = $_POST['meeting_id'];	}
 	else
 	{
 		$sql = "select * from group_meeting_now where member_id = '".$id."'";
@@ -46,32 +53,41 @@
 //		do    select votes from meeting_voting_options where topic_id = '1' and meeting_id = '4' and issue_id = '1' and option_id = '1'
 //		{     select votes form meeting_voting_options where topic_id = '1' and meeting_id = '4' and issue_id = '1' and option_id = '1'
 			
-			$sql = "select votes from meeting_voting_options where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' ".
-					"and issue_id = '".$issue_id."' and option_id = '".$option_id."'";
+			$sql = "select votes from meeting_voting_options where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' 
+					and issue_id = '".$issue_id."' and option_id = '".$option_id."'";
 			echo $sql; 
 			$result = $conn -> query($sql);
 			$row = $result -> fetch_array();
 			$votes = $row['votes'];
 			$votes = $votes + 1;
 			
-			$sql = "update meeting_voting_options set votes = '".$votes."' ".
-					"where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' ".
-					"and issue_id = '".$issue_id."' and option_id = '".$option_id."'";
+			//																檢查是否已經投票
+			$sql = "select * from meeting_member_vote 
+					where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."' 
+					and issue_id = '".$issue_id."' and member_id = '".$id."'";
+			$result = $conn -> query($sql);
+			$voted = $result->num_rows;
+			//===============================================================================================================================================
+			if ($voted == 0)
+			{
+				$sql = "update meeting_voting_options set votes = '".$votes."' ".
+						"where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."' ".
+						"and issue_id = '".$issue_id."' and option_id = '".$option_id."'";
+					
+				$conn->query($sql);
 				
-			$conn->query($sql);
 				
-			$sql = "INSERT INTO meeting_member_vote value
-					('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$option_id."', '".$id."')";
-			
-			$conn->query($sql);
+				$sql = "INSERT INTO meeting_member_vote value
+						('".$meeting_id."', '".$topic_id."', '".$issue_id."', '".$option_id."', '".$id."')";
+				
+				$conn->query($sql);
+			}
 			
 //		}while (true);
 
 	}
 	
-	
-	
-	if ($_SESSION['platform'] == "web")
+	if ($platform == "web")
 	{
 		header("Location: ../../../web/employee_web/meeting/meeting_running/em_meeting_running_vote.php?meeting_id=".$meeting_id."&topic_id=".$topic_id);
 	}	

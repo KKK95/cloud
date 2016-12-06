@@ -29,10 +29,15 @@
 		
 		if (isset($_GET['topic_id']))
 		{	$topic_id = $_GET['topic_id'];	}
+		else if (isset($_POST['topic_id']))
+		{	$topic_id = $_POST['topic_id'];	}
 		else
 		{	$topic_id = 0;	}
 		
-		$question = $_POST['question'];
+		if (isset($_POST['question']))
+			$question = $_POST['question'];
+		else if (isset($_GET['question']))
+			$question = $_GET['question'];
 		
 		$sql = "select * from meeting_questions where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
 		$result = $conn->query($sql);
@@ -44,12 +49,11 @@
 			$sql = "INSERT INTO meeting_questions value('".$meeting_id."', '".$topic_id."', '".$question_id."', '".$question."', '', '".$datetime."')";
 			
 			if	($conn->query($sql))
-			{	echo "發送成功";	}
+			{	echo "SET QUESETION SUCCESS";	}
 			else
 			{
 				echo $sql;
 			}
 		}
 		
-		//大神出產 UI 的平均速度是?
 ?>

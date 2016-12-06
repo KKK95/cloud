@@ -1,7 +1,7 @@
 ﻿<?php
 
 	
-	//127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_doc.php?meeting_id=4
+	//127.0.0.1:8080/meeting_cloud/back_end/meeting/get_info/get_meeting_list.php?meeting_id=4
 	header("Content-Type: text/html; charset=UTF-8");
 	
 	if(!isset($_SESSION))

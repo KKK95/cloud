@@ -32,17 +32,26 @@
 	else if (isset($_GET['topic_id']))						//否
 	{	$topic_id = $_GET['topic_id'];	}
 	
-	
-	$sql = "select * from meeting_topic_contents
-			where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
-	$result=$conn->query($sql);
-	$content_id = $result->num_rows + 1;	
-	
-	if (isset($_POST['content']))
+	if ( isset($_POST['content']) )
 	{
 		$content = $_POST['content'];
-		$sql = "INSERT INTO meeting_topic_contents value('".$meeting_id."', '".$topic_id."', '".$content_id."', '".$content."')";
-		$result = $conn->query($sql);
+		if ( isset($_POST['content_id']) )
+		{
+			$content_id = $_POST['content_id'];
+			$sql = "update meeting_topic_contents set content = '".$content."'
+					where meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."' and content_id = '".$content_id."'";
+		}
+		else 
+		{
+			$sql = "select * from meeting_topic_contents
+					where	meeting_id = '".$meeting_id."' and topic_id = '".$topic_id."'";
+			$result=$conn->query($sql);
+			$content_id = $result->num_rows + 1;	
+
+			$sql = "INSERT INTO meeting_topic_contents value('".$meeting_id."', '".$topic_id."', '".$content_id."', '".$content."')";
+		}
+		
+		$conn->query($sql);
 	}
 	
 ?>

@@ -8,7 +8,7 @@
 
 		require_once("../../../connMysql.php");			//引用connMysql.php 來連接資料庫
 	
-		require_once("../../../login_check.php");	
+//		require_once("../../../login_check.php");	
 
 		if (isset($_SESSION["id"]))
 			$id = $_SESSION["id"];

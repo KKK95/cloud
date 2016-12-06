@@ -22,19 +22,32 @@
 	$num_rows = $result->num_rows;	
 	if (isset($_GET['meeting_id']))							//否
 	{	$meeting_id = $_GET['meeting_id'];	}
-	else if ($num_rows!=0)											//是
+	else if ($num_rows != 0)								//是
 	{
-		$row=$result->fetch_array();
+		$row = $result->fetch_array();
 		$meeting_id = $row['meeting_id'];
 	}
 	
-	$sql = "select * from group_meeting_topics
-			where	meeting_id = '".$meeting_id."'";
-	$result=$conn->query($sql);
-	$topic_id = $result->num_rows + 1;	
-	
-	$sql = "INSERT INTO group_meeting_topics value('".$meeting_id."', '".$topic_id."', '".$topic."')";
-	$result = $conn->query($sql);
-	
-	echo $meeting_id;
+	if (isset($_POST['topic']))
+	{
+		$topic = $_POST['topic'];
+		
+		if ( isset($_POST['topic_id']) )
+		{
+			$topic_id = $_POST['topic_id'];
+			$sql = "update group_meeting_topics set topic = '".$topic."' 
+					where topic_id = '".$topic_id."' and meeting_id = '".$meeting_id."'";
+		}
+		else 
+		{
+			$sql = "select * from group_meeting_topics
+					where	meeting_id = '".$meeting_id."'";
+			$result=$conn->query($sql);
+			$topic_id = $result->num_rows + 1;	
+			
+			$sql = "INSERT INTO group_meeting_topics value('".$meeting_id."', '".$topic_id."', '".$topic."')";
+		}
+		$conn->query($sql);
+	}
+
 ?>
